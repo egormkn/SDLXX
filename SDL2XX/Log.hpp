@@ -41,63 +41,62 @@
 /// regardless of library (assuming you have standard C++ I/O
 /// classes).
 ///
-class Log
-{
+class Log {
 public:
-	/// Logs *msg* with prefix "Error: ".
-	///
-	/// @note By default logs to _stderr_.
-	static void error(std::string msg);
+    /// Logs *msg* with prefix "Error: ".
+    ///
+    /// @note By default logs to _stderr_.
+    static void error(std::string msg);
 
-	/// Logs *msg* with prefix "Warning: ".
-	///
-	/// @note By default logs to _stderr_.
-	static void warning(std::string msg);
+    /// Logs *msg* with prefix "Warning: ".
+    ///
+    /// @note By default logs to _stderr_.
+    static void warning(std::string msg);
 
-	/// Logs *msg*.
-	///
-	/// @note By default logs to _stdout_.
-	static void log(std::string msg);
+    /// Logs *msg*.
+    ///
+    /// @note By default logs to _stdout_.
+    static void log(std::string msg);
 
-	/// Logs `msg` without end of line.
-	static void log_raw(std::string msg);
+    /// Logs `msg` without end of line.
+    static void log_raw(std::string msg);
 
-	/// Logs *msg* with prefis "Debug: ".
-	///
-	/// @note Only gets logged if debug mode is on.
-	/// @note By default logs to _stdout_.
-	static void debug(std::string msg);
+    /// Logs *msg* with prefis "Debug: ".
+    ///
+    /// @note Only gets logged if debug mode is on.
+    /// @note By default logs to _stdout_.
+    static void debug(std::string msg);
 
-	static void verbose(std::string msg);
+    static void verbose(std::string msg);
 
-	/// Turns debug on/off.
-	/// This tells if all debug messages will be ignored.
-	///
-	/// @note By default it is turned off.
-	static void debugMode(bool option);
+    /// Turns debug on/off.
+    /// This tells if all debug messages will be ignored.
+    ///
+    /// @note By default it is turned off.
+    static void debugMode(bool option);
 
-	/// Turns verbose on/off.
-	/// This tells if all verbose messages will be ignored.
-	///
-	/// @note By default it is turned off.
-	static void verboseMode(bool option);
+    /// Turns verbose on/off.
+    /// This tells if all verbose messages will be ignored.
+    ///
+    /// @note By default it is turned off.
+    static void verboseMode(bool option);
 
-	/// Enables/disables terminal escape codes at _stdout_ output.
-	///
-	static void colors(bool option);
+    /// Enables/disables terminal escape codes at _stdout_ output.
+    ///
+    static void colors(bool option);
 
-	static void clearLine();
+    static void clearLine();
 
-	static std::string intToString(int num);
+    static std::string intToString(int num);
 
 private:
-	static bool isDebugMode;     ///< Tells if we're on debug mode.
-	static bool isVerboseMode;   ///< Tells if we're on verbose mode.
-	// static std::ostream& stdout; ///< Standard output stream
-	// static std::ostream& stderr; ///< Standard error stream
-	// static bool isUsingFiles;
+    static bool isDebugMode;     ///< Tells if we're on debug mode.
+    static bool isVerboseMode;   ///< Tells if we're on verbose mode.
+    // static std::ostream& stdout; ///< Standard output stream
+    // static std::ostream& stderr; ///< Standard error stream
+    // static bool isUsingFiles;
 
-	static bool haveEscapeCodes;
+    static bool haveEscapeCodes;
 };
 
 #endif /* LOG_H_DEFINED */

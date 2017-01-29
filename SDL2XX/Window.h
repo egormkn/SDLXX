@@ -3,8 +3,9 @@
 #define SDLXX_WINDOW_H
 
 #include "SDL2XX.h"
-#include "Renderer.h"
-#include <sstream>
+//#include "Renderer.h"
+#include "Exception.h"
+#include <string>
 
 namespace SDL {
     class Window {
@@ -19,8 +20,13 @@ namespace SDL {
         }
 
         ~Window() {
+            if(renderer != NULL) {
+                SDL_DestroyRenderer(renderer);
+                renderer = NULL;
+            }
             if(window != NULL) {
                 SDL_DestroyWindow(window);
+                window = NULL;
             }
         }
 
@@ -28,6 +34,20 @@ namespace SDL {
             return window;
         }
 
+        void setRenderer(int driver, Uint32 flags) {
+            if(renderer != NULL) {
+                throw Exception("Window already has a renderer!");
+            }
+            renderer = SDL_CreateRenderer(window, driver, flags);
+            if(renderer == NULL) {
+                throw Exception("Renderer could not be created", SDL_GetError());
+            }
+        }
+
+        SDL_Renderer *getRenderer() {
+            return renderer;
+        }
+/*
         void setWidth(int width) {
 
         }
@@ -151,12 +171,17 @@ namespace SDL {
             mWidth = 0;
             mHeight = 0;
         }
-
+*/
+/*        void setRenderer(Renderer &renderer) {
+            if (this->renderer != NULL) {
+                throw Exception("Window already has a renderer");
+            }
+            this->renderer = renderer;
+        }*/
 
     private:
-        // Window data
-        SDL_Window *window;
-        Renderer renderer = nullptr;
+        SDL_Window *window = NULL;
+        SDL_Renderer *renderer = NULL;
     };
 }
 

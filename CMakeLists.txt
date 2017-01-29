@@ -62,7 +62,9 @@ set(SOURCE_FILES
     SDL2XX/Color.cpp
     SDL2XX/Color.h
     SDL2XX/Utils.cpp
-    SDL2XX/Utils.h)
+    SDL2XX/Utils.h
+    SDL2XX/SDLIMG.cpp
+    SDL2XX/SDLIMG.h)
 
 add_library(SDL2XX ${SOURCE_FILES})
 target_compile_definitions(SDL2XX PUBLIC ${DEFINES})

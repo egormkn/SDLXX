@@ -2,6 +2,8 @@
 #ifndef SDL2XX_H
 #define SDL2XX_H
 
+#include <string>
+
 #ifdef SDL2_FOUND
 #include <SDL.h>
 #endif
@@ -53,6 +55,8 @@ namespace SDL {
         void initSubSystem(Uint32 flags);
 
         void quitSubSystem(Uint32 flags);
+
+        static void setHint(const std::string &name, const std::string &value);
 
         static void setMainReady();
 

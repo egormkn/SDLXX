@@ -32,3 +32,9 @@ void SDL::SDL::quitSubSystem(Uint32 flags) {
 void SDL::SDL::setMainReady() {
     SDL_SetMainReady();
 }
+
+void SDL::SDL::setHint(const std::string &name, const std::string &value) {
+    if(SDL_SetHint(name.c_str(), value.c_str()) == SDL_FALSE) {
+        SDL_Log(("Failed to set " + name).c_str()); // FIXME
+    }
+}

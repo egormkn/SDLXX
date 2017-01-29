@@ -1,301 +1,497 @@
-#include <string>
 #include <iostream>
+
 #include "SDL2XX.h"
 #include "Exception.h"
 #include "Window.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Using SDL, SDL_image, standard IO, strings, and file streams
+#include <SDL.h>
+#include <SDL_image.h>
+#include <stdio.h>
+#include <string>
+#include <fstream>
+#include "Texture.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-//Total windows
-const int TOTAL_WINDOWS = 3;
+//The dimensions of the level
+const int LEVEL_WIDTH = 1280;
+const int LEVEL_HEIGHT = 960;
 
-class LWindow {
+//Tile constants
+const int TILE_WIDTH = 80;
+const int TILE_HEIGHT = 80;
+const int TOTAL_TILES = 192;
+const int TOTAL_TILE_SPRITES = 12;
+
+//The different tile sprites
+const int TILE_RED = 0;
+const int TILE_GREEN = 1;
+const int TILE_BLUE = 2;
+const int TILE_CENTER = 3;
+const int TILE_TOP = 4;
+const int TILE_TOPRIGHT = 5;
+const int TILE_RIGHT = 6;
+const int TILE_BOTTOMRIGHT = 7;
+const int TILE_BOTTOM = 8;
+const int TILE_BOTTOMLEFT = 9;
+const int TILE_LEFT = 10;
+const int TILE_TOPLEFT = 11;
+
+
+//The tile
+class Tile {
 public:
-    //Intializes internals
-    LWindow();
+    //Initializes position and type
+    Tile(int x, int y, int tileType);
 
-    //Creates window
-    bool init();
+    //Shows the tile
+    void render(SDL_Rect &camera);
 
-    //Handles window events
-    void handleEvent(SDL_Event &e);
+    //Get the tile type
+    int getType();
 
-    //Focuses on window
-    void focus();
-
-    //Shows windows contents
-    void render();
-
-    //Deallocates internals
-    void free();
-
-    //Window dimensions
-    int getWidth();
-
-    int getHeight();
-
-    //Window focii
-    bool hasMouseFocus();
-
-    bool hasKeyboardFocus();
-
-    bool isMinimized();
-
-    bool isShown();
+    //Get the collision box
+    SDL_Rect getBox();
 
 private:
-    //Window data
-    SDL_Window *mWindow;
-    SDL_Renderer *mRenderer;
-    int mWindowID;
+    //The attributes of the tile
+    SDL_Rect mBox;
 
-    //Window dimensions
-    int mWidth;
-    int mHeight;
+    //The tile type
+    int mType;
+};
 
-    //Window focus
-    bool mMouseFocus;
-    bool mKeyboardFocus;
-    bool mFullScreen;
-    bool mMinimized;
-    bool mShown;
+//The dot that will move around on the screen
+class Dot {
+public:
+    //The dimensions of the dot
+    static const int DOT_WIDTH = 20;
+    static const int DOT_HEIGHT = 20;
+
+    //Maximum axis velocity of the dot
+    static const int DOT_VEL = 10;
+
+    //Initializes the variables
+    Dot();
+
+    //Takes key presses and adjusts the dot's velocity
+    void handleEvent(SDL_Event &e);
+
+    //Moves the dot and check collision against tiles
+    void move(Tile *tiles[]);
+
+    //Centers the camera over the dot
+    void setCamera(SDL_Rect &camera);
+
+    //Shows the dot on the screen
+    void render(SDL_Rect &camera);
+
+private:
+    //Collision box of the dot
+    SDL_Rect mBox;
+
+    //The velocity of the dot
+    int mVelX, mVelY;
 };
 
 //Starts up SDL and creates window
 bool init();
 
+//Loads media
+bool loadMedia(Tile *tiles[]);
+
 //Frees media and shuts down SDL
-void close();
+void close(Tile *tiles[]);
 
-//Our custom windows
-LWindow gWindows[TOTAL_WINDOWS];
+//Box collision detector
+bool checkCollision(SDL_Rect a, SDL_Rect b);
 
-LWindow::LWindow() {
-    //Initialize non-existant window
-    mWindow = NULL;
-    mRenderer = NULL;
+//Checks collision box against set of tiles
+bool touchesWall(SDL_Rect box, Tile *tiles[]);
 
-    mMouseFocus = false;
-    mKeyboardFocus = false;
-    mFullScreen = false;
-    mShown = false;
-    mWindowID = -1;
+//Sets tiles from tile map
+bool setTiles(Tile *tiles[]);
 
-    mWidth = 0;
-    mHeight = 0;
+//The window we'll be rendering to
+SDL_Window *gWindow = NULL;
+
+//The window renderer
+SDL_Renderer *gRenderer = NULL;
+
+//Scene textures
+SDL::Texture gDotTexture;
+SDL::Texture gTileTexture;
+SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
+
+Tile::Tile(int x, int y, int tileType) {
+    //Get the offsets
+    mBox.x = x;
+    mBox.y = y;
+
+    //Set the collision box
+    mBox.w = TILE_WIDTH;
+    mBox.h = TILE_HEIGHT;
+
+    //Get the tile type
+    mType = tileType;
 }
 
-bool LWindow::init() {
-    //Create window
-    mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
-                               SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    if(mWindow != NULL) {
-        mMouseFocus = true;
-        mKeyboardFocus = true;
-        mWidth = SCREEN_WIDTH;
-        mHeight = SCREEN_HEIGHT;
-
-        //Create renderer for window
-        mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        if(mRenderer == NULL) {
-            printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-            SDL_DestroyWindow(mWindow);
-            mWindow = NULL;
-        } else {
-            //Initialize renderer color
-            SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-            //Grab window identifier
-            mWindowID = SDL_GetWindowID(mWindow);
-
-            //Flag as opened
-            mShown = true;
-        }
-    } else {
-        printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+void Tile::render(SDL_Rect &camera) {
+    //If the tile is on screen
+    if(checkCollision(camera, mBox)) {
+        //Show the tile
+        gTileTexture.render(gRenderer, mBox.x - camera.x, mBox.y - camera.y, &gTileClips[mType]);
     }
-
-    return mWindow != NULL && mRenderer != NULL;
 }
 
-void LWindow::handleEvent(SDL_Event &e) {
-    //If an event was detected for this window
-    if(e.type == SDL_WINDOWEVENT && e.window.windowID == mWindowID) {
-        //Caption update flag
-        bool updateCaption = false;
+int Tile::getType() {
+    return mType;
+}
 
-        switch (e.window.event) {
-            //Window appeared
-            case SDL_WINDOWEVENT_SHOWN:
-                mShown = true;
+SDL_Rect Tile::getBox() {
+    return mBox;
+}
+
+Dot::Dot() {
+    //Initialize the collision box
+    mBox.x = 0;
+    mBox.y = 0;
+    mBox.w = DOT_WIDTH;
+    mBox.h = DOT_HEIGHT;
+
+    //Initialize the velocity
+    mVelX = 0;
+    mVelY = 0;
+}
+
+void Dot::handleEvent(SDL_Event &e) {
+    //If a key was pressed
+    if(e.type == SDL_KEYDOWN && e.key.repeat == 0) {
+        //Adjust the velocity
+        switch (e.key.keysym.sym) {
+            case SDLK_UP:
+                mVelY -= DOT_VEL;
                 break;
-
-                //Window disappeared
-            case SDL_WINDOWEVENT_HIDDEN:
-                mShown = false;
+            case SDLK_DOWN:
+                mVelY += DOT_VEL;
                 break;
-
-                //Get new dimensions and repaint
-            case SDL_WINDOWEVENT_SIZE_CHANGED:
-                mWidth = e.window.data1;
-                mHeight = e.window.data2;
-                SDL_RenderPresent(mRenderer);
+            case SDLK_LEFT:
+                mVelX -= DOT_VEL;
                 break;
-
-                //Repaint on expose
-            case SDL_WINDOWEVENT_EXPOSED:
-                SDL_RenderPresent(mRenderer);
-                break;
-
-                //Mouse enter
-            case SDL_WINDOWEVENT_ENTER:
-                mMouseFocus = true;
-                updateCaption = true;
-                break;
-
-                //Mouse exit
-            case SDL_WINDOWEVENT_LEAVE:
-                mMouseFocus = false;
-                updateCaption = true;
-                break;
-
-                //Keyboard focus gained
-            case SDL_WINDOWEVENT_FOCUS_GAINED:
-                mKeyboardFocus = true;
-                updateCaption = true;
-                break;
-
-                //Keyboard focus lost
-            case SDL_WINDOWEVENT_FOCUS_LOST:
-                mKeyboardFocus = false;
-                updateCaption = true;
-                break;
-
-                //Window minimized
-            case SDL_WINDOWEVENT_MINIMIZED:
-                mMinimized = true;
-                break;
-
-                //Window maxized
-            case SDL_WINDOWEVENT_MAXIMIZED:
-                mMinimized = false;
-                break;
-
-                //Window restored
-            case SDL_WINDOWEVENT_RESTORED:
-                mMinimized = false;
-                break;
-
-                //Hide on close
-            case SDL_WINDOWEVENT_CLOSE:
-                SDL_HideWindow(mWindow);
+            case SDLK_RIGHT:
+                mVelX += DOT_VEL;
                 break;
         }
-
-        //Update window caption with new data
-        if(updateCaption) {
-            std::stringstream caption;
-            caption << "SDL Tutorial - ID: " << mWindowID << " MouseFocus:" << ((mMouseFocus) ? "On" : "Off")
-                    << " KeyboardFocus:" << ((mKeyboardFocus) ? "On" : "Off");
-            SDL_SetWindowTitle(mWindow, caption.str().c_str());
+    }
+        //If a key was released
+    else if(e.type == SDL_KEYUP && e.key.repeat == 0) {
+        //Adjust the velocity
+        switch (e.key.keysym.sym) {
+            case SDLK_UP:
+                mVelY += DOT_VEL;
+                break;
+            case SDLK_DOWN:
+                mVelY -= DOT_VEL;
+                break;
+            case SDLK_LEFT:
+                mVelX += DOT_VEL;
+                break;
+            case SDLK_RIGHT:
+                mVelX -= DOT_VEL;
+                break;
         }
     }
 }
 
-void LWindow::focus() {
-    //Restore window if needed
-    if(!mShown) {
-        SDL_ShowWindow(mWindow);
+void Dot::move(Tile *tiles[]) {
+    //Move the dot left or right
+    mBox.x += mVelX;
+
+    //If the dot went too far to the left or right or touched a wall
+    if((mBox.x < 0) || (mBox.x + DOT_WIDTH > LEVEL_WIDTH) || touchesWall(mBox, tiles)) {
+        //move back
+        mBox.x -= mVelX;
     }
 
-    //Move window forward
-    SDL_RaiseWindow(mWindow);
-}
+    //Move the dot up or down
+    mBox.y += mVelY;
 
-void LWindow::render() {
-    if(!mMinimized) {
-        //Clear screen
-        SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderClear(mRenderer);
-
-        //Update screen
-        SDL_RenderPresent(mRenderer);
+    //If the dot went too far up or down or touched a wall
+    if((mBox.y < 0) || (mBox.y + DOT_HEIGHT > LEVEL_HEIGHT) || touchesWall(mBox, tiles)) {
+        //move back
+        mBox.y -= mVelY;
     }
 }
 
-void LWindow::free() {
-    if(mWindow != NULL) {
-        SDL_DestroyWindow(mWindow);
+void Dot::setCamera(SDL_Rect &camera) {
+    //Center the camera over the dot
+    camera.x = (mBox.x + DOT_WIDTH / 2) - SCREEN_WIDTH / 2;
+    camera.y = (mBox.y + DOT_HEIGHT / 2) - SCREEN_HEIGHT / 2;
+
+    //Keep the camera in bounds
+    if(camera.x < 0) {
+        camera.x = 0;
     }
-
-    mMouseFocus = false;
-    mKeyboardFocus = false;
-    mWidth = 0;
-    mHeight = 0;
+    if(camera.y < 0) {
+        camera.y = 0;
+    }
+    if(camera.x > LEVEL_WIDTH - camera.w) {
+        camera.x = LEVEL_WIDTH - camera.w;
+    }
+    if(camera.y > LEVEL_HEIGHT - camera.h) {
+        camera.y = LEVEL_HEIGHT - camera.h;
+    }
 }
 
-int LWindow::getWidth() {
-    return mWidth;
+void Dot::render(SDL_Rect &camera) {
+    //Show the dot
+    gDotTexture.render(gRenderer, mBox.x - camera.x, mBox.y - camera.y);
 }
 
-int LWindow::getHeight() {
-    return mHeight;
-}
-
-bool LWindow::hasMouseFocus() {
-    return mMouseFocus;
-}
-
-bool LWindow::hasKeyboardFocus() {
-    return mKeyboardFocus;
-}
-
-bool LWindow::isMinimized() {
-    return mMinimized;
-}
-
-bool LWindow::isShown() {
-    return mShown;
-}
-
-bool init() {
-    //Initialization flag
+bool loadMedia(Tile *tiles[]) {
+    //Loading success flag
     bool success = true;
-    if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-        printf("Warning: Linear texture filtering not enabled!");
+
+    //Load dot texture
+    if(!gDotTexture.loadFromFile(gRenderer, "resources/dot.bmp")) {
+        printf("Failed to load dot texture!\n");
+        success = false;
     }
 
-
-    //Initialize SDL
-    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+    //Load tile texture
+    if(!gTileTexture.loadFromFile(gRenderer, "resources/tiles.png")) {
+        printf("Failed to load tile set texture!\n");
         success = false;
-    } else {
-        //Set texture filtering to linear
-        if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-            printf("Warning: Linear texture filtering not enabled!");
-        }
+    }
 
-        //Create window
-        if(!gWindows[0].init()) {
-            printf("Window 0 could not be created!\n");
-            success = false;
-        }
+    //Load tile map
+    if(!setTiles(tiles)) {
+        printf("Failed to load tile set!\n");
+        success = false;
     }
 
     return success;
 }
 
-void close() {
-    //Destroy windows
+void close(Tile *tiles[]) {
+    //Deallocate tiles
+    for (int i = 0; i < TOTAL_TILES; ++i) {
+        if(tiles[i] == NULL) {
+            delete tiles[i];
+            tiles[i] = NULL;
+        }
+    }
 
+    //Free loaded images
+    gDotTexture.free();
+    gTileTexture.free();
+
+    IMG_Quit();
 }
+
+bool checkCollision(SDL_Rect a, SDL_Rect b) {
+    //The sides of the rectangles
+    int leftA, leftB;
+    int rightA, rightB;
+    int topA, topB;
+    int bottomA, bottomB;
+
+    //Calculate the sides of rect A
+    leftA = a.x;
+    rightA = a.x + a.w;
+    topA = a.y;
+    bottomA = a.y + a.h;
+
+    //Calculate the sides of rect B
+    leftB = b.x;
+    rightB = b.x + b.w;
+    topB = b.y;
+    bottomB = b.y + b.h;
+
+    //If any of the sides from A are outside of B
+    if(bottomA <= topB) {
+        return false;
+    }
+
+    if(topA >= bottomB) {
+        return false;
+    }
+
+    if(rightA <= leftB) {
+        return false;
+    }
+
+    if(leftA >= rightB) {
+        return false;
+    }
+
+    //If none of the sides from A are outside B
+    return true;
+}
+
+bool setTiles(Tile *tiles[]) {
+    //Success flag
+    bool tilesLoaded = true;
+
+    //The tile offsets
+    int x = 0, y = 0;
+
+    //Open the map
+    std::ifstream map("resources/lazy.map");
+
+    //If the map couldn't be loaded
+    if(/*map == NULL*/false) {
+        printf("Unable to load map file!\n");
+        tilesLoaded = false;
+    } else {
+        //Initialize the tiles
+        for (int i = 0; i < TOTAL_TILES; ++i) {
+            //Determines what kind of tile will be made
+            int tileType = -1;
+
+            //Read tile from map file
+            map >> tileType;
+
+            //If the was a problem in reading the map
+            if(map.fail()) {
+                //Stop loading map
+                printf("Error loading map: Unexpected end of file!\n");
+                tilesLoaded = false;
+                break;
+            }
+
+            //If the number is a valid tile number
+            if((tileType >= 0) && (tileType < TOTAL_TILE_SPRITES)) {
+                tiles[i] = new Tile(x, y, tileType);
+            }
+                //If we don't recognize the tile type
+            else {
+                //Stop loading map
+                printf("Error loading map: Invalid tile type at %d!\n", i);
+                tilesLoaded = false;
+                break;
+            }
+
+            //Move to next tile spot
+            x += TILE_WIDTH;
+
+            //If we've gone too far
+            if(x >= LEVEL_WIDTH) {
+                //Move back
+                x = 0;
+
+                //Move to the next row
+                y += TILE_HEIGHT;
+            }
+        }
+
+        //Clip the sprite sheet
+        if(tilesLoaded) {
+            gTileClips[TILE_RED].x = 0;
+            gTileClips[TILE_RED].y = 0;
+            gTileClips[TILE_RED].w = TILE_WIDTH;
+            gTileClips[TILE_RED].h = TILE_HEIGHT;
+
+            gTileClips[TILE_GREEN].x = 0;
+            gTileClips[TILE_GREEN].y = 80;
+            gTileClips[TILE_GREEN].w = TILE_WIDTH;
+            gTileClips[TILE_GREEN].h = TILE_HEIGHT;
+
+            gTileClips[TILE_BLUE].x = 0;
+            gTileClips[TILE_BLUE].y = 160;
+            gTileClips[TILE_BLUE].w = TILE_WIDTH;
+            gTileClips[TILE_BLUE].h = TILE_HEIGHT;
+
+            gTileClips[TILE_TOPLEFT].x = 80;
+            gTileClips[TILE_TOPLEFT].y = 0;
+            gTileClips[TILE_TOPLEFT].w = TILE_WIDTH;
+            gTileClips[TILE_TOPLEFT].h = TILE_HEIGHT;
+
+            gTileClips[TILE_LEFT].x = 80;
+            gTileClips[TILE_LEFT].y = 80;
+            gTileClips[TILE_LEFT].w = TILE_WIDTH;
+            gTileClips[TILE_LEFT].h = TILE_HEIGHT;
+
+            gTileClips[TILE_BOTTOMLEFT].x = 80;
+            gTileClips[TILE_BOTTOMLEFT].y = 160;
+            gTileClips[TILE_BOTTOMLEFT].w = TILE_WIDTH;
+            gTileClips[TILE_BOTTOMLEFT].h = TILE_HEIGHT;
+
+            gTileClips[TILE_TOP].x = 160;
+            gTileClips[TILE_TOP].y = 0;
+            gTileClips[TILE_TOP].w = TILE_WIDTH;
+            gTileClips[TILE_TOP].h = TILE_HEIGHT;
+
+            gTileClips[TILE_CENTER].x = 160;
+            gTileClips[TILE_CENTER].y = 80;
+            gTileClips[TILE_CENTER].w = TILE_WIDTH;
+            gTileClips[TILE_CENTER].h = TILE_HEIGHT;
+
+            gTileClips[TILE_BOTTOM].x = 160;
+            gTileClips[TILE_BOTTOM].y = 160;
+            gTileClips[TILE_BOTTOM].w = TILE_WIDTH;
+            gTileClips[TILE_BOTTOM].h = TILE_HEIGHT;
+
+            gTileClips[TILE_TOPRIGHT].x = 240;
+            gTileClips[TILE_TOPRIGHT].y = 0;
+            gTileClips[TILE_TOPRIGHT].w = TILE_WIDTH;
+            gTileClips[TILE_TOPRIGHT].h = TILE_HEIGHT;
+
+            gTileClips[TILE_RIGHT].x = 240;
+            gTileClips[TILE_RIGHT].y = 80;
+            gTileClips[TILE_RIGHT].w = TILE_WIDTH;
+            gTileClips[TILE_RIGHT].h = TILE_HEIGHT;
+
+            gTileClips[TILE_BOTTOMRIGHT].x = 240;
+            gTileClips[TILE_BOTTOMRIGHT].y = 160;
+            gTileClips[TILE_BOTTOMRIGHT].w = TILE_WIDTH;
+            gTileClips[TILE_BOTTOMRIGHT].h = TILE_HEIGHT;
+        }
+    }
+
+    //Close the file
+    map.close();
+
+    //If the map was loaded fine
+    return tilesLoaded;
+}
+
+bool touchesWall(SDL_Rect box, Tile *tiles[]) {
+    //Go through the tiles
+    for (int i = 0; i < TOTAL_TILES; ++i) {
+        //If the tile is a wall type tile
+        if((tiles[i]->getType() >= TILE_CENTER) && (tiles[i]->getType() <= TILE_TOPLEFT)) {
+            //If the collision box touches the wall tile
+            if(checkCollision(box, tiles[i]->getBox())) {
+                return true;
+            }
+        }
+    }
+
+    //If no wall tiles were touched
+    return false;
+}
+
 
 int main(int argc, char *args[]) {
     try {
         SDL::SDL sdl(SDL_INIT_VIDEO);
+        sdl.setHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
         SDL::Window window(
                 "An SDL2 window",                  // window title
@@ -305,78 +501,99 @@ int main(int argc, char *args[]) {
                 480,                               // height, in pixels
                 SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE                  // flags - see below
         );
-
-        SDL::Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
+        window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 
-        SDL_Delay(3000);
 
-        for (int i = 0; i < TOTAL_WINDOWS; ++i) {
-            gWindows[i].init();
+
+
+
+
+
+
+
+
+
+
+        gWindow = window.getWindow();
+        gRenderer = window.getRenderer();
+
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+        //Initialize PNG loading
+        int imgFlags = IMG_INIT_PNG;
+        if(!(IMG_Init(imgFlags) & imgFlags)) {
+            throw SDL::Exception("SDL_image could not initialize", IMG_GetError());
         }
 
-        //Main loop flag
-        bool quit = false;
 
-        //Event handler
-        SDL_Event e;
 
-        //While application is running
-        while (!quit) {
-            //Handle events on queue
-            while (SDL_PollEvent(&e) != 0) {
-                //User requests quit
-                if(e.type == SDL_QUIT) {
-                    quit = true;
-                }
+        //The level tiles
+        Tile *tileSet[TOTAL_TILES];
 
-                //Handle window events
-                for (int i = 0; i < TOTAL_WINDOWS; ++i) {
-                    gWindows[i].handleEvent(e);
-                }
+        //Load media
+        if(!loadMedia(tileSet)) {
+            printf("Failed to load media!\n");
+        } else {
+            //Main loop flag
+            bool quit = false;
 
-                //Pull up window
-                if(e.type == SDL_KEYDOWN) {
-                    switch (e.key.keysym.sym) {
-                        case SDLK_1:
-                            gWindows[0].focus();
-                            break;
+            //Event handler
+            SDL_Event e;
 
-                        case SDLK_2:
-                            gWindows[1].focus();
-                            break;
+            //The dot that will be moving around on the screen
+            Dot dot;
 
-                        case SDLK_3:
-                            gWindows[2].focus();
-                            break;
+            //Level camera
+            SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+            //While application is running
+            while (!quit) {
+                //Handle events on queue
+                while (SDL_PollEvent(&e) != 0) {
+                    //User requests quit
+                    if(e.type == SDL_QUIT) {
+                        quit = true;
                     }
+
+                    //Handle input for the dot
+                    dot.handleEvent(e);
                 }
-            }
 
-            //Update all windows
-            for (int i = 0; i < TOTAL_WINDOWS; ++i) {
-                gWindows[i].render();
-            }
+                //Move the dot
+                dot.move(tileSet);
+                dot.setCamera(camera);
 
-            //Check all windows
-            bool allWindowsClosed = true;
-            for (int i = 0; i < TOTAL_WINDOWS; ++i) {
-                if(gWindows[i].isShown()) {
-                    allWindowsClosed = false;
-                    break;
+                //Clear screen
+                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                SDL_RenderClear(gRenderer);
+
+                //Render level
+                for (int i = 0; i < TOTAL_TILES; ++i) {
+                    tileSet[i]->render(camera);
                 }
-            }
 
-            //Application closed all windows
-            if(allWindowsClosed) {
-                quit = true;
+                //Render dot
+                dot.render(camera);
+
+                //Update screen
+                SDL_RenderPresent(gRenderer);
             }
         }
 
-        for (int i = 0; i < TOTAL_WINDOWS; ++i) {
-            gWindows[i].free();
-        }
+        //Free resources and close SDL
+        close(tileSet);
+
+
+
+
+
+
+
+
+
+
+
 
 
     } catch (std::exception &e) {

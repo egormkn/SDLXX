@@ -1,8 +1,7 @@
 #include "Color.h"
 #include "Utils.h"
 
-Color::Color()
-        : red(0), green(0), blue(0), alpha(255) {}
+Color::Color() : red(0), green(0), blue(0), alpha(255) {}
 
 Color::Color(int color_mask) {
     this->red = (color_mask >> 16) & 0xFF;

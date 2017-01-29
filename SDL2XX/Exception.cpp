@@ -1,10 +1,7 @@
 #include "Exception.h"
-#include <SDL_quit.h>
 
 SDL::Exception::Exception() :
-        exception(), msg(SDL_GetError()) {
-    SDL_ClearError();
-}
+        exception(), msg("Error!") {}
 
 SDL::Exception::Exception(const std::string &m) :
         exception(), msg(m) {}
