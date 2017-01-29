@@ -2,7 +2,7 @@
 #ifndef SDLXX_WINDOW_H
 #define SDLXX_WINDOW_H
 
-#include "SDL2XX.h"
+#include "SDLXX.h"
 //#include "Renderer.h"
 #include "Exception.h"
 #include <string>
@@ -30,7 +30,7 @@ namespace SDL {
             }
         }
 
-        SDL_Window* getWindow() {
+        SDL_Window *getWindow() {
             return window;
         }
 

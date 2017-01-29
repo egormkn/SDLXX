@@ -20,38 +20,31 @@ Color::Color(std::string &colorName) {
         r = 255;
         g = 255;
         b = 255;
-    }
-    else if(colorName == "black") {
+    } else if(colorName == "black") {
         r = 0;
         g = 0;
         b = 0;
-    }
-    else if(colorName == "red") {
+    } else if(colorName == "red") {
         r = 255;
         g = 0;
         b = 0;
-    }
-    else if(colorName == "green") {
+    } else if(colorName == "green") {
         r = 0;
         g = 255;
         b = 0;
-    }
-    else if(colorName == "blue") {
+    } else if(colorName == "blue") {
         r = 0;
         g = 0;
         b = 255;
-    }
-    else if(colorName == "cyan") {
+    } else if(colorName == "cyan") {
         r = 0;
         g = 255;
         b = 255;
-    }
-    else if(colorName == "yellow") {
+    } else if(colorName == "yellow") {
         r = 255;
         g = 255;
         b = 0;
-    }
-    else if(colorName == "magenta") {
+    } else if(colorName == "magenta") {
         r = 255;
         g = 0;
         b = 255;

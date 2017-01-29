@@ -1,7 +1,8 @@
+#include <sstream>
 #include "Exception.h"
 
 SDL::Exception::Exception() :
-        exception(), msg("Error!") {}
+        exception(), msg("Error") {}
 
 SDL::Exception::Exception(const std::string &m) :
         exception(), msg(m) {}
@@ -18,6 +19,6 @@ SDL::Exception::Exception(const SDL::Exception &other) :
 
 SDL::Exception::~Exception() {}
 
-const char *SDL::Exception::what() const noexcept{
+const char *SDL::Exception::what() const noexcept {
     return msg.c_str();
 }

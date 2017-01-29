@@ -1,11 +1,10 @@
-#ifndef SDL2XX_EXCEPTION_H
-#define SDL2XX_EXCEPTION_H
+#ifndef SDLXX_EXCEPTION_H
+#define SDLXX_EXCEPTION_H
 
 #include <exception>
-#include <sstream>
+#include <string>
 
 namespace SDL {
-
     class Exception : public std::exception {
     public:
         Exception();
@@ -14,7 +13,7 @@ namespace SDL {
 
         Exception(const std::string &, const std::string &);
 
-        Exception(const Exception& other);
+        Exception(const Exception &other);
 
         virtual ~Exception();
 
@@ -24,4 +23,4 @@ namespace SDL {
         std::string msg;
     };
 }
-#endif // SDL2XX_EXCEPTION_H
+#endif // SDLXX_EXCEPTION_H

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "SDL2XX.h"
+#include "SDLXX.h"
 #include "Exception.h"
 #include "Window.h"
 

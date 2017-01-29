@@ -1,5 +1,5 @@
-#ifndef SDL2XX_TEXTURE_H
-#define SDL2XX_TEXTURE_H
+#ifndef SDLXX_TEXTURE_H
+#define SDLXX_TEXTURE_H
 
 #include <string>
 #include <SDL_render.h>
@@ -50,4 +50,4 @@ namespace SDL {
     };
 }
 
-#endif // SDL2XX_TEXTURE_H
+#endif // SDLXX_TEXTURE_H

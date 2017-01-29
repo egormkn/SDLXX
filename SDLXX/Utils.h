@@ -1,5 +1,5 @@
-#ifndef SDL2XX_UTILS_H
-#define SDL2XX_UTILS_H
+#ifndef SDLXX_UTILS_H
+#define SDLXX_UTILS_H
 
 #include <string>
 #include <vector>
@@ -48,4 +48,4 @@ namespace Utils {
     };
 };
 
-#endif //SDL2XX_UTILS_H
+#endif // SDLXX_UTILS_H

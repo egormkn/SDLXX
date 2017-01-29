@@ -1,4 +1,4 @@
-#include "SDL2XX.h"
+#include "SDLXX.h"
 
 SDL::SDL::SDL(Uint32 flags) {
     if(SDL_Init(flags) != 0) {

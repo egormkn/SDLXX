@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(SDL2XX CXX)
-set(SRC_DIR "${PROJECT_SOURCE_DIR}/SDL2XX")
+project(SDLXX CXX)
+set(SRC_DIR "${PROJECT_SOURCE_DIR}/SDLXX")
 set(CMAKE_DIR "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_DIR}")
 
@@ -47,32 +47,32 @@ endif ()
 include_directories(${INCLUDE_DIRS})
 
 set(SOURCE_FILES
-    SDL2XX/SDL2XX.cpp
-    SDL2XX/SDL2XX.h
-    SDL2XX/Window.cpp
-    SDL2XX/Window.h
-    SDL2XX/Exception.cpp
-    SDL2XX/Exception.h
-    SDL2XX/Renderer.cpp
-    SDL2XX/Renderer.h
-    SDL2XX/Texture.cpp
-    SDL2XX/Texture.h
-    SDL2XX/Animation.cpp
-    SDL2XX/Animation.h
-    SDL2XX/Color.cpp
-    SDL2XX/Color.h
-    SDL2XX/Utils.cpp
-    SDL2XX/Utils.h
-    SDL2XX/SDLIMG.cpp
-    SDL2XX/SDLIMG.h)
+    SDLXX/SDLXX.cpp
+    SDLXX/SDLXX.h
+    SDLXX/Window.cpp
+    SDLXX/Window.h
+    SDLXX/Exception.cpp
+    SDLXX/Exception.h
+    SDLXX/Renderer.cpp
+    SDLXX/Renderer.h
+    SDLXX/Texture.cpp
+    SDLXX/Texture.h
+    SDLXX/Animation.cpp
+    SDLXX/Animation.h
+    SDLXX/Color.cpp
+    SDLXX/Color.h
+    SDLXX/Utils.cpp
+    SDLXX/Utils.h
+    SDLXX/SDLXX_image.cpp
+    SDLXX/SDLXX_image.h SDLXX/SDLXX_ttf.cpp SDLXX/SDLXX_ttf.h SDLXX/SDLXX_net.cpp SDLXX/SDLXX_net.h SDLXX/SDLXX_mixer.cpp SDLXX/SDLXX_mixer.h)
 
-add_library(SDL2XX ${SOURCE_FILES})
-target_compile_definitions(SDL2XX PUBLIC ${DEFINES})
-target_compile_features(SDL2XX PRIVATE cxx_noexcept)
+add_library(SDLXX ${SOURCE_FILES})
+target_compile_definitions(SDLXX PUBLIC ${DEFINES})
+target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
 # Test program
-add_executable(SDL2XXtest SDL2XX/Test.cpp)
-target_link_libraries(SDL2XXtest SDL2XX
+add_executable(SDLXXtest SDLXX/Test.cpp)
+target_link_libraries(SDLXXtest SDLXX
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_TTF_LIBRARY}

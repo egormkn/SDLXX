@@ -1,5 +1,5 @@
-#ifndef SDL2XX_RENDERER_H
-#define SDL2XX_RENDERER_H
+#ifndef SDLXX_RENDERER_H
+#define SDLXX_RENDERER_H
 
 #include <SDL_render.h>
 #include "Window.h"
@@ -20,13 +20,13 @@ namespace SDL {
             renderer = NULL;
         }
 
-        SDL_Renderer* getRenderer() {
+        SDL_Renderer *getRenderer() {
             return renderer;
         }
 
     private:
-        SDL_Renderer* renderer = NULL;
+        SDL_Renderer *renderer = NULL;
     };
 }
 
-#endif // SDL2XX_RENDERER_H
+#endif // SDLXX_RENDERER_H

@@ -1,5 +1,6 @@
-#ifndef SDL2XX_COLOR_H
-#define SDL2XX_COLOR_H
+// TODO: Add SDL bindings
+#ifndef SDLXX_COLOR_H
+#define SDLXX_COLOR_H
 
 #include <cstdint> // uint8_t
 #include <string>
@@ -71,4 +72,4 @@ private:
     uint8_t alpha; ///< Alpha component (0 is transparent, 255 is opacque).
 };
 
-#endif //SDL2XX_COLOR_H
+#endif // SDLXX_COLOR_H

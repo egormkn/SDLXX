@@ -1,27 +1,10 @@
-#pragma once
-#ifndef SDL2XX_H
-#define SDL2XX_H
+#ifndef SDLXX_H
+#define SDLXX_H
 
 #include <string>
 
 #ifdef SDL2_FOUND
 #include <SDL.h>
-#endif
-
-#ifdef SDL2_IMAGE_FOUND
-#include <SDL_image.h>
-#endif
-
-#ifdef SDL2_TTF_FOUND
-#include <SDL_ttf.h>
-#endif
-
-#ifdef SDL2_NET_FOUND
-#include <SDL_net.h>
-#endif
-
-#ifdef SDL2_MIXER_FOUND
-#include <SDL_mixer.h>
 #endif
 
 namespace SDL {
@@ -36,19 +19,19 @@ namespace SDL {
 
         // Deleted copy constructor
         // This class is not copyable
-        SDL(const SDL& other) = delete;
+        SDL(const SDL &other) = delete;
 
         // Deleted assignment operator
         // This class is not copyable
-        SDL& operator=(const SDL& other) = delete;
+        SDL &operator=(const SDL &other) = delete;
 
         // Deleted move constructor
         // This class is not movable
-        SDL(SDL&& other) = delete;
+        SDL(SDL &&other) = delete;
 
         // Deleted move assignment operator
         // This class is not movable
-        SDL& operator=(SDL&& other) = delete;
+        SDL &operator=(SDL &&other) = delete;
 
         Uint32 wasInit(Uint32 flags);
 
@@ -64,4 +47,4 @@ namespace SDL {
     };
 }
 
-#endif // SDL2XX_H
+#endif // SDLXX_H
