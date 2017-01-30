@@ -2,30 +2,38 @@
 #define SDLXX_RENDERER_H
 
 #include <SDL_render.h>
-#include "Window.h"
 #include "Exception.h"
+#include "Color.h"
 
-namespace SDL {
+namespace SDLXX {
     class Renderer {
     public:
-        Renderer(Window &window, int driver, Uint32 flags) {
-            renderer = SDL_CreateRenderer(window.getWindow(), driver, flags);
-            if(renderer == NULL) {
+        Renderer(SDL_Renderer *r) : renderer(r) {}
+
+        Renderer(SDL_Window *w, int driver, Uint32 flags) {
+            renderer = SDL_CreateRenderer(w, driver, flags);
+            if(renderer == nullptr) {
                 throw Exception("Renderer could not be created");
             }
         }
 
         ~Renderer() {
-            SDL_DestroyRenderer(renderer);
-            renderer = NULL;
+            if(renderer != nullptr) {
+                SDL_DestroyRenderer(renderer);
+                renderer = nullptr;
+            }
         }
 
         SDL_Renderer *getRenderer() {
             return renderer;
         }
 
+        void setColor(const Color &color) {
+            SDL_SetRenderDrawColor(renderer, color.r(), color.g(), color.b(), color.a());
+        }
+
     private:
-        SDL_Renderer *renderer = NULL;
+        SDL_Renderer *renderer = nullptr;
     };
 }
 

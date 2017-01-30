@@ -3,10 +3,10 @@
 
 Color::Color() : red(0), green(0), blue(0), alpha(255) {}
 
-Color::Color(int color_mask) {
-    this->red = (color_mask >> 16) & 0xFF;
-    this->green = (color_mask >> 8) & 0xFF;
-    this->blue = color_mask & 0xFF;
+Color::Color(uint32_t color_mask) {
+    this->red = (uint8_t) ((color_mask >> 16) & 0xFF);
+    this->green = (uint8_t) ((color_mask >> 8) & 0xFF);
+    this->blue = (uint8_t) (color_mask & 0xFF);
     this->alpha = 255;
 }
 
@@ -122,19 +122,19 @@ bool Color::operator!=(const Color &color) const {
             (this->alpha != color.alpha));
 }
 
-uint8_t Color::r() {
+uint8_t Color::r() const {
     return (this->red);
 }
 
-uint8_t Color::g() {
+uint8_t Color::g() const {
     return (this->green);
 }
 
-uint8_t Color::b() {
+uint8_t Color::b() const {
     return (this->blue);
 }
 
-uint8_t Color::a() {
+uint8_t Color::a() const {
     return (this->alpha);
 }
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <SDL_render.h>
 
-namespace SDL {
+namespace SDLXX {
     class Texture {
     public:
         // Initializes variables
@@ -34,7 +34,7 @@ namespace SDL {
         void setAlpha(Uint8 alpha);
 
         //Renders texture at given point
-        void render(SDL_Renderer *renderer, int x, int y, SDL_Rect *clip = NULL, double angle = 0.0, SDL_Point *center = NULL,
+        void render(SDL_Renderer *renderer, int x, int y, SDL_Rect *clip = nullptr, double angle = 0.0, SDL_Point *center = nullptr,
                     SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         //Gets image dimensions

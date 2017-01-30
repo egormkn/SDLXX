@@ -2,7 +2,7 @@
 #ifndef SDLXX_COLOR_H
 #define SDLXX_COLOR_H
 
-#include <cstdint> // uint8_t
+#include <cstdint>
 #include <string>
 
 class Color {
@@ -19,7 +19,7 @@ public:
     /// * Color(0x0000FF) should give you full blue
     /// * Color(0xC0FFEE) I don't know what it is but has a nice name
     ///
-    Color(int color_mask);
+    Color(uint32_t color_mask);
 
     /// Creates a RGBA color.
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
@@ -48,10 +48,10 @@ public:
     /// Tests if two RGBA colors are different.
     bool operator!=(const Color &color) const;
 
-    uint8_t r(); ///< Returns the Red part of the color.
-    uint8_t g(); ///< Returns the Green part of the color.
-    uint8_t b(); ///< Returns the Blue part of the color.
-    uint8_t a(); ///< Returns the Alpha part of the color.
+    uint8_t r() const; ///< Returns the Red part of the color.
+    uint8_t g() const; ///< Returns the Green part of the color.
+    uint8_t b() const; ///< Returns the Blue part of the color.
+    uint8_t a() const; ///< Returns the Alpha part of the color.
 
     /// Transforms this color into a random one.
     ///

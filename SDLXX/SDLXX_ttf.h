@@ -5,9 +5,9 @@
 #include <SDL_ttf.h>
 #endif
 
-namespace SDL {
+namespace SDLXX {
     class SDLXX_ttf {
-
+        // TODO
     };
 }
 

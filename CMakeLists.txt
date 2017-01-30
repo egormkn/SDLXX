@@ -64,7 +64,15 @@ set(SOURCE_FILES
     SDLXX/Utils.cpp
     SDLXX/Utils.h
     SDLXX/SDLXX_image.cpp
-    SDLXX/SDLXX_image.h SDLXX/SDLXX_ttf.cpp SDLXX/SDLXX_ttf.h SDLXX/SDLXX_net.cpp SDLXX/SDLXX_net.h SDLXX/SDLXX_mixer.cpp SDLXX/SDLXX_mixer.h)
+    SDLXX/SDLXX_image.h
+    SDLXX/SDLXX_ttf.cpp
+    SDLXX/SDLXX_ttf.h
+    SDLXX/SDLXX_net.cpp
+    SDLXX/SDLXX_net.h
+    SDLXX/SDLXX_mixer.cpp
+    SDLXX/SDLXX_mixer.h
+    SDLXX/Log.cpp
+    SDLXX/Log.h)
 
 add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})

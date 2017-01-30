@@ -1,11 +1,10 @@
 #include <iostream>
 
 #include "SDLXX.h"
+#include "SDLXX_image.h"
 #include "Exception.h"
+#include "Texture.h"
 #include "Window.h"
-
-
-
 
 
 
@@ -22,7 +21,6 @@
 #include <stdio.h>
 #include <string>
 #include <fstream>
-#include "Texture.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -127,15 +125,12 @@ bool touchesWall(SDL_Rect box, Tile *tiles[]);
 //Sets tiles from tile map
 bool setTiles(Tile *tiles[]);
 
-//The window we'll be rendering to
-SDL_Window *gWindow = NULL;
-
 //The window renderer
-SDL_Renderer *gRenderer = NULL;
+SDL_Renderer *gRenderer = nullptr;
 
 //Scene textures
-SDL::Texture gDotTexture;
-SDL::Texture gTileTexture;
+SDLXX::Texture gDotTexture;
+SDLXX::Texture gTileTexture;
 SDL_Rect gTileClips[TOTAL_TILE_SPRITES];
 
 Tile::Tile(int x, int y, int tileType) {
@@ -291,9 +286,9 @@ bool loadMedia(Tile *tiles[]) {
 void close(Tile *tiles[]) {
     //Deallocate tiles
     for (int i = 0; i < TOTAL_TILES; ++i) {
-        if(tiles[i] == NULL) {
+        if(tiles[i] == nullptr) {
             delete tiles[i];
-            tiles[i] = NULL;
+            tiles[i] = nullptr;
         }
     }
 
@@ -355,7 +350,7 @@ bool setTiles(Tile *tiles[]) {
     std::ifstream map("resources/lazy.map");
 
     //If the map couldn't be loaded
-    if(/*map == NULL*/false) {
+    if(/*map == nullptr*/false) {
         printf("Unable to load map file!\n");
         tilesLoaded = false;
     } else {
@@ -490,10 +485,14 @@ bool touchesWall(SDL_Rect box, Tile *tiles[]) {
 
 int main(int argc, char *args[]) {
     try {
-        SDL::SDL sdl(SDL_INIT_VIDEO);
+        using namespace SDLXX;
+
+        SDL& sdl = SDL::getInstance(SDL_INIT_VIDEO);
         sdl.setHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-        SDL::Window window(
+        SDL_image &image = SDL_image::getInstance(IMG_INIT_PNG | IMG_INIT_JPG);
+
+        Window window(
                 "An SDL2 window",                  // window title
                 SDL_WINDOWPOS_UNDEFINED,           // initial x position
                 SDL_WINDOWPOS_UNDEFINED,           // initial y position
@@ -501,33 +500,12 @@ int main(int argc, char *args[]) {
                 480,                               // height, in pixels
                 SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE                  // flags - see below
         );
-        window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        Renderer renderer = window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        renderer.setColor(Color(0xFFFFFFFF));
 
 
 
-
-
-
-
-
-
-
-
-
-
-        gWindow = window.getWindow();
-        gRenderer = window.getRenderer();
-
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-        //Initialize PNG loading
-        int imgFlags = IMG_INIT_PNG;
-        if(!(IMG_Init(imgFlags) & imgFlags)) {
-            throw SDL::Exception("SDL_image could not initialize", IMG_GetError());
-        }
-
-
-
+        gRenderer = renderer.getRenderer(); // FIXME
         //The level tiles
         Tile *tileSet[TOTAL_TILES];
 

@@ -1,28 +1,28 @@
 #include <SDL_image.h>
 #include "Texture.h"
 
-SDL::Texture::Texture() {
+SDLXX::Texture::Texture() {
     //Initialize
-    texture = NULL;
+    texture = nullptr;
     width = 0;
     height = 0;
 }
 
-SDL::Texture::~Texture() {
+SDLXX::Texture::~Texture() {
     //Deallocate
     free();
 }
 
-bool SDL::Texture::loadFromFile(SDL_Renderer *renderer, std::string path) {
+bool SDLXX::Texture::loadFromFile(SDL_Renderer *renderer, std::string path) {
     //Get rid of preexisting texture
     free();
 
     //The final texture
-    SDL_Texture *newTexture = NULL;
+    SDL_Texture *newTexture = nullptr;
 
     //Load image at specified path
     SDL_Surface *loadedSurface = IMG_Load(path.c_str());
-    if(loadedSurface == NULL) {
+    if(loadedSurface == nullptr) {
         printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
     } else {
         //Color key image
@@ -30,7 +30,7 @@ bool SDL::Texture::loadFromFile(SDL_Renderer *renderer, std::string path) {
 
         //Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-        if(newTexture == NULL) {
+        if(newTexture == nullptr) {
             printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
         } else {
             //Get image dimensions
@@ -44,22 +44,22 @@ bool SDL::Texture::loadFromFile(SDL_Renderer *renderer, std::string path) {
 
     //Return success
     texture = newTexture;
-    return texture != NULL;
+    return texture != nullptr;
 }
 
 #ifdef _SDL_TTF_H
-bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColor )
+bool SDLXX::Texture::loadFromRenderedText( std::string textureText, SDL_Color textColor )
 {
     //Get rid of preexisting texture
     free();
 
     //Render text surface
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
-    if( textSurface != NULL )
+    if( textSurface != nullptr )
     {
         //Create texture from surface pixels
         mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-        if( mTexture == NULL )
+        if( mTexture == nullptr )
         {
             printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
         }
@@ -80,41 +80,41 @@ bool LTexture::loadFromRenderedText( std::string textureText, SDL_Color textColo
 
 
     //Return success
-    return mTexture != NULL;
+    return mTexture != nullptr;
 }
 #endif
 
-void SDL::Texture::free() {
+void SDLXX::Texture::free() {
     //Free texture if it exists
-    if(texture != NULL) {
+    if(texture != nullptr) {
         SDL_DestroyTexture(texture);
-        texture = NULL;
+        texture = nullptr;
         width = 0;
         height = 0;
     }
 }
 
-void SDL::Texture::setColor(Uint8 red, Uint8 green, Uint8 blue) {
+void SDLXX::Texture::setColor(Uint8 red, Uint8 green, Uint8 blue) {
     //Modulate texture rgb
     SDL_SetTextureColorMod(texture, red, green, blue);
 }
 
-void SDL::Texture::setBlendMode(SDL_BlendMode blending) {
+void SDLXX::Texture::setBlendMode(SDL_BlendMode blending) {
     //Set blending function
     SDL_SetTextureBlendMode(texture, blending);
 }
 
-void SDL::Texture::setAlpha(Uint8 alpha) {
+void SDLXX::Texture::setAlpha(Uint8 alpha) {
     //Modulate texture alpha
     SDL_SetTextureAlphaMod(texture, alpha);
 }
 
-void SDL::Texture::render(SDL_Renderer *renderer, int x, int y, SDL_Rect *clip, double angle, SDL_Point *center, SDL_RendererFlip flip) {
+void SDLXX::Texture::render(SDL_Renderer *renderer, int x, int y, SDL_Rect *clip, double angle, SDL_Point *center, SDL_RendererFlip flip) {
     //Set rendering space and render to screen
     SDL_Rect renderQuad = {x, y, width, height};
 
     //Set clip rendering dimensions
-    if(clip != NULL) {
+    if(clip != nullptr) {
         renderQuad.w = clip->w;
         renderQuad.h = clip->h;
     }
@@ -123,10 +123,10 @@ void SDL::Texture::render(SDL_Renderer *renderer, int x, int y, SDL_Rect *clip, 
     SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, angle, center, flip);
 }
 
-int SDL::Texture::getWidth() {
+int SDLXX::Texture::getWidth() {
     return width;
 }
 
-int SDL::Texture::getHeight() {
+int SDLXX::Texture::getHeight() {
     return height;
 }

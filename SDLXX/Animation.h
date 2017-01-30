@@ -1,7 +1,7 @@
 #ifndef SDLXX_ANIMATION_H
 #define SDLXX_ANIMATION_H
 
-namespace SDL {
+namespace SDLXX {
     class Animation {
 
     };

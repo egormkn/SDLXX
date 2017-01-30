@@ -4,15 +4,32 @@
 #include <string>
 
 #ifdef SDL2_FOUND
+
 #include <SDL.h>
+
 #endif
 
-namespace SDL {
+namespace SDLXX {
 
     class SDL {
     public:
+        static SDL &getInstance(Uint32 flags);
+
+        Uint32 wasInit(Uint32 flags);
+
+        void initSubSystem(Uint32 flags);
+
+        void quitSubSystem(Uint32 flags);
+
+        static void setHint(const std::string &name, const std::string &value);
+
+        static void setMainReady();
+
+        // static int winRTRunApp(MainFunction mainFunction, void* reserved);
+
+    private:
         // Init SDL
-        SDL(Uint32 flags);
+        SDL();
 
         // Quit SDL
         ~SDL();
@@ -32,18 +49,6 @@ namespace SDL {
         // Deleted move assignment operator
         // This class is not movable
         SDL &operator=(SDL &&other) = delete;
-
-        Uint32 wasInit(Uint32 flags);
-
-        void initSubSystem(Uint32 flags);
-
-        void quitSubSystem(Uint32 flags);
-
-        static void setHint(const std::string &name, const std::string &value);
-
-        static void setMainReady();
-
-        // static int winRTRunApp(MainFunction mainFunction, void* reserved);
     };
 }
 

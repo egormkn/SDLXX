@@ -3,49 +3,50 @@
 #define SDLXX_WINDOW_H
 
 #include "SDLXX.h"
-//#include "Renderer.h"
 #include "Exception.h"
+#include "Renderer.h"
 #include <string>
 
-namespace SDL {
+namespace SDLXX {
     class Window {
     public:
+        Window(SDL_Window *w) : window(w) {}
 
-        // Constructor
         Window(const std::string &title, int posX, int posY, int width, int height, Uint32 flags) {
             window = SDL_CreateWindow(title.c_str(), posX, posY, width, height, flags);
-            if(window == NULL) {
-                throw Exception("Window was not initialized!");
+            if(window == nullptr) {
+                throw Exception("Window was not initialized");
             }
         }
 
         ~Window() {
-            if(renderer != NULL) {
-                SDL_DestroyRenderer(renderer);
-                renderer = NULL;
+            if(renderer != nullptr) {
+                delete renderer;
+                renderer = nullptr;
             }
-            if(window != NULL) {
+            if(window != nullptr) {
                 SDL_DestroyWindow(window);
-                window = NULL;
+                window = nullptr;
             }
         }
 
-        SDL_Window *getWindow() {
+        SDL_Window *getWindow() const {
             return window;
         }
 
-        void setRenderer(int driver, Uint32 flags) {
-            if(renderer != NULL) {
-                throw Exception("Window already has a renderer!");
+        Renderer setRenderer(int driver, Uint32 flags) {
+            if(renderer != nullptr) {
+                throw Exception("Window already has a renderer");
             }
-            renderer = SDL_CreateRenderer(window, driver, flags);
-            if(renderer == NULL) {
+            renderer = new Renderer(SDL_CreateRenderer(window, driver, flags));
+            if(renderer == nullptr) {
                 throw Exception("Renderer could not be created", SDL_GetError());
             }
+            return *renderer; // TODO Check
         }
 
         SDL_Renderer *getRenderer() {
-            return renderer;
+            return renderer->getRenderer();
         }
 /*
         void setWidth(int width) {
@@ -162,7 +163,7 @@ namespace SDL {
 
         //Deallocates internals
         void free() {
-            if(mWindow != NULL) {
+            if(mWindow != nullptr) {
                 SDL_DestroyWindow(mWindow);
             }
 
@@ -172,17 +173,11 @@ namespace SDL {
             mHeight = 0;
         }
 */
-/*        void setRenderer(Renderer &renderer) {
-            if (this->renderer != NULL) {
-                throw Exception("Window already has a renderer");
-            }
-            this->renderer = renderer;
-        }*/
 
     private:
-        SDL_Window *window = NULL;
-        SDL_Renderer *renderer = NULL;
+        SDL_Window *window = nullptr;
+        Renderer *renderer = nullptr;
     };
 }
 
-#endif // SDL_WINDOW_H
+#endif // SDLXX_WINDOW_H

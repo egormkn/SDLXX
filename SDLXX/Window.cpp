@@ -64,8 +64,8 @@ LWindow gWindows[TOTAL_WINDOWS];
 
 LWindow::LWindow() {
     //Initialize non-existant window
-    mWindow = NULL;
-    mRenderer = NULL;
+    mWindow = nullptr;
+    mRenderer = nullptr;
 
     mMouseFocus = false;
     mKeyboardFocus = false;
@@ -81,7 +81,7 @@ bool LWindow::init() {
     //Create window
     mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
                                SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    if(mWindow != NULL) {
+    if(mWindow != nullptr) {
         mMouseFocus = true;
         mKeyboardFocus = true;
         mWidth = SCREEN_WIDTH;
@@ -89,10 +89,10 @@ bool LWindow::init() {
 
         //Create renderer for window
         mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        if(mRenderer == NULL) {
+        if(mRenderer == nullptr) {
             printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
             SDL_DestroyWindow(mWindow);
-            mWindow = NULL;
+            mWindow = nullptr;
         } else {
             //Initialize renderer color
             SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -107,7 +107,7 @@ bool LWindow::init() {
         printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
     }
 
-    return mWindow != NULL && mRenderer != NULL;
+    return mWindow != nullptr && mRenderer != nullptr;
 }
 
 void LWindow::handleEvent(SDL_Event &e) {
@@ -216,7 +216,7 @@ void LWindow::render() {
 }
 
 void LWindow::free() {
-    if(mWindow != NULL) {
+    if(mWindow != nullptr) {
         SDL_DestroyWindow(mWindow);
     }
 

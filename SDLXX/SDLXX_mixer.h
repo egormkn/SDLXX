@@ -5,9 +5,9 @@
 #include <SDL_mixer.h>
 #endif
 
-namespace SDL {
+namespace SDLXX {
     class SDLXX_mixer {
-
+        // TODO
     };
 }
 

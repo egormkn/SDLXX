@@ -5,9 +5,9 @@
 #include <SDL_net.h>
 #endif
 
-namespace SDL {
+namespace SDLXX {
     class SDLXX_net {
-
+        // TODO
     };
 }
 
