@@ -2,18 +2,20 @@
 #define SDLXX_H
 
 #include <string>
+#include <mutex>
 
 #ifdef SDL2_FOUND
-
 #include <SDL.h>
-
 #endif
 
 namespace SDLXX {
-
     class SDL {
     public:
-        static SDL &getInstance(Uint32 flags);
+        // Init SDL
+        SDL(Uint32 flags);
+
+        // Quit SDL
+        ~SDL();
 
         Uint32 wasInit(Uint32 flags);
 
@@ -28,11 +30,11 @@ namespace SDLXX {
         // static int winRTRunApp(MainFunction mainFunction, void* reserved);
 
     private:
-        // Init SDL
-        SDL();
+        // Mutex that allows only one instance of class
+        static std::mutex mutex;
 
-        // Quit SDL
-        ~SDL();
+        // Initialization status
+        static bool initialized;
 
         // Deleted copy constructor
         // This class is not copyable

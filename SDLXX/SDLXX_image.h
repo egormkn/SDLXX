@@ -1,22 +1,27 @@
 #ifndef SDLXX_IMAGE_H
 #define SDLXX_IMAGE_H
 
+#include <mutex>
+
 #ifdef SDL2_IMAGE_FOUND
 #include <SDL_image.h>
 #endif
 
 namespace SDLXX {
-
     class SDL_image {
     public:
-        static SDL_image &getInstance(Uint32 flags);
-
-    private:
-        // Init SDL
+        // Init SDL_image
         SDL_image(Uint32 flags);
 
-        // Quit SDL
+        // Quit SDL_image
         ~SDL_image();
+
+    private:
+        // Mutex that allows only one instance of class
+        static std::mutex mutex;
+
+        // Initialization status
+        static bool initialized;
 
         // Deleted copy constructor
         // This class is not copyable

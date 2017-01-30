@@ -1,1 +1,41 @@
+#include <sstream>
 #include "SDLXX_ttf.h"
+#include "Log.h"
+#include "Exception.h"
+
+std::mutex SDLXX::SDL_ttf::mutex;
+
+bool SDLXX::SDL_ttf::initialized = false;
+
+SDLXX::SDL_ttf::SDL_ttf() {
+    Log::log("Initializing SDL font rendering system...");
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        if(initialized) {
+            throw Exception("SDL_ttf already initialized");
+        }
+        if(TTF_Init() == -1) {
+            throw Exception("Unable to initialize SDL_ttf", TTF_GetError());
+        }
+        initialized = true;
+    }
+
+    SDL_version compiled;
+    const SDL_version *linked = TTF_Linked_Version();
+    SDL_TTF_VERSION(&compiled);
+    std::stringstream compiledString, linkedString;
+    compiledString << "Compiled against SDL_ttf v" << (int) compiled.major
+                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
+    linkedString << "Linked against SDL_ttf v" << (int) linked->major
+                 << '.' << (int) linked->minor << '.' << (int) linked->patch;
+    Log::log(compiledString.str());
+    Log::log(linkedString.str());
+    Log::newline();
+}
+
+SDLXX::SDL_ttf::~SDL_ttf() {
+    Log::log("Cleaning up SDL font rendering system...");
+    std::lock_guard<std::mutex> lock(mutex);
+    TTF_Quit();
+    initialized = false;
+}

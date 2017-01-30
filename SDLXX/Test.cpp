@@ -2,23 +2,14 @@
 
 #include "SDLXX.h"
 #include "SDLXX_image.h"
+#include "SDLXX_net.h"
+#include "SDLXX_ttf.h"
+#include "SDLXX_mixer.h"
 #include "Exception.h"
 #include "Texture.h"
 #include "Window.h"
 
 
-
-
-
-
-
-
-
-
-//Using SDL, SDL_image, standard IO, strings, and file streams
-#include <SDL.h>
-#include <SDL_image.h>
-#include <stdio.h>
 #include <string>
 #include <fstream>
 
@@ -487,22 +478,18 @@ int main(int argc, char *args[]) {
     try {
         using namespace SDLXX;
 
-        SDL& sdl = SDL::getInstance(SDL_INIT_VIDEO);
+        SDL sdl(SDL_INIT_VIDEO);
         sdl.setHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-        SDL_image &image = SDL_image::getInstance(IMG_INIT_PNG | IMG_INIT_JPG);
+        SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
+        SDL_net sdl_net;
+        SDL_ttf sdl_ttf;
+        SDL_mixer sdl_mixer(MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG);
 
-        Window window(
-                "An SDL2 window",                  // window title
-                SDL_WINDOWPOS_UNDEFINED,           // initial x position
-                SDL_WINDOWPOS_UNDEFINED,           // initial y position
-                640,                               // width, in pixels
-                480,                               // height, in pixels
-                SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE                  // flags - see below
-        );
+        Window window("The Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
+                      SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         Renderer renderer = window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         renderer.setColor(Color(0xFFFFFFFF));
-
 
 
         gRenderer = renderer.getRenderer(); // FIXME
@@ -511,67 +498,44 @@ int main(int argc, char *args[]) {
 
         //Load media
         if(!loadMedia(tileSet)) {
-            printf("Failed to load media!\n");
-        } else {
-            //Main loop flag
-            bool quit = false;
+            throw Exception("Failed to load media!");
+        }
 
-            //Event handler
-            SDL_Event e;
+        bool quit = false;
+        SDL_Event e;
+        Dot dot;
+        SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
-            //The dot that will be moving around on the screen
-            Dot dot;
-
-            //Level camera
-            SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-
-            //While application is running
-            while (!quit) {
-                //Handle events on queue
-                while (SDL_PollEvent(&e) != 0) {
-                    //User requests quit
-                    if(e.type == SDL_QUIT) {
-                        quit = true;
-                    }
-
-                    //Handle input for the dot
-                    dot.handleEvent(e);
+        while (!quit) {
+            while (SDL_PollEvent(&e) != 0) {
+                if(e.type == SDL_QUIT) {
+                    quit = true;
                 }
 
-                //Move the dot
-                dot.move(tileSet);
-                dot.setCamera(camera);
-
-                //Clear screen
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                SDL_RenderClear(gRenderer);
-
-                //Render level
-                for (int i = 0; i < TOTAL_TILES; ++i) {
-                    tileSet[i]->render(camera);
-                }
-
-                //Render dot
-                dot.render(camera);
-
-                //Update screen
-                SDL_RenderPresent(gRenderer);
+                dot.handleEvent(e);
             }
+
+            dot.move(tileSet);
+            dot.setCamera(camera);
+
+            //Clear screen
+            SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+            SDL_RenderClear(gRenderer);
+
+            //Render level
+            for (int i = 0; i < TOTAL_TILES; ++i) {
+                tileSet[i]->render(camera);
+            }
+
+            //Render dot
+            dot.render(camera);
+
+            //Update screen
+            SDL_RenderPresent(gRenderer);
         }
 
         //Free resources and close SDL
         close(tileSet);
-
-
-
-
-
-
-
-
-
-
-
 
 
     } catch (std::exception &e) {

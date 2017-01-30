@@ -22,6 +22,8 @@ namespace SDLXX {
 
         static void verboseMode(bool option);
 
+        static void newline();
+
     private:
         static bool isDebugMode;     ///< Tells if we're on debug mode.
         static bool isVerboseMode;   ///< Tells if we're on verbose mode.

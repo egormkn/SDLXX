@@ -1,21 +1,43 @@
+#include <sstream>
 #include "SDLXX.h"
 #include "Exception.h"
+#include "Log.h"
 
-SDLXX::SDL &SDLXX::SDL::getInstance(Uint32 flags) {
-    static SDL s;
-    s.initSubSystem(flags);
-    return s;
-}
+std::mutex SDLXX::SDL::mutex;
 
-SDLXX::SDL::SDL() {
-    if(SDL_Init(0) != 0) {
-        throw Exception("Unable to initialize SDL");
+bool SDLXX::SDL::initialized = false;
+
+SDLXX::SDL::SDL(Uint32 flags) {
+    Log::log("Initializing SDL subsystems...");
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        if(initialized) {
+            throw Exception("SDL already initialized");
+        }
+        if(SDL_Init(flags) != 0) {
+            throw Exception("Unable to initialize SDL");
+        }
+        initialized = true;
     }
+    SDL_version compiled, linked;
+    SDL_VERSION(&compiled);
+    SDL_GetVersion(&linked);
+    std::stringstream compiledString, linkedString;
+    compiledString << "Compiled against SDL v" << (int) compiled.major
+                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
+    linkedString << "Linked against SDL v" << (int) linked.major
+                 << '.' << (int) linked.minor << '.' << (int) linked.patch;
+    Log::log(compiledString.str());
+    Log::log(linkedString.str());
+    Log::newline();
 }
 
 SDLXX::SDL::~SDL() {
-    // TODO: Quit subsystems
+    Log::log("Cleaning up SDL subsystems...");
+    // TODO: Quit subsystems?
+    std::lock_guard<std::mutex> lock(mutex);
     SDL_Quit();
+    initialized = false;
 }
 
 Uint32 SDLXX::SDL::wasInit(Uint32 flags) {
@@ -36,6 +58,6 @@ void SDLXX::SDL::setMainReady() {
 
 void SDLXX::SDL::setHint(const std::string &name, const std::string &value) {
     if(SDL_SetHint(name.c_str(), value.c_str()) == SDL_FALSE) {
-        SDL_Log(("Failed to set " + name).c_str()); // FIXME
+        Log::warning(("Failed to set " + name).c_str());
     }
 }

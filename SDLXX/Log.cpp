@@ -1,9 +1,10 @@
 #include "Log.h"
 #include <sstream>
 #include <iostream>
+#include <SDL_log.h>
 
 bool SDLXX::Log::isDebugMode = false;
-bool SDLXX::Log::isVerboseMode = false;
+bool SDLXX::Log::isVerboseMode = true;
 
 // std::ostream& Log::stdout       = std::cout;
 // std::ostream& Log::stderr       = std::cout;
@@ -35,29 +36,35 @@ const std::string debugPrefix = "Debug:   ";
 const std::string verbosePrefix = "Verbose: ";
 
 void SDLXX::Log::error(std::string msg) {
-    std::cerr << bold_red << errorPrefix << msg << reset_color << std::endl;
+    std::cerr << errorPrefix << msg << std::endl;
+    std::cout.flush();
 }
 
 void SDLXX::Log::warning(std::string msg) {
-    std::cerr << bold_yellow << warningPrefix << msg << reset_color << std::endl;
+    std::cerr << warningPrefix << msg << std::endl;
+    std::cout.flush();
 }
 
 void SDLXX::Log::log(std::string msg) {
-    std::cout << bold_green << msg << reset_color << std::endl;
+    std::cout << msg << std::endl;
+    std::cout.flush();
 }
 
 void SDLXX::Log::raw(std::string msg) {
-    std::cout << bold_green << msg << reset_color;
+    std::cout << msg;
+    std::cout.flush();
 }
 
 void SDLXX::Log::debug(std::string msg) {
     if(isDebugMode)
-        std::cerr << bold_cyan << debugPrefix << msg << reset_color << std::endl;
+        std::cerr << debugPrefix << msg << std::endl;
+    std::cout.flush();
 }
 
 void SDLXX::Log::verbose(std::string msg) {
     if(isVerboseMode)
-        std::cerr << cyan << verbosePrefix << msg << reset_color << std::endl;
+        std::cerr << verbosePrefix << msg << std::endl;
+    std::cout.flush();
 }
 
 void SDLXX::Log::debugMode(bool option) {
@@ -67,7 +74,7 @@ void SDLXX::Log::debugMode(bool option) {
     }
 
     isDebugMode = true;
-    Log::debug(">Debug mode activated");
+    Log::debug("> Debug mode activated");
 }
 
 void SDLXX::Log::verboseMode(bool option) {
@@ -78,9 +85,15 @@ void SDLXX::Log::verboseMode(bool option) {
 
     // Prints a nice logo
     isVerboseMode = true;
-    Log::verbose(">Verbose Mode activated");
+    Log::verbose("> Verbose Mode activated");
 }
 
 void SDLXX::Log::clearLine() {
     std::cout << clear_line;
+    std::cout.flush();
+}
+
+void SDLXX::Log::newline() {
+    std::cout << std::endl;
+    std::cout.flush();
 }

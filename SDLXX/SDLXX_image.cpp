@@ -1,18 +1,42 @@
+#include <sstream>
 #include "SDLXX_image.h"
 #include "Exception.h"
+#include "Log.h"
+
+std::mutex SDLXX::SDL_image::mutex;
+
+bool SDLXX::SDL_image::initialized = false;
 
 SDLXX::SDL_image::SDL_image(Uint32 flags) {
-    int initted = IMG_Init(flags);
-    if((initted & flags) != flags) {
-        throw SDLXX::Exception("Failed to init required image support");
+    Log::log("Initializing SDL image system...");
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        if(initialized) {
+            throw Exception("SDL_image already initialized");
+        }
+        int initted = IMG_Init(flags);
+        if((initted & flags) != flags) {
+            throw Exception("Unable to initialize SDL_image", IMG_GetError());
+        }
+        initialized = true;
     }
+
+    SDL_version compiled;
+    const SDL_version *linked = IMG_Linked_Version();
+    SDL_IMAGE_VERSION(&compiled);
+    std::stringstream compiledString, linkedString;
+    compiledString << "Compiled against SDL_image v" << (int) compiled.major
+                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
+    linkedString << "Linked against SDL_image v" << (int) linked->major
+                 << '.' << (int) linked->minor << '.' << (int) linked->patch;
+    Log::log(compiledString.str());
+    Log::log(linkedString.str());
+    Log::newline();
 }
 
 SDLXX::SDL_image::~SDL_image() {
+    Log::log("Cleaning up SDL image system...");
+    std::lock_guard<std::mutex> lock(mutex);
     IMG_Quit();
-}
-
-SDLXX::SDL_image &SDLXX::SDL_image::getInstance(Uint32 flags) {
-    static SDL_image s(flags);
-    return s;
+    initialized = false;
 }
