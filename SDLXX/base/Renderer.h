@@ -2,7 +2,7 @@
 #define SDLXX_RENDERER_H
 
 #include <SDL_render.h>
-#include "Exception.h"
+#include "../Exception.h"
 #include "Color.h"
 
 namespace SDLXX {
@@ -24,12 +24,20 @@ namespace SDLXX {
             }
         }
 
-        SDL_Renderer *getRenderer() {
+        SDL_Renderer *getSDLRenderer() const {
             return renderer;
         }
 
         void setColor(const Color &color) {
             SDL_SetRenderDrawColor(renderer, color.r(), color.g(), color.b(), color.a());
+        }
+
+        void render() {
+            SDL_RenderPresent(renderer);
+        }
+
+        void clear() {
+            SDL_RenderClear(renderer);
         }
 
     private:

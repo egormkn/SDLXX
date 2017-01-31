@@ -6,8 +6,10 @@
 #include "SDLXX_ttf.h"
 #include "SDLXX_mixer.h"
 #include "Exception.h"
-#include "Texture.h"
-#include "Window.h"
+#include "base/Texture.h"
+#include "base/Window.h"
+#include "base/SceneManager.h"
+#include "base/SceneTest.h"
 
 
 #include <string>
@@ -49,7 +51,7 @@ public:
     Tile(int x, int y, int tileType);
 
     //Shows the tile
-    void render(SDL_Rect &camera);
+    void render(const SDLXX::Renderer &renderer, SDL_Rect &camera);
 
     //Get the tile type
     int getType();
@@ -88,7 +90,7 @@ public:
     void setCamera(SDL_Rect &camera);
 
     //Shows the dot on the screen
-    void render(SDL_Rect &camera);
+    void render(const SDLXX::Renderer &renderer, SDL_Rect &camera);
 
 private:
     //Collision box of the dot
@@ -102,7 +104,7 @@ private:
 bool init();
 
 //Loads media
-bool loadMedia(Tile *tiles[]);
+bool loadMedia(const SDLXX::Renderer &renderer, Tile *tiles[]);
 
 //Frees media and shuts down SDL
 void close(Tile *tiles[]);
@@ -137,11 +139,11 @@ Tile::Tile(int x, int y, int tileType) {
     mType = tileType;
 }
 
-void Tile::render(SDL_Rect &camera) {
+void Tile::render(const SDLXX::Renderer &renderer, SDL_Rect &camera) {
     //If the tile is on screen
     if(checkCollision(camera, mBox)) {
         //Show the tile
-        gTileTexture.render(gRenderer, mBox.x - camera.x, mBox.y - camera.y, &gTileClips[mType]);
+        gTileTexture.render(renderer.getSDLRenderer(), mBox.x - camera.x, mBox.y - camera.y, &gTileClips[mType]);
     }
 }
 
@@ -244,23 +246,23 @@ void Dot::setCamera(SDL_Rect &camera) {
     }
 }
 
-void Dot::render(SDL_Rect &camera) {
+void Dot::render(const SDLXX::Renderer &renderer, SDL_Rect &camera) {
     //Show the dot
-    gDotTexture.render(gRenderer, mBox.x - camera.x, mBox.y - camera.y);
+    gDotTexture.render(renderer.getSDLRenderer(), mBox.x - camera.x, mBox.y - camera.y);
 }
 
-bool loadMedia(Tile *tiles[]) {
+bool loadMedia(const SDLXX::Renderer &renderer, Tile *tiles[]) {
     //Loading success flag
     bool success = true;
 
     //Load dot texture
-    if(!gDotTexture.loadFromFile(gRenderer, "resources/dot.bmp")) {
+    if(!gDotTexture.loadFromFile(renderer.getSDLRenderer(), "resources/dot.bmp")) {
         printf("Failed to load dot texture!\n");
         success = false;
     }
 
     //Load tile texture
-    if(!gTileTexture.loadFromFile(gRenderer, "resources/tiles.png")) {
+    if(!gTileTexture.loadFromFile(renderer.getSDLRenderer(), "resources/tiles.png")) {
         printf("Failed to load tile set texture!\n");
         success = false;
     }
@@ -286,8 +288,6 @@ void close(Tile *tiles[]) {
     //Free loaded images
     gDotTexture.free();
     gTileTexture.free();
-
-    IMG_Quit();
 }
 
 bool checkCollision(SDL_Rect a, SDL_Rect b) {
@@ -480,24 +480,24 @@ int main(int argc, char *args[]) {
 
         SDL sdl(SDL_INIT_VIDEO);
         sdl.setHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-
         SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
+        SDL_mixer sdl_mixer(MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG);
         SDL_net sdl_net;
         SDL_ttf sdl_ttf;
-        SDL_mixer sdl_mixer(MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG);
 
         Window window("The Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
                       SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         Renderer renderer = window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         renderer.setColor(Color(0xFFFFFFFF));
 
+        SceneManager manager(window, new SceneTest);
+        manager.run();
 
-        gRenderer = renderer.getRenderer(); // FIXME
-        //The level tiles
+        /*//The level tiles
         Tile *tileSet[TOTAL_TILES];
 
         //Load media
-        if(!loadMedia(tileSet)) {
+        if(!loadMedia(renderer, tileSet)) {
             throw Exception("Failed to load media!");
         }
 
@@ -511,33 +511,24 @@ int main(int argc, char *args[]) {
                 if(e.type == SDL_QUIT) {
                     quit = true;
                 }
-
                 dot.handleEvent(e);
             }
 
             dot.move(tileSet);
             dot.setCamera(camera);
 
-            //Clear screen
-            SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-            SDL_RenderClear(gRenderer);
+            renderer.setColor(Color(0xFFFFFFFF));
+            renderer.clear();
 
-            //Render level
             for (int i = 0; i < TOTAL_TILES; ++i) {
-                tileSet[i]->render(camera);
+                tileSet[i]->render(renderer, camera);
             }
 
-            //Render dot
-            dot.render(camera);
-
-            //Update screen
-            SDL_RenderPresent(gRenderer);
+            dot.render(renderer, camera);
+            renderer.render();
         }
 
-        //Free resources and close SDL
-        close(tileSet);
-
-
+        close(tileSet);*/
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }

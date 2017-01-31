@@ -1,3 +1,5 @@
+#include "Window.h"
+
 /*
  *
  *
@@ -251,3 +253,40 @@ bool LWindow::isShown() {
 }
 
  */
+
+SDLXX::Window::Window(SDL_Window *w) : window(w) {
+    SDL_Renderer *windowRenderer = SDL_GetRenderer(w);
+    if(windowRenderer != nullptr) {
+        renderer = new Renderer(windowRenderer);
+    }
+}
+
+SDLXX::Window::Window(const std::string &title, int posX, int posY, int width, int height, Uint32 flags) {
+    window = SDL_CreateWindow(title.c_str(), posX, posY, width, height, flags);
+    if(window == nullptr) {
+        throw Exception("Window was not initialized");
+    }
+}
+
+SDLXX::Window::~Window() {
+    if(renderer != nullptr) {
+        delete renderer;
+        renderer = nullptr;
+    }
+    if(window != nullptr) {
+        SDL_DestroyWindow(window);
+        window = nullptr;
+    }
+}
+
+void SDLXX::Window::minimize() {
+    SDL_MinimizeWindow(window);
+}
+
+void SDLXX::Window::maximize() {
+    SDL_MaximizeWindow(window);
+}
+
+void SDLXX::Window::restore() {
+    SDL_RestoreWindow(window);
+}

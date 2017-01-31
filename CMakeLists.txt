@@ -49,18 +49,18 @@ include_directories(${INCLUDE_DIRS})
 set(SOURCE_FILES
     SDLXX/SDLXX.cpp
     SDLXX/SDLXX.h
-    SDLXX/Window.cpp
-    SDLXX/Window.h
+    SDLXX/base/Window.cpp
+    SDLXX/base/Window.h
     SDLXX/Exception.cpp
     SDLXX/Exception.h
-    SDLXX/Renderer.cpp
-    SDLXX/Renderer.h
-    SDLXX/Texture.cpp
-    SDLXX/Texture.h
-    SDLXX/Animation.cpp
-    SDLXX/Animation.h
-    SDLXX/Color.cpp
-    SDLXX/Color.h
+    SDLXX/base/Renderer.cpp
+    SDLXX/base/Renderer.h
+    SDLXX/base/Texture.cpp
+    SDLXX/base/Texture.h
+    SDLXX/base/Animation.cpp
+    SDLXX/base/Animation.h
+    SDLXX/base/Color.cpp
+    SDLXX/base/Color.h
     SDLXX/Utils.cpp
     SDLXX/Utils.h
     SDLXX/SDLXX_image.cpp
@@ -72,14 +72,21 @@ set(SOURCE_FILES
     SDLXX/SDLXX_mixer.cpp
     SDLXX/SDLXX_mixer.h
     SDLXX/Log.cpp
-    SDLXX/Log.h)
+    SDLXX/Log.h
+    SDLXX/base/SceneManager.cpp
+    SDLXX/base/SceneManager.h
+    SDLXX/base/Scene.cpp
+    SDLXX/base/Scene.h
+    SDLXX/base/Event.cpp
+    SDLXX/base/Event.h)
 
 add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})
 target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
 # Test program
-add_executable(SDLXXtest SDLXX/Test.cpp)
+add_executable(SDLXXtest SDLXX/Test.cpp SDLXX/base/SceneTest.h SDLXX/base/SceneTest.cpp )
+# SDLXX/base/Dot.cpp SDLXX/base/Dot.h SDLXX/base/Tile.cpp SDLXX/base/Tile.h
 target_link_libraries(SDLXXtest SDLXX
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}

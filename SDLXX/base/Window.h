@@ -2,39 +2,25 @@
 #ifndef SDLXX_WINDOW_H
 #define SDLXX_WINDOW_H
 
-#include "SDLXX.h"
-#include "Exception.h"
+#include "../SDLXX.h"
+#include "../Exception.h"
 #include "Renderer.h"
 #include <string>
 
 namespace SDLXX {
     class Window {
     public:
-        Window(SDL_Window *w) : window(w) {}
+        Window(SDL_Window *w);
 
-        Window(const std::string &title, int posX, int posY, int width, int height, Uint32 flags) {
-            window = SDL_CreateWindow(title.c_str(), posX, posY, width, height, flags);
-            if(window == nullptr) {
-                throw Exception("Window was not initialized");
-            }
-        }
+        Window(const std::string &title, int posX, int posY, int width, int height, Uint32 flags);
 
-        ~Window() {
-            if(renderer != nullptr) {
-                delete renderer;
-                renderer = nullptr;
-            }
-            if(window != nullptr) {
-                SDL_DestroyWindow(window);
-                window = nullptr;
-            }
-        }
+        ~Window();
 
-        SDL_Window *getWindow() const {
+        SDL_Window *getSDLWindow() const {
             return window;
         }
 
-        Renderer setRenderer(int driver, Uint32 flags) {
+        Renderer &setRenderer(int driver, Uint32 flags) {
             if(renderer != nullptr) {
                 throw Exception("Window already has a renderer");
             }
@@ -45,9 +31,23 @@ namespace SDLXX {
             return *renderer; // TODO Check
         }
 
-        SDL_Renderer *getRenderer() {
-            return renderer->getRenderer();
+        Renderer &getRenderer() const {
+            return *renderer; // TODO Check
         }
+
+        SDL_Renderer *getSDLRenderer() {
+            return renderer->getSDLRenderer();
+        }
+
+        void setTitle(const std::string &title) {
+            SDL_SetWindowTitle(window, title.c_str());
+        }
+
+        void minimize();
+
+        void maximize();
+
+        void restore();
 /*
         void setWidth(int width) {
 
