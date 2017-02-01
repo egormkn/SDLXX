@@ -4,6 +4,7 @@
 #include <fstream>
 #include <SDL_timer.h>
 #include <vector>
+#include "../SDLXX_image.h"
 #include "../base/Scene.h"
 #include "../base/Texture.h"
 #include "../physics/Object.h"
@@ -24,11 +25,32 @@ namespace SDLXX {
             Log::log("[" + getTitle() + "] Scene created");
             // Init resources
             // After: setInitialized(true);
+            screen = SDL_GetWindowSurface(window.getSDLWindow());
+
+
+            //Load image at specified path
+            SDL_Surface *loadedSurface = IMG_Load("resources/background.jpg");
+            if(loadedSurface == NULL) {
+                printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
+            } else {
+                //Convert surface to screen format
+                image = SDL_ConvertSurface(loadedSurface, screen->format, NULL);
+                if(image == NULL) {
+                    printf("Unable to optimize image! SDL Error: %s\n", SDL_GetError());
+                }
+
+                //Get rid of old loaded surface
+                SDL_FreeSurface(loadedSurface);
+            }
+
+
         }
 
         void onDestroy() override {
             Log::log("[" + getTitle() + "] Scene destroyed");
             // Free resources
+            SDL_FreeSurface( image );
+            image = nullptr;
         }
 
         void onPause() override {
@@ -60,8 +82,8 @@ namespace SDLXX {
             }
         }
 
-        void render(Renderer &renderer) override {
-            renderer.setColor(Color(0xFFFFFFFF));
+        void render(Window &window) override {
+            /*renderer.setColor(Color(0xFFFFFFFF));
             renderer.clear();
 
             SDL_Rect fillRect = {
@@ -70,12 +92,18 @@ namespace SDLXX {
 
             renderer.setColor(Color(0xFF8888FF));
             SDL_RenderFillRect(renderer.getSDLRenderer(), &fillRect);
-            renderer.render();
+            renderer.render();*/
+            SDL_BlitSurface( image, NULL, screen, NULL );
+
+            //Update the surface
+            SDL_UpdateWindowSurface( window.getSDLWindow() );
         }
 
     private:
         int pos = 0;
+        bool loaded = false;
         std::vector<Object *> objects;
+        SDL_Surface *screen = nullptr, *image = nullptr;
     };
 }
 

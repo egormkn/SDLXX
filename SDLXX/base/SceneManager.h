@@ -124,7 +124,7 @@ namespace SDLXX {
                 //state.v = current.v * alpha + previous.v * (1 - alpha);
                 // render( state );
                 if(!currentScene->isFinished()) {
-                    currentScene->render(window->getRenderer());
+                    currentScene->render(*window);
                 }
             }
         }

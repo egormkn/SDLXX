@@ -18,7 +18,7 @@ namespace SDLXX {
 
         virtual void handleEvent(Event &e) = 0;
         virtual void update(Uint32 t, Uint32 dt) = 0;
-        virtual void render(Renderer &renderer) = 0;
+        virtual void render(Window &window) = 0;
 
         virtual ~Scene() {
             if (intent != nullptr) {

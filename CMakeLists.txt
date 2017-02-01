@@ -94,7 +94,7 @@ target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
 # Test program
 add_executable(SDLXXtest
-    SDLXX/test/Test.cpp
+    SDLXX/test/Game.cpp
     SDLXX/test/SceneTest.h
     SDLXX/test/SceneTest.cpp)
 
