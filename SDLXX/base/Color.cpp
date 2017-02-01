@@ -1,19 +1,19 @@
 #include "Color.h"
 #include "../Utils.h"
 
-Color::Color() : red(0), green(0), blue(0), alpha(255) {}
+SDLXX::Color::Color() : red(0), green(0), blue(0), alpha(255) {}
 
-Color::Color(uint32_t color_mask) {
+SDLXX::Color::Color(uint32_t color_mask) {
     this->red = (uint8_t) ((color_mask >> 16) & 0xFF);
     this->green = (uint8_t) ((color_mask >> 8) & 0xFF);
     this->blue = (uint8_t) (color_mask & 0xFF);
     this->alpha = 255;
 }
 
-Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+SDLXX::Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
         : red(r), green(g), blue(b), alpha(a) {}
 
-Color::Color(std::string &colorName) {
+SDLXX::Color::Color(std::string &colorName) {
     uint8_t r, g, b;
 
     if(colorName == "white") {
@@ -56,7 +56,7 @@ Color::Color(std::string &colorName) {
     this->alpha = 255;
 }
 
-Color Color::operator+(const Color &color) const {
+SDLXX::Color SDLXX::Color::operator+(const SDLXX::Color &color) const {
     int tmp = 0;
 
     uint8_t tmpR = 0;
@@ -82,7 +82,7 @@ Color Color::operator+(const Color &color) const {
     return result;
 }
 
-Color Color::operator-(const Color &color) const {
+SDLXX::Color SDLXX::Color::operator-(const SDLXX::Color &color) const {
     int tmp = 0;
 
     uint8_t tmpR = 0;
@@ -108,47 +108,47 @@ Color Color::operator-(const Color &color) const {
     return result;
 }
 
-bool Color::operator==(const Color &color) const {
+bool SDLXX::Color::operator==(const Color &color) const {
     return ((this->red == color.red) &&
             (this->green == color.green) &&
             (this->blue == color.blue) &&
             (this->alpha == color.alpha));
 }
 
-bool Color::operator!=(const Color &color) const {
+bool SDLXX::Color::operator!=(const Color &color) const {
     return ((this->red != color.red) &&
             (this->green != color.green) &&
             (this->blue != color.blue) &&
             (this->alpha != color.alpha));
 }
 
-uint8_t Color::r() const {
+uint8_t SDLXX::Color::r() const {
     return (this->red);
 }
 
-uint8_t Color::g() const {
+uint8_t SDLXX::Color::g() const {
     return (this->green);
 }
 
-uint8_t Color::b() const {
+uint8_t SDLXX::Color::b() const {
     return (this->blue);
 }
 
-uint8_t Color::a() const {
+uint8_t SDLXX::Color::a() const {
     return (this->alpha);
 }
 
-void Color::randomize() {
+void SDLXX::Color::randomize() {
     this->red = Utils::Random::between(0, 255);
     this->green = Utils::Random::between(0, 255);
     this->blue = Utils::Random::between(0, 255);
 }
 
-void Color::randomizeAlpha() {
+void SDLXX::Color::randomizeAlpha() {
     this->alpha = Utils::Random::between(0, 255);
 }
 
-void Color::invert(bool R, bool G, bool B) {
+void SDLXX::Color::invert(bool R, bool G, bool B) {
     if(R) this->red = (255 - this->red);
     if(G) this->green = (255 - this->green);
     if(B) this->blue = (255 - this->blue);

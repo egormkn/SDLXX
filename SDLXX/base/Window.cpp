@@ -264,7 +264,7 @@ SDLXX::Window::Window(SDL_Window *w) : window(w) {
 SDLXX::Window::Window(const std::string &title, int posX, int posY, int width, int height, Uint32 flags) {
     window = SDL_CreateWindow(title.c_str(), posX, posY, width, height, flags);
     if(window == nullptr) {
-        throw Exception("Window was not initialized");
+        throw Exception("Window was not initialized", SDL_GetError());
     }
 }
 

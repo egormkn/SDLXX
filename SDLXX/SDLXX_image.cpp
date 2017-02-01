@@ -8,7 +8,9 @@ std::mutex SDLXX::SDL_image::mutex;
 bool SDLXX::SDL_image::initialized = false;
 
 SDLXX::SDL_image::SDL_image(Uint32 flags) {
+#ifndef SDLXX_RELEASE
     Log::log("Initializing SDL image system...");
+#endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
@@ -20,7 +22,7 @@ SDLXX::SDL_image::SDL_image(Uint32 flags) {
         }
         initialized = true;
     }
-
+#ifndef SDLXX_RELEASE
     SDL_version compiled;
     const SDL_version *linked = IMG_Linked_Version();
     SDL_IMAGE_VERSION(&compiled);
@@ -32,10 +34,13 @@ SDLXX::SDL_image::SDL_image(Uint32 flags) {
     Log::log(compiledString.str());
     Log::log(linkedString.str());
     Log::newline();
+#endif
 }
 
 SDLXX::SDL_image::~SDL_image() {
+#ifndef SDLXX_RELEASE
     Log::log("Cleaning up SDL image system...");
+#endif
     std::lock_guard<std::mutex> lock(mutex);
     IMG_Quit();
     initialized = false;

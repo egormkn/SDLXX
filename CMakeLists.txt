@@ -4,6 +4,8 @@ project(SDLXX CXX)
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/SDLXX")
 set(CMAKE_DIR "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_DIR}")
+set(CMAKE_C_FLAGS_RELEASE "-DSDLXX_RELEASE")
+set(CMAKE_CXX_FLAGS_RELEASE "-DSDLXX_RELEASE")
 
 include(${CMAKE_DIR}/LibraryPaths.cmake OPTIONAL)
 
@@ -49,6 +51,14 @@ include_directories(${INCLUDE_DIRS})
 set(SOURCE_FILES
     SDLXX/SDLXX.cpp
     SDLXX/SDLXX.h
+    SDLXX/SDLXX_image.cpp
+    SDLXX/SDLXX_image.h
+    SDLXX/SDLXX_ttf.cpp
+    SDLXX/SDLXX_ttf.h
+    SDLXX/SDLXX_net.cpp
+    SDLXX/SDLXX_net.h
+    SDLXX/SDLXX_mixer.cpp
+    SDLXX/SDLXX_mixer.h
     SDLXX/base/Window.cpp
     SDLXX/base/Window.h
     SDLXX/Exception.cpp
@@ -63,14 +73,6 @@ set(SOURCE_FILES
     SDLXX/base/Color.h
     SDLXX/Utils.cpp
     SDLXX/Utils.h
-    SDLXX/SDLXX_image.cpp
-    SDLXX/SDLXX_image.h
-    SDLXX/SDLXX_ttf.cpp
-    SDLXX/SDLXX_ttf.h
-    SDLXX/SDLXX_net.cpp
-    SDLXX/SDLXX_net.h
-    SDLXX/SDLXX_mixer.cpp
-    SDLXX/SDLXX_mixer.h
     SDLXX/Log.cpp
     SDLXX/Log.h
     SDLXX/base/SceneManager.cpp
@@ -78,15 +80,25 @@ set(SOURCE_FILES
     SDLXX/base/Scene.cpp
     SDLXX/base/Scene.h
     SDLXX/base/Event.cpp
-    SDLXX/base/Event.h)
+    SDLXX/base/Event.h
+    SDLXX/base/Rectangle.cpp
+    SDLXX/base/Rectangle.h
+    SDLXX/physics/Object.cpp
+    SDLXX/physics/Object.h
+    SDLXX/base/Point.cpp
+    SDLXX/base/Point.h)
 
 add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})
 target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
 # Test program
-add_executable(SDLXXtest SDLXX/Test.cpp SDLXX/base/SceneTest.h SDLXX/base/SceneTest.cpp )
-# SDLXX/base/Dot.cpp SDLXX/base/Dot.h SDLXX/base/Tile.cpp SDLXX/base/Tile.h
+add_executable(SDLXXtest
+    SDLXX/test/Test.cpp
+    SDLXX/test/SceneTest.h
+    SDLXX/test/SceneTest2.h
+    SDLXX/test/SceneTest.cpp)
+
 target_link_libraries(SDLXXtest SDLXX
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}

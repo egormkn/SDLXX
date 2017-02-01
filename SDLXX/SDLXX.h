@@ -2,10 +2,13 @@
 #define SDLXX_H
 
 #include <string>
+#include <sstream>
 #include <mutex>
+#include "Log.h"
 
 #ifdef SDL2_FOUND
 #include <SDL.h>
+#include <SDL_video.h>
 #endif
 
 namespace SDLXX {
@@ -16,6 +19,20 @@ namespace SDLXX {
 
         // Quit SDL
         ~SDL();
+
+        void printDebugInfo() {
+            SDL_DisplayMode current;
+            for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i) {
+                std::stringstream s;
+                if(SDL_GetCurrentDisplayMode(i, &current) != 0) {
+                    s << "Could not get display mode for video display #" << i << ": " << SDL_GetError();
+                } else {
+                    s << "Display #" << i << ": " << current.w << "x" << current.h << "px @ "
+                      << current.refresh_rate << "hz";
+                }
+                Log::log(s.str());
+            }
+        }
 
         Uint32 wasInit(Uint32 flags);
 

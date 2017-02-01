@@ -8,7 +8,9 @@ std::mutex SDLXX::SDL_ttf::mutex;
 bool SDLXX::SDL_ttf::initialized = false;
 
 SDLXX::SDL_ttf::SDL_ttf() {
+#ifndef SDLXX_RELEASE
     Log::log("Initializing SDL font rendering system...");
+#endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
@@ -19,7 +21,7 @@ SDLXX::SDL_ttf::SDL_ttf() {
         }
         initialized = true;
     }
-
+#ifndef SDLXX_RELEASE
     SDL_version compiled;
     const SDL_version *linked = TTF_Linked_Version();
     SDL_TTF_VERSION(&compiled);
@@ -31,10 +33,13 @@ SDLXX::SDL_ttf::SDL_ttf() {
     Log::log(compiledString.str());
     Log::log(linkedString.str());
     Log::newline();
+#endif
 }
 
 SDLXX::SDL_ttf::~SDL_ttf() {
+#ifndef SDLXX_RELEASE
     Log::log("Cleaning up SDL font rendering system...");
+#endif
     std::lock_guard<std::mutex> lock(mutex);
     TTF_Quit();
     initialized = false;

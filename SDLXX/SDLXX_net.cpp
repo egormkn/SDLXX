@@ -8,7 +8,9 @@ std::mutex SDLXX::SDL_net::mutex;
 bool SDLXX::SDL_net::initialized = false;
 
 SDLXX::SDL_net::SDL_net() {
+#ifndef SDLXX_RELEASE
     Log::log("Initializing SDL network system...");
+#endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
@@ -19,7 +21,7 @@ SDLXX::SDL_net::SDL_net() {
         }
         initialized = true;
     }
-
+#ifndef SDLXX_RELEASE
     SDL_version compiled;
     const SDL_version *linked = SDLNet_Linked_Version();
     SDL_NET_VERSION(&compiled);
@@ -31,10 +33,13 @@ SDLXX::SDL_net::SDL_net() {
     Log::log(compiledString.str());
     Log::log(linkedString.str());
     Log::newline();
+#endif
 }
 
 SDLXX::SDL_net::~SDL_net() {
+#ifndef SDLXX_RELEASE
     Log::log("Cleaning up SDL network system...");
+#endif
     std::lock_guard<std::mutex> lock(mutex);
     SDLNet_Quit();
     initialized = false;

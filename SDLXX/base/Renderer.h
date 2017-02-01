@@ -4,6 +4,7 @@
 #include <SDL_render.h>
 #include "../Exception.h"
 #include "Color.h"
+#include "../Log.h"
 
 namespace SDLXX {
     class Renderer {
@@ -13,7 +14,11 @@ namespace SDLXX {
         Renderer(SDL_Window *w, int driver, Uint32 flags) {
             renderer = SDL_CreateRenderer(w, driver, flags);
             if(renderer == nullptr) {
-                throw Exception("Renderer could not be created");
+                Log::warning("Could not create hardware accelerated renderer, trying software fallback");
+                renderer = SDL_CreateRenderer(w, -1, SDL_RENDERER_SOFTWARE);
+                if(renderer == nullptr) {
+                    throw Exception("Renderer could not be created", SDL_GetError());
+                }
             }
         }
 

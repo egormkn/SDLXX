@@ -8,7 +8,9 @@ std::mutex SDLXX::SDL::mutex;
 bool SDLXX::SDL::initialized = false;
 
 SDLXX::SDL::SDL(Uint32 flags) {
+#ifndef SDLXX_RELEASE
     Log::log("Initializing SDL subsystems...");
+#endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
@@ -19,6 +21,7 @@ SDLXX::SDL::SDL(Uint32 flags) {
         }
         initialized = true;
     }
+#ifndef SDLXX_RELEASE
     SDL_version compiled, linked;
     SDL_VERSION(&compiled);
     SDL_GetVersion(&linked);
@@ -30,11 +33,13 @@ SDLXX::SDL::SDL(Uint32 flags) {
     Log::log(compiledString.str());
     Log::log(linkedString.str());
     Log::newline();
+#endif
 }
 
 SDLXX::SDL::~SDL() {
+#ifndef SDLXX_RELEASE
     Log::log("Cleaning up SDL subsystems...");
-    // TODO: Quit subsystems?
+#endif
     std::lock_guard<std::mutex> lock(mutex);
     SDL_Quit();
     initialized = false;

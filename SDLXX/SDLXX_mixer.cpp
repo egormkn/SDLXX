@@ -8,7 +8,9 @@ std::mutex SDLXX::SDL_mixer::mutex;
 bool SDLXX::SDL_mixer::initialized = false;
 
 SDLXX::SDL_mixer::SDL_mixer(Uint32 flags) {
+#ifndef SDLXX_RELEASE
     Log::log("Initializing SDL audio mix system...");
+#endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
@@ -19,7 +21,7 @@ SDLXX::SDL_mixer::SDL_mixer(Uint32 flags) {
         }
         initialized = true;
     }
-
+#ifndef SDLXX_RELEASE
     SDL_version compiled;
     const SDL_version *linked = Mix_Linked_Version();
     SDL_MIXER_VERSION(&compiled);
@@ -31,10 +33,13 @@ SDLXX::SDL_mixer::SDL_mixer(Uint32 flags) {
     Log::log(compiledString.str());
     Log::log(linkedString.str());
     Log::newline();
+#endif
 }
 
 SDLXX::SDL_mixer::~SDL_mixer() {
+#ifndef SDLXX_RELEASE
     Log::log("Cleaning up SDL audio mix system...");
+#endif
     std::lock_guard<std::mutex> lock(mutex);
     Mix_Quit();
     initialized = false;
