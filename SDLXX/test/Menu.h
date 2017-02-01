@@ -10,33 +10,38 @@
 #include "../physics/Object.h"
 
 namespace SDLXX {
-    class SceneTest : public Scene {
+    class Menu : public Scene {
     public:
 
-        SceneTest(const std::string &title) : Scene(title) {
+        Menu(const std::string &title) : Scene(title) {
             Log::log("[" + getTitle() + "] Scene constructed");
         }
 
-        ~SceneTest() {
+        ~Menu() {
             Log::log("[" + getTitle() + "] Scene destructed");
         }
 
-        void onCreate(Window &window) override {
+        void onCreate(Window &w) override {
             Log::log("[" + getTitle() + "] Scene created");
+
+
+            window = &w;
             // Init resources
             // After: setInitialized(true);
-            screen = SDL_GetWindowSurface(window.getSDLWindow());
 
+
+
+            std::string path = "resources/background.jpg";
 
             //Load image at specified path
-            SDL_Surface *loadedSurface = IMG_Load("resources/background.jpg");
-            if(loadedSurface == NULL) {
-                printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
+            SDL_Surface *loadedSurface = IMG_Load(path.c_str());
+            if(loadedSurface == nullptr) {
+                printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
             } else {
-                //Convert surface to screen format
-                image = SDL_ConvertSurface(loadedSurface, screen->format, NULL);
-                if(image == NULL) {
-                    printf("Unable to optimize image! SDL Error: %s\n", SDL_GetError());
+                //Create texture from surface pixels
+                image = SDL_CreateTextureFromSurface(w.getSDLRenderer(), loadedSurface);
+                if(image == nullptr) {
+                    printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
                 }
 
                 //Get rid of old loaded surface
@@ -49,7 +54,7 @@ namespace SDLXX {
         void onDestroy() override {
             Log::log("[" + getTitle() + "] Scene destroyed");
             // Free resources
-            SDL_FreeSurface( image );
+            SDL_DestroyTexture(image);
             image = nullptr;
         }
 
@@ -67,11 +72,14 @@ namespace SDLXX {
             if(e.getType() == SDL_KEYDOWN) {
                 if(e.getEvent().key.keysym.sym == SDLK_UP) {
                     Log::log("[" + getTitle() + "] UP");
-                    runIntent(new SceneTest("New title"));
+                    //runIntent(new Menu("New title"));
                     // finish();
                 } else {
                     finish();
                 }
+            }
+            if(e.getType() == SDL_WINDOWEVENT) {
+                window->getRenderer().render();
             }
         }
 
@@ -82,7 +90,7 @@ namespace SDLXX {
             }
         }
 
-        void render(Window &window) override {
+        void render(Renderer &renderer) override {
             /*renderer.setColor(Color(0xFFFFFFFF));
             renderer.clear();
 
@@ -93,17 +101,17 @@ namespace SDLXX {
             renderer.setColor(Color(0xFF8888FF));
             SDL_RenderFillRect(renderer.getSDLRenderer(), &fillRect);
             renderer.render();*/
-            SDL_BlitSurface( image, NULL, screen, NULL );
-
-            //Update the surface
-            SDL_UpdateWindowSurface( window.getSDLWindow() );
+            SDL_RenderCopy(renderer.getSDLRenderer(), image, NULL, NULL);
+            // renderer.renderCopy(Texture(image));
+            renderer.render();
         }
 
     private:
         int pos = 0;
         bool loaded = false;
         std::vector<Object *> objects;
-        SDL_Surface *screen = nullptr, *image = nullptr;
+        SDL_Texture *image = nullptr;
+        Window *window = nullptr;
     };
 }
 

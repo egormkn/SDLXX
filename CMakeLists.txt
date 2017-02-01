@@ -86,7 +86,7 @@ set(SOURCE_FILES
     SDLXX/physics/Object.cpp
     SDLXX/physics/Object.h
     SDLXX/base/Point.cpp
-    SDLXX/base/Point.h)
+    SDLXX/base/Point.h SDLXX/gui/View.cpp SDLXX/gui/View.h SDLXX/gui/Button.cpp SDLXX/gui/Button.h)
 
 add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})
@@ -95,8 +95,8 @@ target_compile_features(SDLXX PRIVATE cxx_noexcept)
 # Test program
 add_executable(SDLXXtest
     SDLXX/test/Game.cpp
-    SDLXX/test/SceneTest.h
-    SDLXX/test/SceneTest.cpp)
+    SDLXX/test/Menu.h
+    SDLXX/test/Menu.cpp)
 
 target_link_libraries(SDLXXtest SDLXX
     ${SDL2_LIBRARY}

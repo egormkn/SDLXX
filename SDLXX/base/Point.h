@@ -6,17 +6,31 @@
 namespace SDLXX {
     class Point {
     public:
-        Point(int x, int y);
+        Point(int x, int y) {
+            point = new SDL_Point;
+            point->x = x;
+            point->y = y;
+        }
 
-        ~Point();
+        ~Point() {
+            delete point;
+        }
 
-        int getX();
+        int getX() const {
+            return point->x;
+        }
 
-        int getY();
+        int getY() const {
+            return point->y;
+        }
+
+        SDL_Point &getSDLPoint() {
+            return *point;
+        }
 
     private:
-        SDL_Point *point;
+        SDL_Point *point = nullptr;
     };
 }
 
-#endif //SDLXX_POINT_H
+#endif // SDLXX_POINT_H

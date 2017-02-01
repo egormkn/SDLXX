@@ -5,7 +5,7 @@
 #include "../SDLXX_mixer.h"
 #include "../base/Window.h"
 #include "../base/SceneManager.h"
-#include "SceneTest.h"
+#include "Menu.h"
 
 using namespace SDLXX;
 
@@ -24,12 +24,12 @@ int main(int argc, char *args[]) {
 #endif
 
         Window window("The Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
-                      SDL_WINDOW_SHOWN | /*SDL_WINDOW_RESIZABLE |*/ SDL_WINDOW_ALLOW_HIGHDPI);
+                      SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
         Renderer renderer = window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         renderer.setColor(Color(0xFFFFFFFF));
 
         SceneManager manager(window);
-        manager.push(new SceneTest("MENU"));
+        manager.push(new Menu("MENU"));
         manager.run();
 
     } catch (std::exception &e) {
