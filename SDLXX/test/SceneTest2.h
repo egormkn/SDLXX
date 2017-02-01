@@ -1,5 +1,5 @@
-#ifndef SDLXX_SCENETEST_H
-#define SDLXX_SCENETEST_H
+#ifndef SDLXX_SCENETEST2_H
+#define SDLXX_SCENETEST2_H
 
 #include <fstream>
 #include <SDL_timer.h>
@@ -32,7 +32,7 @@ namespace SDLXX {
         void handleEvent(Event &e) override {
             if(e.getType() == SDL_KEYDOWN) {
                 if(e.getEvent().key.keysym.sym == SDLK_UP) {
-                    runIntent(new SceneTest);
+                    //runIntent(new SceneTest);
                 } else {
                     setActive(false);
                 }
@@ -66,4 +66,4 @@ namespace SDLXX {
     };
 }
 
-#endif // SDLXX_SCENETEST_H
+#endif // SDLXX_SCENETEST2_H

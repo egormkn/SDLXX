@@ -32,7 +32,7 @@ namespace SDLXX {
         void handleEvent(Event &e) override {
             if(e.getType() == SDL_KEYDOWN) {
                 if(e.getEvent().key.keysym.sym == SDLK_UP) {
-                    runIntent(new SceneTest);
+                    //runIntent(new SceneTest2);
                 } else {
                     setActive(false);
                 }
