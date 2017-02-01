@@ -13,19 +13,19 @@ namespace SDLXX {
     class SceneTest2 : public Scene {
     public:
 
-        void init(Window &window) override {
+        void onCreate(Window &window) override {
             setActive(true);
         }
 
-        void cleanUp() override {
+        void onDestroy() override {
 
         }
 
-        void pause() override {
+        void onPause() override {
 
         }
 
-        void resume() override {
+        void onResume() override {
 
         }
 

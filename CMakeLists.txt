@@ -96,7 +96,6 @@ target_compile_features(SDLXX PRIVATE cxx_noexcept)
 add_executable(SDLXXtest
     SDLXX/test/Test.cpp
     SDLXX/test/SceneTest.h
-    SDLXX/test/SceneTest2.h
     SDLXX/test/SceneTest.cpp)
 
 target_link_libraries(SDLXXtest SDLXX

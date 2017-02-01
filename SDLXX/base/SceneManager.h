@@ -9,9 +9,8 @@
 namespace SDLXX {
     class SceneManager {
     public:
-        SceneManager(Window &w, Scene *s) {
+        SceneManager(Window &w) {
             window = &w;
-            scenes.push(s);
         }
 
         ~SceneManager() {
@@ -37,8 +36,13 @@ namespace SDLXX {
 
         void clear() {
             while (scenes.size() > 0) {
-                scenes.top()->cleanUp();
-                delete scenes.top();
+                Scene *scene = scenes.top();
+                if (scene->isInitialized()) {
+                    scene->setFinished(true);
+                    scene->setInitialized(false);
+                    scene->onDestroy();
+                }
+                delete scene;
                 scenes.pop();
             }
         }
@@ -48,9 +52,6 @@ namespace SDLXX {
             Uint32 currentTime = SDL_GetTicks();
 
             Event e;
-
-            scenes.top()->init(*window);
-
             //State previous, current;
 
             while (scenes.size() > 0) {
@@ -60,40 +61,45 @@ namespace SDLXX {
 
                 Scene *currentScene = scenes.top();
 
-                ////////CHECK/////////
-                if(!currentScene->isActive()) {
+                if (currentScene->isFinished()) {
                     Scene *intent = nullptr;
                     if(currentScene->hasIntent()) {
                         intent = currentScene->getIntent();
                     }
+                    currentScene->setInitialized(false);
+                    currentScene->onDestroy();
                     delete currentScene;
                     scenes.pop();
                     if(intent != nullptr) {
                         scenes.push(intent);
-                    } else if(scenes.size() > 0) {
-                        scenes.top()->init(*window);
                     }
                     continue;
                 }
 
                 if(currentScene->hasIntent()) {
-                    Log::log("Pushing new intent");
+                    Log::log("[MANAGER] Pushing new intent");
+                    currentScene->setInitialized(false);
+                    currentScene->setFinished(false);
+                    currentScene->onDestroy();
                     scenes.push(currentScene->getIntent());
-                    currentScene->cleanUp();
                     continue;
                 }
-                ////////CHECK/////////
 
+                if (!currentScene->isInitialized()) {
+                    currentScene->onCreate(*window);
+                    currentScene->setInitialized(true);
+                    currentScene->setFinished(false);
+                }
 
                 while (e.hasNext()) {
                     if(e.getType() == SDL_QUIT) {
-                        clear(); // FIXME Do we really need to quit?
-                    } else {
+                        clear(); // FIXME: Do we really need to quit?
+                    } else if(!currentScene->isFinished()) {
                         currentScene->handleEvent(e);
                     }
                 }
 
-                if (scenes.size() == 0) {
+                if(scenes.size() == 0) {
                     break;
                 }
 
@@ -102,11 +108,13 @@ namespace SDLXX {
                 while (accumulator >= dt) {
                     //previous = current;
                     //integrate( current, t, dt );
-                    scenes.top()->update();
+                    if(!currentScene->isFinished()) {
+                        currentScene->update(t, dt);
+                    }
                     t += dt;
                     accumulator -= dt;
-                    std::string str = "Game FPS: " + std::to_string((frameTime == 0 ? 0 : (int) (1000.0 / frameTime)));
-                    window->setTitle(str);
+                    /*std::string str = "Game FPS: " + std::to_string((frameTime == 0 ? 0 : (int) (1000.0 / frameTime)));
+                    window->setTitle(str);*/
                 }
 
                 const Uint32 alpha = (Uint32) (accumulator / dt);
@@ -115,8 +123,9 @@ namespace SDLXX {
                 //state.x = current.x * alpha + previous.x * (1 - alpha);
                 //state.v = current.v * alpha + previous.v * (1 - alpha);
                 // render( state );
-
-                scenes.top()->render(window->getRenderer());
+                if(!currentScene->isFinished()) {
+                    currentScene->render(window->getRenderer());
+                }
             }
         }
 

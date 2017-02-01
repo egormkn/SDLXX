@@ -7,41 +7,55 @@
 #include "../base/Scene.h"
 #include "../base/Texture.h"
 #include "../physics/Object.h"
-#include "SceneTest2.h"
 
 namespace SDLXX {
     class SceneTest : public Scene {
     public:
 
-        void init(Window &window) override {
-            setActive(true);
+        SceneTest(const std::string &title) : Scene(title) {
+            Log::log("[" + getTitle() + "] Scene constructed");
         }
 
-        void cleanUp() override {
-
+        ~SceneTest() {
+            Log::log("[" + getTitle() + "] Scene destructed");
         }
 
-        void pause() override {
-
+        void onCreate(Window &window) override {
+            Log::log("[" + getTitle() + "] Scene created");
+            // Init resources
+            // After: setInitialized(true);
         }
 
-        void resume() override {
+        void onDestroy() override {
+            Log::log("[" + getTitle() + "] Scene destroyed");
+            // Free resources
+        }
 
+        void onPause() override {
+            // Save state
+            // After: setPaused(true);
+        }
+
+        void onResume() override {
+            // Restore state
+            // After: setPaused(false);
         }
 
         void handleEvent(Event &e) override {
             if(e.getType() == SDL_KEYDOWN) {
                 if(e.getEvent().key.keysym.sym == SDLK_UP) {
-                    //runIntent(new SceneTest2);
+                    Log::log("[" + getTitle() + "] UP");
+                    runIntent(new SceneTest("New title"));
+                    // finish();
                 } else {
-                    setActive(false);
+                    finish();
                 }
             }
         }
 
-        void update() override {
+        void update(Uint32 t, Uint32 dt) override {
             pos += 1;
-            if (pos > 300) {
+            if(pos > 300) {
                 pos = 0;
             }
         }
@@ -55,13 +69,12 @@ namespace SDLXX {
             };
 
             renderer.setColor(Color(0xFF8888FF));
-            SDL_RenderFillRect(renderer.getSDLRenderer(), &fillRect );
+            SDL_RenderFillRect(renderer.getSDLRenderer(), &fillRect);
             renderer.render();
         }
 
     private:
         int pos = 0;
-
         std::vector<Object *> objects;
     };
 }
