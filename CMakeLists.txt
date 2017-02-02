@@ -92,13 +92,34 @@ add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})
 target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
+#option(BOX2D_INSTALL "Install Box2D" ON)
+#option(BOX2D_BUILD_SHARED "Build Box2D shared libraries" ON)
+#option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
+set(BOX2D_VERSION 2.3.2)
+#set(LIB_INSTALL_DIR lib${LIB_SUFFIX})
+
+# The Box2D library.
+add_subdirectory(Box2D)
+
+add_subdirectory(HelloWorld)
+
+
+
+
+
+include_directories (${Box2D_SOURCE_DIR})
+
+
+
 # Test program
 add_executable(SDLXXtest
-    SDLXX/test/Game.cpp
+    SDLXX/test/main.cpp
     SDLXX/test/Menu.h
-    SDLXX/test/Menu.cpp)
+    SDLXX/test/Menu.cpp SDLXX/test/Game.cpp SDLXX/test/Game.h)
 
-target_link_libraries(SDLXXtest SDLXX
+target_link_libraries(SDLXXtest
+    Box2D
+    SDLXX
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_TTF_LIBRARY}

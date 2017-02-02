@@ -8,6 +8,7 @@
 #include "../base/Scene.h"
 #include "../base/Texture.h"
 #include "../physics/Object.h"
+#include "Game.h"
 
 namespace SDLXX {
     class Menu : public Scene {
@@ -72,8 +73,9 @@ namespace SDLXX {
             if(e.getType() == SDL_KEYDOWN) {
                 if(e.getEvent().key.keysym.sym == SDLK_UP) {
                     Log::log("[" + getTitle() + "] UP");
-                    //runIntent(new Menu("New title"));
+                    runIntent(new Game("Game"));
                     // finish();
+                    // My changes
                 } else {
                     finish();
                 }
