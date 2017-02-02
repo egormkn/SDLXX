@@ -4,8 +4,8 @@ project(SDLXX CXX)
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/SDLXX")
 set(CMAKE_DIR "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_DIR}")
-#set(CMAKE_C_FLAGS_RELEASE "-DSDLXX_RELEASE")
-#set(CMAKE_CXX_FLAGS_RELEASE "-DSDLXX_RELEASE")
+set(CMAKE_C_FLAGS_RELEASE "-DSDLXX_RELEASE")
+set(CMAKE_CXX_FLAGS_RELEASE "-DSDLXX_RELEASE")
 
 include(${CMAKE_DIR}/LibraryPaths.cmake OPTIONAL)
 
@@ -98,10 +98,11 @@ target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
 # Test program
 add_executable(SDLXXtest
-    #SDLXX/test/Game.cpp
+    SDLXX/test/Game.cpp
     SDLXX/test/SceneTest.h
     SDLXX/test/SceneTest.cpp
-    SDLXX/network/tcp/main.cpp)
+    #SDLXX/network/tcp/main.cpp
+    )
 
 target_link_libraries(SDLXXtest SDLXX
     ${SDL2_LIBRARY}
