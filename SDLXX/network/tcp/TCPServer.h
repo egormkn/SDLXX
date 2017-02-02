@@ -10,15 +10,16 @@
 #include <thread>
 
 /*
- * codes for connection requests:
- * 1 - get information
- * 2 - try to connect to the server
+ * TCPServer
+ * to start using it is needed to run method init() which returns bool result
+ *
+ * Usage: it's nothing you should do by yourself (there is a tread which works with answer clients requests)
  */
 
 class TCPServer {
 private:
     //server info
-    int32_t port;
+    uint16_t port;
     IPaddress ipAddress;
     TCPsocket tcpSocket;
     //storing clients connections
@@ -29,32 +30,40 @@ private:
     bool server_flag;
     std::thread server_tread;
 
+    //preparing method
+    bool setupPort();
+
+    //preparing method
+    bool openPortForListening();
+
+    //if there is clients which wants to connect this method will accept new connection
+    void acceptConnection();
+
+    //check if any client sent request
+    bool checkForRequests();
+
+    //returns size of file
     int fileSize(const char *filename);
 
+    //method for thread for server
     void serverManager();
 
+    //sending file (with directory equal to file_dir) to client with unique id equal to number
+    void sendFile(int number, std::string file_dir);
+
+    //answers all clients requests
+    void answerRequests();
 public:
-    TCPServer(int32_t port_);
+    //initializing with port of new server
+    TCPServer(uint16_t port_);
 
     ~TCPServer();
 
+    //method which preparing work of TCPServer class (if it returns false it cannot be used)
     bool init();
 
-    bool setupPort();
-
-    bool openPortForListening();
-
-    bool canAcceptConnection();
-
-    void acceptConnection();
-
-    bool checkForRequests();
-
+    //returns information about server as string
     std::string getInformation();
-
-    void sendFile(int number, std::string file_dir);
-
-    void answerRequests();
 };
 
 #endif

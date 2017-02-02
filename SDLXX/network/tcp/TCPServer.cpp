@@ -1,6 +1,7 @@
 #include <SDL_net.h>
 #include <fstream>
 #include "TCPServer.h"
+#include <thread>
 #include "../../Log.h"
 
 int TCPServer::fileSize(const char *filename) {
@@ -9,10 +10,11 @@ int TCPServer::fileSize(const char *filename) {
 }
 
 void TCPServer::serverManager() {
+    SDLXX::Log::debug("[TCPServer] server thread started");
     while (true) {
-        if (canAcceptConnection()) {
+        //if (canAcceptConnection()) {
             acceptConnection();
-        }
+        //}
         if (checkForRequests()) {
             answerRequests();
         }
@@ -26,11 +28,10 @@ void TCPServer::serverManager() {
     SDLXX::Log::verbose("[TCPServer] thread closed");
 }
 
-TCPServer::TCPServer(int32_t port_) {
+TCPServer::TCPServer(uint16_t port_) {
     clientSocketSet = SDLNet_AllocSocketSet(10);
     port = port_;
     server_flag = true;
-    server_tread = std::thread(serverManager);
     SDLXX::Log::verbose("[TCPServer] created with port :" + std::to_string(port));
 }
 
@@ -44,15 +45,16 @@ TCPServer::~TCPServer() {
 }
 
 bool TCPServer::init() {
-    if (ipAddress == NULL) {
-        setupPort();
+    if (!setupPort() || !openPortForListening()) {
+        return false;
     }
-
+    std::thread thread2(serverManager, this);
+    server_tread.swap(thread2);
+    return true;
 }
 
 bool TCPServer::setupPort() {
     int result = SDLNet_ResolveHost(&ipAddress, nullptr, port);
-    std::cout << ipAddress.port << '\n';
 
     if (result == -1) {
         SDLXX::Log::warning("[TCPServer] failed to resolve port");
@@ -77,20 +79,11 @@ bool TCPServer::openPortForListening() {
     return true;
 }
 
-bool TCPServer::canAcceptConnection() {
-    if (tcpSocket == nullptr) {
-        return false;
-    }
-    int i = SDLNet_SocketReady(tcpSocket);
-    bool canAccept = (i != 0);
-    return canAccept;
-}
-
 void TCPServer::acceptConnection() {
     TCPsocket newSocket = SDLNet_TCP_Accept(tcpSocket);
 
     if (newSocket == nullptr) {
-        SDLXX::Log::warning("[TCPServer] cannot accept TCP connection: " + std::string(SDLNet_GetError()));
+        //SDLXX::Log::warning("[TCPServer] cannot accept TCP connection: " + std::string(SDLNet_GetError()));
         return;
     }
 
@@ -106,7 +99,8 @@ bool TCPServer::checkForRequests() {
 }
 
 std::string TCPServer::getInformation() {
-    return "Information about server:\nport: " + std::to_string(port) + "\nNumber of clients: " + std::to_string(clientConnections.size());
+    return "Information about server:\nport: " + std::to_string(port) + "\nNumber of clients: " +
+           std::to_string(clientConnections.size());
 }
 
 void TCPServer::sendFile(int number, std::string file_dir) {
@@ -169,7 +163,8 @@ void TCPServer::answerRequests() {
 
             int numused = SDLNet_TCP_DelSocket(clientSocketSet, clientConnections[i]->getSocket());
             if (numused < 0) {
-                SDLXX::Log::warning("[TCPServer] cannot delete " + std::to_string(i) + " client from set: " + std::string(SDLNet_GetError()));
+                SDLXX::Log::warning("[TCPServer] cannot delete " + std::to_string(i) + " client from set: " +
+                                    std::string(SDLNet_GetError()));
             }
             clientConnections.erase(clientConnections.begin() + i);
             code_request = -1;
@@ -186,7 +181,6 @@ void TCPServer::answerRequests() {
                 SDLXX::Log::debug("[TCPServer] " + std::to_string(i) + " client wants to join the game");
                 //TODO: write joining the game
                 break;
-            default:
                 //std::cout << "ERROR: unknown request code received from " << i << " client\n" <<
                 //          "==================================================\n";
         }

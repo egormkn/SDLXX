@@ -7,7 +7,7 @@
 #include "../../Log.h"
 
 
-TCPClient::TCPClient(const std::string &ip_, int32_t port_) {
+TCPClient::TCPClient(const std::string &ip_, uint16_t port_) {
     ip = ip_;
     port = port_;
     SDLXX::Log::verbose("[TCPClient] created");
@@ -24,8 +24,11 @@ TCPClient::~TCPClient() {
     SDLXX::Log::verbose("[TCPClient] closed");
 }
 
+bool TCPClient::init() {
+    return (setupIpAddress() && openConnectionToServer());
+}
+
 bool TCPClient::setupIpAddress() {
-    //std::cout << "Trying to initialize\n";
     int result = SDLNet_ResolveHost(&ipAddress, ip.c_str(), port);
 
     if (result == -1) {
@@ -38,8 +41,6 @@ bool TCPClient::setupIpAddress() {
 }
 
 bool TCPClient::openConnectionToServer() {
-    //std::cout << "Opening connection\n";
-
     tcpSocket = SDLNet_TCP_Open(&ipAddress);
 
     if (tcpSocket == nullptr) {
@@ -88,16 +89,23 @@ void TCPClient::sendRequest(int32_t request_code) {
     SDLXX::Log::debug("[TCPClient] trying to send request with code: " + std::to_string(request_code));
     SDLNet_TCP_Send(tcpSocket, &request_code, 4);
     if (request_code == 1) {
-        //std::cout << "Waiting for information from server\n";
         readFile();
     }
+}
+
+void TCPClient::requestServerInformation() {
+    sendRequest(1);
+}
+
+void TCPClient::requestForConnection() {
+    sendRequest(2);
 }
 
 void TCPClient::resolveIp() {
     char *host = new char[4];
     SDLNet_Write32(ipAddress.host, &host);
-    std::cout << "SDLNet_ResolveIP: " << (unsigned int) &host[0] << '.' << (int) &host[1] << '.' << (int) &host[2] << '.'
-              << (int) &host[3] << '\n' <<
+    std::cout << "SDLNet_ResolveIP: " << (unsigned int) &host[0] << '.' << (unsigned int) &host[1] << '.' << (unsigned int) &host[2] << '.'
+              << (unsigned int) &host[3] << '\n' <<
               "==================================================\n";
     delete[] host;
 }
