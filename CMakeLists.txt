@@ -83,10 +83,9 @@ set(SOURCE_FILES
     SDLXX/base/Event.h
     SDLXX/base/Rectangle.cpp
     SDLXX/base/Rectangle.h
-    SDLXX/physics/Object.cpp
-    SDLXX/physics/Object.h
     SDLXX/base/Point.cpp
-    SDLXX/base/Point.h SDLXX/gui/View.cpp SDLXX/gui/View.h SDLXX/gui/Button.cpp SDLXX/gui/Button.h)
+    SDLXX/base/Point.h
+    SDLXX/gui/Button.cpp SDLXX/gui/Button.h SDLXX/base/Object.cpp SDLXX/base/Object.h)
 
 add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})

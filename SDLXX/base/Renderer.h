@@ -61,6 +61,10 @@ namespace SDLXX {
             }
         }
 
+        void fillRect(SDL_Rect *rect) {
+            SDL_RenderFillRect(renderer, rect);
+        }
+
     private:
         SDL_Renderer *renderer = nullptr;
     };

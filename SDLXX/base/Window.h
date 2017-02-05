@@ -5,6 +5,7 @@
 #include "../SDLXX.h"
 #include "../Exception.h"
 #include "Renderer.h"
+#include "Point.h"
 #include <string>
 
 namespace SDLXX {
@@ -48,6 +49,12 @@ namespace SDLXX {
         void maximize();
 
         void restore();
+
+        Dimensions getDimensions() {
+            int w, h;
+            SDL_GetWindowSize(window, &w, &h);
+            return Dimensions(w, h);
+        }
 /*
         void setWidth(int width) {
 

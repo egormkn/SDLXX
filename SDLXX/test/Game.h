@@ -7,7 +7,6 @@
 #include "../SDLXX_image.h"
 #include "../base/Scene.h"
 #include "../base/Texture.h"
-#include "../physics/Object.h"
 
 #include <Box2D/Box2D.h>
 
@@ -161,7 +160,7 @@ namespace SDLXX {
             };
 
             renderer.setColor(Color(0xFF8888FF));
-            SDL_RenderFillRect(renderer.getSDLRenderer(), &fillRect);
+            renderer.fillRect(&fillRect);
             renderer.render();
         }
 
@@ -171,17 +170,6 @@ namespace SDLXX {
 
         std::unique_ptr<b2World> world;
         b2Body *body = nullptr;
-
-        /*b2Vec2 *gravity = nullptr;
-        b2World *world = nullptr;
-        b2BodyDef *groundBodyDef = nullptr;
-        b2Body* groundBody = nullptr;
-        b2PolygonShape *groundBox = nullptr;
-        b2BodyDef *bodyDef = nullptr;
-        b2Body *body = nullptr;
-        b2PolygonShape *dynamicBox = nullptr;
-        b2FixtureDef *fixtureDef = nullptr;*/
-
 
     };
 }

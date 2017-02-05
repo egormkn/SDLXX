@@ -4,10 +4,11 @@
 #include <fstream>
 #include <SDL_timer.h>
 #include <vector>
+#include <SDLXX/base/Object.h>
+#include <SDLXX/gui/Button.h>
 #include "../SDLXX_image.h"
 #include "../base/Scene.h"
 #include "../base/Texture.h"
-#include "../physics/Object.h"
 #include "Game.h"
 
 namespace SDLXX {
@@ -16,10 +17,17 @@ namespace SDLXX {
 
         Menu(const std::string &title) : Scene(title) {
             Log::log("[" + getTitle() + "] Scene constructed");
+            Button *exitButton = new Button(-100, -25, 200, 50);
+            exitButton->setRelativePosition(50, 50);
+            exitButton->setText("Exit");
+            objects.resize(1);
+            objects[0] = exitButton;
         }
 
         ~Menu() {
             Log::log("[" + getTitle() + "] Scene destructed");
+            delete objects[0];
+            objects.clear();
         }
 
         void onCreate(Window &w) override {
@@ -80,16 +88,17 @@ namespace SDLXX {
                     finish();
                 }
             }
-            if(e.getType() == SDL_WINDOWEVENT) {
-                window->getRenderer().render();
+            if(objects[0]->handleEvent(e)) {
+                if (e.getType() == SDL_MOUSEBUTTONDOWN) {
+                    runIntent(new Game("Game"));
+                }
             }
         }
 
         void update(Uint32 t, Uint32 dt) override {
-            pos += 1;
-            if(pos > 300) {
-                pos = 0;
-            }
+            Dimensions d = window->getDimensions();
+
+            objects[0]->update(t, dt, d);
         }
 
         void render(Renderer &renderer) override {
@@ -105,6 +114,7 @@ namespace SDLXX {
             renderer.render();*/
             SDL_RenderCopy(renderer.getSDLRenderer(), image, NULL, NULL);
             // renderer.renderCopy(Texture(image));
+            objects[0]->render(renderer);
             renderer.render();
         }
 
