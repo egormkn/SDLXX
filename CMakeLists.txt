@@ -53,8 +53,8 @@ set(SOURCE_FILES
     SDLXX/SDLXX.h
     SDLXX/SDLXX_image.cpp
     SDLXX/SDLXX_image.h
-    SDLXX/SDLXX_ttf.cpp
-    SDLXX/SDLXX_ttf.h
+    SDLXX/ttf/SDLXX_ttf.cpp
+    SDLXX/ttf/SDLXX_ttf.h
     SDLXX/SDLXX_net.cpp
     SDLXX/SDLXX_net.h
     SDLXX/SDLXX_mixer.cpp
@@ -85,7 +85,12 @@ set(SOURCE_FILES
     SDLXX/base/Rectangle.h
     SDLXX/base/Point.cpp
     SDLXX/base/Point.h
-    SDLXX/gui/Button.cpp SDLXX/gui/Button.h SDLXX/base/Object.cpp SDLXX/base/Object.h)
+    SDLXX/gui/Button.cpp
+    SDLXX/gui/Button.h
+    SDLXX/base/Object.cpp
+    SDLXX/base/Object.h
+    SDLXX/ttf/Font.cpp
+    SDLXX/ttf/Font.h)
 
 add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})

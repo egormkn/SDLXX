@@ -44,6 +44,14 @@ namespace SDLXX {
 
         static void setMainReady();
 
+        static void setScreensaverEnabled(bool enabled) {
+            if (enabled) {
+                SDL_EnableScreenSaver();
+            } else {
+                SDL_DisableScreenSaver();
+            }
+        }
+
         // static int winRTRunApp(MainFunction mainFunction, void* reserved);
 
     private:

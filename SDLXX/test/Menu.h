@@ -17,16 +17,19 @@ namespace SDLXX {
 
         Menu(const std::string &title) : Scene(title) {
             Log::log("[" + getTitle() + "] Scene constructed");
+
+
             Button *exitButton = new Button(-100, -25, 200, 50);
             exitButton->setRelativePosition(50, 50);
             exitButton->setText("Exit");
-            objects.resize(1);
-            objects[0] = exitButton;
+            objects.push_back(exitButton);
         }
 
         ~Menu() {
             Log::log("[" + getTitle() + "] Scene destructed");
-            delete objects[0];
+            for (std::vector<Object *>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+                delete *it;
+            }
             objects.clear();
         }
 
