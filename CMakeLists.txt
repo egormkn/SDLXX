@@ -90,7 +90,11 @@ set(SOURCE_FILES
     SDLXX/base/Object.cpp
     SDLXX/base/Object.h
     SDLXX/ttf/Font.cpp
-    SDLXX/ttf/Font.h)
+    SDLXX/ttf/Font.h
+    SDLXX/network/tcp/TCPClient.cpp
+    SDLXX/network/tcp/TCPClient.h
+    SDLXX/network/tcp/TCPServer.cpp
+    SDLXX/network/tcp/TCPServer.h)
 
 add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})
@@ -117,6 +121,14 @@ include_directories (${Box2D_SOURCE_DIR})
 
 # Test program
 add_executable(SDLXXtest
+
+    SDLXX/test/Game.cpp
+    SDLXX/test/SceneTest.h
+    SDLXX/test/SceneTest.cpp
+    )
+
+add_executable(SDLXXtest2
+    #SDLXX/network/tcp/main.cpp
     SDLXX/test/main.cpp
     SDLXX/test/Menu.h
     SDLXX/test/Menu.cpp SDLXX/test/Game.cpp SDLXX/test/Game.h)
