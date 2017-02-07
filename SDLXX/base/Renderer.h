@@ -5,6 +5,8 @@
 #include "../Exception.h"
 #include "Color.h"
 #include "../Log.h"
+#include "Texture.h"
+#include "Rectangle.h"
 
 namespace SDLXX {
     class Renderer {
@@ -43,6 +45,24 @@ namespace SDLXX {
 
         void clear() {
             SDL_RenderClear(renderer);
+        }
+
+        void renderCopy(const Texture &texture) {
+            int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), NULL, NULL);
+            if (result < 0) {
+                throw Exception("Failed to render a texture");
+            }
+        }
+
+        void renderCopy(const Texture &texture, const Rectangle &src, const Rectangle &dest) {
+            int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), src.getSDLRectangle(), dest.getSDLRectangle());
+            if (result < 0) {
+                throw Exception("Failed to render a texture");
+            }
+        }
+
+        void fillRect(SDL_Rect *rect) {
+            SDL_RenderFillRect(renderer, rect);
         }
 
     private:

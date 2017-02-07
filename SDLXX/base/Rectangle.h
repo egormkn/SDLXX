@@ -18,12 +18,28 @@ namespace SDLXX {
             delete rectangle;
         }
 
-        SDL_Rect &getSDLRectangle() {
-            return *rectangle;
+        SDL_Rect *getSDLRectangle() const {
+            return rectangle;
+        }
+
+        int getX() const {
+            return rectangle->x;
+        }
+
+        int getY() const {
+            return rectangle->y;
+        }
+
+        int getWidth() const {
+            return rectangle->w;
+        }
+
+        int getHeight() const {
+            return rectangle->h;
         }
 
     private:
-        SDL_Rect *rectangle;
+        SDL_Rect *rectangle = nullptr;
     };
 }
 

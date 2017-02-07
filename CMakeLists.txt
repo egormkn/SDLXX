@@ -53,8 +53,8 @@ set(SOURCE_FILES
     SDLXX/SDLXX.h
     SDLXX/SDLXX_image.cpp
     SDLXX/SDLXX_image.h
-    SDLXX/SDLXX_ttf.cpp
-    SDLXX/SDLXX_ttf.h
+    SDLXX/ttf/SDLXX_ttf.cpp
+    SDLXX/ttf/SDLXX_ttf.h
     SDLXX/SDLXX_net.cpp
     SDLXX/SDLXX_net.h
     SDLXX/SDLXX_mixer.cpp
@@ -83,10 +83,14 @@ set(SOURCE_FILES
     SDLXX/base/Event.h
     SDLXX/base/Rectangle.cpp
     SDLXX/base/Rectangle.h
-    SDLXX/physics/Object.cpp
-    SDLXX/physics/Object.h
     SDLXX/base/Point.cpp
     SDLXX/base/Point.h
+    SDLXX/gui/Button.cpp
+    SDLXX/gui/Button.h
+    SDLXX/base/Object.cpp
+    SDLXX/base/Object.h
+    SDLXX/ttf/Font.cpp
+    SDLXX/ttf/Font.h
     SDLXX/network/tcp/TCPClient.cpp
     SDLXX/network/tcp/TCPClient.h
     SDLXX/network/tcp/TCPServer.cpp
@@ -96,15 +100,42 @@ add_library(SDLXX ${SOURCE_FILES})
 target_compile_definitions(SDLXX PUBLIC ${DEFINES})
 target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
+#option(BOX2D_INSTALL "Install Box2D" ON)
+#option(BOX2D_BUILD_SHARED "Build Box2D shared libraries" ON)
+#option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
+set(BOX2D_VERSION 2.3.2)
+#set(LIB_INSTALL_DIR lib${LIB_SUFFIX})
+
+# The Box2D library.
+add_subdirectory(Box2D)
+
+add_subdirectory(HelloWorld)
+
+
+
+
+
+include_directories (${Box2D_SOURCE_DIR})
+
+
+
 # Test program
 add_executable(SDLXXtest
+
     SDLXX/test/Game.cpp
     SDLXX/test/SceneTest.h
     SDLXX/test/SceneTest.cpp
-    #SDLXX/network/tcp/main.cpp
     )
 
-target_link_libraries(SDLXXtest SDLXX
+add_executable(SDLXXtest2
+    #SDLXX/network/tcp/main.cpp
+    SDLXX/test/main.cpp
+    SDLXX/test/Menu.h
+    SDLXX/test/Menu.cpp SDLXX/test/Game.cpp SDLXX/test/Game.h)
+
+target_link_libraries(SDLXXtest
+    Box2D
+    SDLXX
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_TTF_LIBRARY}
