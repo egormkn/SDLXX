@@ -3,9 +3,7 @@
 
 #include <mutex>
 
-#ifdef SDL2_TTF_FOUND
 #include <SDL_ttf.h>
-#endif
 
 namespace SDLXX {
     class SDL_ttf {
