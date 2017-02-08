@@ -1,9 +1,8 @@
 #ifndef SDLXX_BUTTON_H
 #define SDLXX_BUTTON_H
 
-
-#include <SDLXX/base/Object.h>
-#include <SDLXX/base/Point.h>
+#include "../base/Point.h"
+#include "../base/Object.h"
 
 namespace SDLXX {
     class Button : public Object {

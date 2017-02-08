@@ -1,7 +1,7 @@
 #include "../SDLXX.h"
 #include "../SDLXX_image.h"
 #include "../SDLXX_net.h"
-#include "SDLXX/ttf/SDLXX_ttf.h"
+#include "../ttf/SDLXX_ttf.h"
 #include "../SDLXX_mixer.h"
 #include "../base/Window.h"
 #include "../base/SceneManager.h"

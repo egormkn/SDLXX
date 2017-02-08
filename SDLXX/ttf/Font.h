@@ -1,8 +1,8 @@
 #ifndef SDLXX_FONT_H
 #define SDLXX_FONT_H
 
-#include <SDLXX/Exception.h>
 #include "SDLXX_ttf.h"
+#include "../Exception.h"
 
 namespace SDLXX {
     class Font {

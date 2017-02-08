@@ -4,8 +4,8 @@
 #include <fstream>
 #include <SDL_timer.h>
 #include <vector>
-#include <SDLXX/base/Object.h>
-#include <SDLXX/gui/Button.h>
+#include "../base/Object.h"
+#include "../gui/Button.h"
 #include "../SDLXX_image.h"
 #include "../base/Scene.h"
 #include "../base/Texture.h"
