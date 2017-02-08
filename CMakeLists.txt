@@ -4,14 +4,14 @@ project(SDLXX CXX)
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/SDLXX")
 set(CMAKE_DIR "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_DIR}")
-set(CMAKE_C_FLAGS_RELEASE "-DSDLXX_RELEASE")
-set(CMAKE_CXX_FLAGS_RELEASE "-DSDLXX_RELEASE")
+#set(CMAKE_C_FLAGS_RELEASE "-DSDLXX_RELEASE")
+#set(CMAKE_CXX_FLAGS_RELEASE "-DSDLXX_RELEASE")
 
 include(${CMAKE_DIR}/LibraryPaths.cmake OPTIONAL)
 
 # You can set custom library paths in file /cmake/LibraryPaths.cmake
 # For example:
-# set(SDL2_DIR "C:\\Programs\\SDL2-2.0.4\\i686-w64-mingw32")
+# set(SDL2_DIR "C:\\Programs\\SDL2-2.0.5\\i686-w64-mingw32")
 # set(SDL2_IMAGE_DIR "C:\\Programs\\SDL2_image-2.0.1\\i686-w64-mingw32")
 # set(SDL2_MIXER_DIR "C:\\Programs\\SDL2_mixer-2.0.1\\i686-w64-mingw32")
 # set(SDL2_NET_DIR "C:\\Programs\\SDL2_net-2.0.1\\i686-w64-mingw32")
@@ -96,15 +96,16 @@ set(SOURCE_FILES
     SDLXX/network/tcp/TCPServer.cpp
     SDLXX/network/tcp/TCPServer.h)
 
-add_library(SDLXX ${SOURCE_FILES})
-target_compile_definitions(SDLXX PUBLIC ${DEFINES})
+add_library(SDLXX STATIC ${SOURCE_FILES})
+target_compile_definitions(SDLXX PRIVATE ${DEFINES})
 target_compile_features(SDLXX PRIVATE cxx_noexcept)
 
 set(BOX2D_VERSION 2.3.2)
 add_subdirectory(Box2D/Box2D/Box2D)
-include_directories (${Box2D_SOURCE_DIR})
+include_directories(${Box2D_SOURCE_DIR})
 
-# Test program
+
+# Game
 add_executable(Game
     SDLXX/test/main.cpp
     SDLXX/test/Menu.h

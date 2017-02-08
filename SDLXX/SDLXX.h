@@ -6,10 +6,8 @@
 #include <mutex>
 #include "Log.h"
 
-#ifdef SDL2_FOUND
 #include <SDL.h>
 #include <SDL_video.h>
-#endif
 
 namespace SDLXX {
     class SDL {

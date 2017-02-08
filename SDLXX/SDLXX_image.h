@@ -2,10 +2,7 @@
 #define SDLXX_IMAGE_H
 
 #include <mutex>
-
-#ifdef SDL2_IMAGE_FOUND
 #include <SDL_image.h>
-#endif
 
 namespace SDLXX {
     class SDL_image {

@@ -3,9 +3,7 @@
 
 #include <mutex>
 
-#ifdef SDL2_NET_FOUND
 #include <SDL_net.h>
-#endif
 
 namespace SDLXX {
     class SDL_net {

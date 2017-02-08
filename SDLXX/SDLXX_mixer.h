@@ -3,9 +3,7 @@
 
 #include <mutex>
 
-#ifdef SDL2_MIXER_FOUND
 #include <SDL_mixer.h>
-#endif
 
 namespace SDLXX {
     class SDL_mixer {
