@@ -3,6 +3,8 @@
 
 #include "SDLXX_ttf.h"
 #include "../Exception.h"
+#include "../base/Surface.h"
+#include "../base/Color.h"
 
 namespace SDLXX {
     class Font {
@@ -19,6 +21,10 @@ namespace SDLXX {
             if(font == nullptr) {
                 throw Exception("Failed to load font", TTF_GetError());
             }
+        }
+
+        TTF_Font *getSDLFont() const {
+            return font;
         }
 
         ~Font() {

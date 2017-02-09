@@ -12,6 +12,12 @@ namespace SDLXX {
             absDim.setPoint(width, height);
         }
 
+        ~Button() {
+            if (textTexture != nullptr) {
+                delete textTexture;
+            }
+        }
+
         void setRelativePosition(int x, int y) {
             relPos.setPoint(x, y);
         }
@@ -48,9 +54,6 @@ namespace SDLXX {
                         inside = false;
                     }
                     mouseOver = inside;
-                    if (e.getType() == SDL_MOUSEBUTTONDOWN) {
-                        Log::log(std::to_string(windowDim.getX()));
-                    }
                     return inside;
                 default:
                     return false;
@@ -62,6 +65,8 @@ namespace SDLXX {
         }
 
         void render(Renderer &renderer) override {
+            int w = (int) (relDim.getX() * windowDim.getX() / 100.0f) + absDim.getX();
+            int h = (int) (relDim.getY() * windowDim.getY() / 100.0f) + absDim.getY();
             SDL_Rect fillRect = {
                     (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX(),
                     (int) (relPos.getY() * windowDim.getY() / 100.0f) + absPos.getY(),
@@ -71,19 +76,33 @@ namespace SDLXX {
 
             renderer.setColor(mouseOver ? Color(0xFF8888FF) : Color(0xCCCCCCFF));
             renderer.fillRect(&fillRect);
+
+            SDL_Rect fillRect2 = {
+                    (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX() + (w - textTexture->getWidth()) / 2,
+                    (int) (relPos.getY() * windowDim.getY() / 100.0f) + absPos.getY() + (h - textTexture->getHeight()) / 2,
+                    textTexture->getWidth(),
+                    textTexture->getHeight()
+
+            };
+
+            renderer.renderCopy(*textTexture, NULL, &fillRect2);
         }
 
-        void setText(const std::string &text) {
+        void setText(const std::string &text, SDL_Renderer *renderer) {
             Button::text = text;
+            if (textTexture != nullptr) {
+                delete textTexture;
+            }
+            textTexture = new Texture(text, Color(), Font("resources/OpenSans.ttf", 16), renderer);
         }
 
     private:
         std::string text;
         Point absPos, relPos;
         Dimensions absDim, relDim, windowDim;
-
+        Texture *textTexture = nullptr;
         bool mouseOver = false;
     };
 }
 
-#endif //SDLXX_BUTTON_H
+#endif // SDLXX_BUTTON_H

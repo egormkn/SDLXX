@@ -29,7 +29,7 @@ int main(int argc, char *args[]) {
         renderer.setColor(Color(0xFFFFFFFF));
 
         SceneManager manager(window);
-        manager.push(new Menu("MENU"));
+        manager.push(new Menu("MENU", window));
         manager.run();
 
     } catch (std::exception &e) {

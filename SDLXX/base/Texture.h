@@ -4,135 +4,70 @@
 #include <string>
 #include <SDL_render.h>
 #include <SDL_image.h>
+#include "../ttf/Font.h"
 
 namespace SDLXX {
     class Texture {
     public:
-        // Initializes variables
-        Texture() {
-            //Initialize
-            texture = nullptr;
-            width = 0;
-            height = 0;
-        }
-
         Texture(SDL_Texture *t) {
-            //Initialize
             texture = t;
-            width = 0;
-            height = 0;
+            SDL_QueryTexture(t, &format, &access, &width, &height);
         }
 
-
-        // Deallocates memory
-        ~Texture() {
-            //Deallocate
-            free();
-        }
-
-        //Loads image at specified path
-        bool loadFromFile(SDL_Renderer *renderer, std::string path) {
-            //Get rid of preexisting texture
-            free();
-
-            //The final texture
-            SDL_Texture *newTexture = nullptr;
-
-            //Load image at specified path
-            SDL_Surface *loadedSurface = IMG_Load(path.c_str());
-            if(loadedSurface == nullptr) {
-                printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-            } else {
-                //Color key image
-                SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-
-                //Create texture from surface pixels
-                newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-                if(newTexture == nullptr) {
-                    printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-                } else {
-                    //Get image dimensions
-                    width = loadedSurface->w;
-                    height = loadedSurface->h;
-                }
-
-                //Get rid of old loaded surface
-                SDL_FreeSurface(loadedSurface);
+        Texture(const std::string &path, SDL_Renderer *renderer) {
+            SDL_Surface *surface = IMG_Load(path.c_str());
+            if(surface == nullptr) {
+                throw Exception("Unable to load image", IMG_GetError());
             }
-
-            //Return success
-            texture = newTexture;
-            return texture != nullptr;
+            SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0xFF)); // FIXME: For what?
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            if(texture == nullptr) {
+                throw Exception("Unable to create texture", SDL_GetError());
+            }
+            width = surface->w;
+            height = surface->h;
+            SDL_FreeSurface(surface);
         }
 
-#ifdef _SDL_TTF_H
-        /*//Creates image from font string
-        bool loadFromRenderedText(std::string textureText, SDL_Color textColor) {
-    //Get rid of preexisting texture
-    free();
-
-    //Render text surface
-    SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
-    if( textSurface != nullptr )
-    {
-        //Create texture from surface pixels
-        mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-        if( mTexture == nullptr )
-        {
-            printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
-        }
-        else
-        {
-            //Get image dimensions
-            mWidth = textSurface->w;
-            mHeight = textSurface->h;
+        Texture(const std::string &text, const Color &color, const Font &font, SDL_Renderer *renderer) {
+            SDL_Surface *surface = TTF_RenderText_Solid(font.getSDLFont(), text.c_str(), *color.getSDLColor());
+            if(surface == nullptr) {
+                throw Exception("Unable to load image", IMG_GetError());
+            }
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            if(texture == nullptr) {
+                throw Exception("Unable to create texture", SDL_GetError());
+            }
+            width = surface->w;
+            height = surface->h;
+            SDL_FreeSurface(surface);
         }
 
-        //Get rid of old surface
-        SDL_FreeSurface( textSurface );
-    }
-    else
-    {
-        printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
-    }
-
-
-    //Return success
-    return mTexture != nullptr;
-}*/
-#endif
-
-        //Deallocates texture
-        void free() {
-            //Free texture if it exists
+        ~Texture() {
             if(texture != nullptr) {
                 SDL_DestroyTexture(texture);
                 texture = nullptr;
                 width = 0;
                 height = 0;
+                access = SDL_TEXTUREACCESS_STATIC;
+                format = SDL_PIXELFORMAT_UNKNOWN;
             }
         }
 
-        //Set color modulation
         void setColor(Uint8 red, Uint8 green, Uint8 blue) {
-            //Modulate texture rgb
             SDL_SetTextureColorMod(texture, red, green, blue);
         }
 
-        //Set blending
         void setBlendMode(SDL_BlendMode blending) {
-            //Set blending function
             SDL_SetTextureBlendMode(texture, blending);
         }
 
-        //Set alpha modulation
         void setAlpha(Uint8 alpha) {
-            //Modulate texture alpha
             SDL_SetTextureAlphaMod(texture, alpha);
         }
 
         //Renders texture at given point
-        void render(SDL_Renderer *renderer, int x, int y, SDL_Rect *clip = nullptr, double angle = 0.0,
+        void render(SDL_Renderer *renderer, int x = 0, int y = 0, SDL_Rect *clip = nullptr, double angle = 0.0,
                     SDL_Point *center = nullptr,
                     SDL_RendererFlip flip = SDL_FLIP_NONE) {
             //Set rendering space and render to screen
@@ -148,12 +83,11 @@ namespace SDLXX {
             SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, angle, center, flip);
         }
 
-        //Gets image dimensions
-        int getWidth() {
+        int getWidth() const {
             return width;
         }
 
-        int getHeight() {
+        int getHeight() const {
             return height;
         }
 
@@ -162,10 +96,11 @@ namespace SDLXX {
         }
 
     private:
-        SDL_Texture *texture;
-
-        int width;
-        int height;
+        SDL_Texture *texture = nullptr;
+        int width = 0;
+        int height = 0;
+        int access = SDL_TEXTUREACCESS_STATIC;
+        Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
     };
 }
 

@@ -15,14 +15,19 @@ namespace SDLXX {
     class Menu : public Scene {
     public:
 
-        Menu(const std::string &title) : Scene(title) {
+        Menu(const std::string &title, Window &w) : Scene(title) {
             Log::log("[" + getTitle() + "] Scene constructed");
 
 
-            Button *exitButton = new Button(-100, -25, 200, 50);
+            Button *runButton = new Button(-100, -25, 200, 50);
+            runButton->setRelativePosition(50, 50);
+            runButton->setText("Run", w.getSDLRenderer());
+            objects.push_back((Object *&&) runButton);
+
+            Button *exitButton = new Button(-100, 35, 200, 50);
             exitButton->setRelativePosition(50, 50);
-            exitButton->setText("Exit");
-            objects.push_back(exitButton);
+            exitButton->setText("Exit", w.getSDLRenderer());
+            objects.push_back((Object *&&) exitButton);
         }
 
         ~Menu() {
@@ -42,32 +47,14 @@ namespace SDLXX {
             // After: setInitialized(true);
 
 
-
             std::string path = "resources/background.jpg";
 
-            //Load image at specified path
-            SDL_Surface *loadedSurface = IMG_Load(path.c_str());
-            if(loadedSurface == nullptr) {
-                printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-            } else {
-                //Create texture from surface pixels
-                image = SDL_CreateTextureFromSurface(w.getSDLRenderer(), loadedSurface);
-                if(image == nullptr) {
-                    printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-                }
-
-                //Get rid of old loaded surface
-                SDL_FreeSurface(loadedSurface);
-            }
-
-
+            image2 = new Texture(path, w.getSDLRenderer());
         }
 
         void onDestroy() override {
             Log::log("[" + getTitle() + "] Scene destroyed");
-            // Free resources
-            SDL_DestroyTexture(image);
-            image = nullptr;
+            delete image2;
         }
 
         void onPause() override {
@@ -96,12 +83,18 @@ namespace SDLXX {
                     runIntent(new Game("Game"));
                 }
             }
+            if(objects[1]->handleEvent(e)) {
+                if (e.getType() == SDL_MOUSEBUTTONDOWN) {
+                    finish();
+                }
+            }
         }
 
         void update(Uint32 t, Uint32 dt) override {
             Dimensions d = window->getDimensions();
 
             objects[0]->update(t, dt, d);
+            objects[1]->update(t, dt, d);
         }
 
         void render(Renderer &renderer) override {
@@ -115,9 +108,11 @@ namespace SDLXX {
             renderer.setColor(Color(0xFF8888FF));
             SDL_RenderFillRect(renderer.getSDLRenderer(), &fillRect);
             renderer.render();*/
-            SDL_RenderCopy(renderer.getSDLRenderer(), image, NULL, NULL);
+            //SDL_RenderCopy(renderer.getSDLRenderer(), image, NULL, NULL);
+            image2->render(renderer.getSDLRenderer());
             // renderer.renderCopy(Texture(image));
             objects[0]->render(renderer);
+            objects[1]->render(renderer);
             renderer.render();
         }
 
@@ -125,7 +120,7 @@ namespace SDLXX {
         int pos = 0;
         bool loaded = false;
         std::vector<Object *> objects;
-        SDL_Texture *image = nullptr;
+        Texture *image2 = nullptr;
         Window *window = nullptr;
     };
 }

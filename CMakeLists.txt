@@ -94,7 +94,7 @@ set(SOURCE_FILES
     SDLXX/network/tcp/TCPClient.cpp
     SDLXX/network/tcp/TCPClient.h
     SDLXX/network/tcp/TCPServer.cpp
-    SDLXX/network/tcp/TCPServer.h)
+    SDLXX/network/tcp/TCPServer.h SDLXX/base/Surface.cpp SDLXX/base/Surface.h)
 
 add_library(SDLXX STATIC ${SOURCE_FILES})
 target_compile_definitions(SDLXX PRIVATE ${DEFINES})
