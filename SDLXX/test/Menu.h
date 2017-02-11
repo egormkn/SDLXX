@@ -19,14 +19,16 @@ namespace SDLXX {
             Log::log("[" + getTitle() + "] Scene constructed");
 
 
-            Button *runButton = new Button(-100, -25, 200, 50);
-            runButton->setRelativePosition(50, 50);
-            runButton->setText("Run", w.getSDLRenderer());
+            Button *runButton = new Button(-150, -25, 100, 50);
+            runButton->setRelativePosition(80, 50);
+            runButton->setRelativeSize(20, 0);
+            runButton->setText("Новая игра", w.getSDLRenderer());
             objects.push_back((Object *&&) runButton);
 
-            Button *exitButton = new Button(-100, 35, 200, 50);
-            exitButton->setRelativePosition(50, 50);
-            exitButton->setText("Exit", w.getSDLRenderer());
+            Button *exitButton = new Button(-150, 35, 100, 50);
+            exitButton->setRelativePosition(80, 50);
+            exitButton->setRelativeSize(20, 0);
+            exitButton->setText("Выход", w.getSDLRenderer());
             objects.push_back((Object *&&) exitButton);
         }
 
@@ -47,7 +49,7 @@ namespace SDLXX {
             // After: setInitialized(true);
 
 
-            std::string path = "resources/background.jpg";
+            std::string path = "resources/menu.png";
 
             image2 = new Texture(path, w.getSDLRenderer());
         }

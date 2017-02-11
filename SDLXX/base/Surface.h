@@ -15,8 +15,16 @@ namespace SDLXX {
             surface = nullptr;
         }
 
-        SDL_Surface *getSDLSurface() {
+        SDL_Surface *getSDLSurface() const {
             return surface;
+        }
+
+        int getWidth() const {
+            return surface->w;
+        }
+
+        int getHeight() const {
+            return surface->h;
         }
 
     private:
@@ -24,4 +32,4 @@ namespace SDLXX {
     };
 }
 
-#endif //SDLXX_SURFACE_H
+#endif // SDLXX_SURFACE_H

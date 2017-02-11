@@ -66,12 +66,12 @@ namespace SDLXX {
         /// Inverts whole color or individial components.
         void invert(bool R = true, bool G = true, bool B = true);
 
-        SDL_Color *getSDLColor() const {
-            SDL_Color *color = new SDL_Color;
-            color->r = red;
-            color->g = green;
-            color->b = blue;
-            color->a = alpha;
+        SDL_Color getSDLColor() const {
+            SDL_Color color;
+            color.r = red;
+            color.g = green;
+            color.b = blue;
+            color.a = alpha;
             return color;
         }
 

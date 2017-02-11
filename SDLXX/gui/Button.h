@@ -22,6 +22,10 @@ namespace SDLXX {
             relPos.setPoint(x, y);
         }
 
+        void setRelativeSize(int x, int y) {
+            relDim.setPoint(x, y);
+        }
+
         bool handleEvent(Event &e) override {
             SDL_Rect fillRect = {
                     (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX(),

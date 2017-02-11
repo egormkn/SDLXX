@@ -30,17 +30,13 @@ namespace SDLXX {
         }
 
         Texture(const std::string &text, const Color &color, const Font &font, SDL_Renderer *renderer) {
-            SDL_Surface *surface = TTF_RenderText_Solid(font.getSDLFont(), text.c_str(), *color.getSDLColor());
-            if(surface == nullptr) {
-                throw Exception("Unable to load image", IMG_GetError());
-            }
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            Surface surface = font.render(text, TTF_MODE_BLENDED, color);
+            texture = SDL_CreateTextureFromSurface(renderer, surface.getSDLSurface());
             if(texture == nullptr) {
                 throw Exception("Unable to create texture", SDL_GetError());
             }
-            width = surface->w;
-            height = surface->h;
-            SDL_FreeSurface(surface);
+            width = surface.getWidth();
+            height = surface.getHeight();
         }
 
         ~Texture() {
