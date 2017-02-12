@@ -18,7 +18,6 @@ namespace SDLXX {
         Menu(const std::string &title, Window &w) : Scene(title) {
             Log::log("[" + getTitle() + "] Scene constructed");
 
-
             Button *runButton = new Button(-150, -25, 100, 50);
             runButton->setRelativePosition(80, 50);
             runButton->setRelativeSize(20, 0);
@@ -34,7 +33,7 @@ namespace SDLXX {
 
         ~Menu() {
             Log::log("[" + getTitle() + "] Scene destructed");
-            for (std::vector<Object *>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+            for (std::vector<Object *>::iterator it = objects.begin(); it != objects.end(); ++it) {
                 delete *it;
             }
             objects.clear();
@@ -42,16 +41,8 @@ namespace SDLXX {
 
         void onCreate(Window &w) override {
             Log::log("[" + getTitle() + "] Scene created");
-
-
             window = &w;
-            // Init resources
-            // After: setInitialized(true);
-
-
-            std::string path = "resources/menu.png";
-
-            image2 = new Texture(path, w.getSDLRenderer());
+            image2 = new Texture("resources/menu.png", w.getSDLRenderer());
         }
 
         void onDestroy() override {
@@ -70,49 +61,22 @@ namespace SDLXX {
         }
 
         void handleEvent(Event &e) override {
-            if(e.getType() == SDL_KEYDOWN) {
-                if(e.getEvent().key.keysym.sym == SDLK_UP) {
-                    Log::log("[" + getTitle() + "] UP");
-                    runIntent(new Game("Game"));
-                    // finish();
-                    // My changes
-                } else {
-                    finish();
-                }
+            if(objects[0]->handleEvent(e) && e.getType() == SDL_MOUSEBUTTONDOWN) {
+                runIntent(new Game("Game"));
             }
-            if(objects[0]->handleEvent(e)) {
-                if (e.getType() == SDL_MOUSEBUTTONDOWN) {
-                    runIntent(new Game("Game"));
-                }
-            }
-            if(objects[1]->handleEvent(e)) {
-                if (e.getType() == SDL_MOUSEBUTTONDOWN) {
-                    finish();
-                }
+            if(objects[1]->handleEvent(e) && e.getType() == SDL_MOUSEBUTTONDOWN) {
+                finish();
             }
         }
 
         void update(Uint32 t, Uint32 dt) override {
             Dimensions d = window->getDimensions();
-
             objects[0]->update(t, dt, d);
             objects[1]->update(t, dt, d);
         }
 
         void render(Renderer &renderer) override {
-            /*renderer.setColor(Color(0xFFFFFFFF));
-            renderer.clear();
-
-            SDL_Rect fillRect = {
-                    pos, 10, 100, 100
-            };
-
-            renderer.setColor(Color(0xFF8888FF));
-            SDL_RenderFillRect(renderer.getSDLRenderer(), &fillRect);
-            renderer.render();*/
-            //SDL_RenderCopy(renderer.getSDLRenderer(), image, NULL, NULL);
             image2->render(renderer.getSDLRenderer());
-            // renderer.renderCopy(Texture(image));
             objects[0]->render(renderer);
             objects[1]->render(renderer);
             renderer.render();

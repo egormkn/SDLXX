@@ -23,7 +23,7 @@ int main(int argc, char *args[]) {
         sdl.printDebugInfo();
 #endif
 
-        Window window("The Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480,
+        Window window("The Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600,
                       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
         Renderer renderer = window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         renderer.setColor(Color(0xFFFFFFFF));

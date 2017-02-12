@@ -112,7 +112,7 @@ add_executable(Game
     SDLXX/test/Menu.h
     SDLXX/test/Menu.cpp
     SDLXX/test/Game.cpp
-    SDLXX/test/Game.h)
+    SDLXX/test/Game.h SDLXX/test/Box2DDrawer.cpp SDLXX/test/Box2DDrawer.h)
 
 target_link_libraries(Game
     Box2D
