@@ -104,7 +104,6 @@ add_library(TMX STATIC
     SDLXX/tmx/TMX_Utils.h
     SDLXX/tmx/TMX_map.cpp
     SDLXX/tmx/TMX_map.h
-    SDLXX/tmx/testTiny.cpp
     SDLXX/tmx/TMX_tileset.cpp
     SDLXX/tmx/TMX_tileset.h
     SDLXX/tmx/TMX_offset.cpp

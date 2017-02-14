@@ -35,4 +35,4 @@
 .idea/
 
 # SDL settings
-cmake/LibraryPaths.cmake
+cmake\LibraryPaths.cmake

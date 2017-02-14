@@ -23,5 +23,5 @@ void TMX_layer::init(const tinyxml2::XMLElement *element) {
     offsetsx = TMX_Utils::getAttributeInt(element, "offsetsx");
     offsety = TMX_Utils::getAttributeInt(element, "offsety");
 
-    tmx_data.init(element->FirstChildElement("data"));
+    tmx_data.init(element->FirstChildElement("data"), height, width);
 }

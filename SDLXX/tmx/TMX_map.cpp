@@ -20,8 +20,15 @@ TMX_map::TMX_map() {
     nextObjectID = TMX_Utils::DEFAULT_INT;
 }
 
-void TMX_map::init(const tinyxml2::XMLElement *map_) {
-    map = map_;
+bool TMX_map::init(const std::string fileDir) {
+    tinyxml2::XMLDocument document;
+    tinyxml2::XMLError result = document.LoadFile(fileDir.c_str());
+    if (result != tinyxml2::XML_SUCCESS) {
+        SDLXX::Log::error("[TMX_map] Can't open file");
+        return false;
+    }
+
+    map =  document.FirstChildElement("map");
     version = TMX_Utils::getAttributeDouble(map, "version");
     orientation = TMX_Utils::getOrientation(map);
     renderOrder = TMX_Utils::getRenderOrder(map);

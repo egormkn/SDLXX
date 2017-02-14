@@ -3,11 +3,10 @@
 TMX_data::TMX_data() {
     encoding = TMX::Encoding::UNKNOWN;
     compression = TMX::Compression::UNKNOWN;
-    data = NULL;
 }
 
-void TMX_data::init(const tinyxml2::XMLElement *element) {
+void TMX_data::init(const tinyxml2::XMLElement *element, int height, int width) {
     encoding = TMX_Utils::getEncoding(element);
     compression = TMX_Utils::getCompression(element);
-    data = element->GetText();
+    data = TMX_Utils::parseMatrix(width, height, element->GetText());
 }

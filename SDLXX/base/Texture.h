@@ -71,7 +71,7 @@ namespace SDLXX {
         }
 
         //Renders texture at given point
-        void render(SDL_Renderer *renderer, int x = 0, int y = 0, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
+        void render(SDL_Renderer *renderer, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
                     SDL_Point *center = nullptr,
                     SDL_RendererFlip flip = SDL_FLIP_NONE) {
             //Set rendering space and render to screen

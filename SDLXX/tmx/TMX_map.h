@@ -7,6 +7,7 @@
 #include "TMX_Utils.h"
 #include "TMX_layer.h"
 #include <vector>
+#include "../Log.h"
 
 class TMX_map {
 private:
@@ -31,7 +32,7 @@ public:
 
     TMX_map();
 
-    void init(const tinyxml2::XMLElement *map_);
+    bool init(const std::string fileDir);
 
     /*void show() {
         std::cout << "version: " << version << '\n';
