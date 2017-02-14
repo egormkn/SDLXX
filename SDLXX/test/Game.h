@@ -222,6 +222,7 @@ public:
                                (int) ((pos.y + local_vec.y) * SCALE - camera.y), height,
                                width};
 
+
         SDL_Point point = {(int) (shape->m_vertices[2].x * SCALE), (int) (shape->m_vertices[2].y * SCALE)};
         image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG, &point);
     }
