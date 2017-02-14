@@ -85,16 +85,38 @@ set(SOURCE_FILES
     SDLXX/base/Rectangle.h
     SDLXX/base/Point.cpp
     SDLXX/base/Point.h
-    SDLXX/gui/Button.cpp
-    SDLXX/gui/Button.h
+    SDLXX/base/Surface.cpp 
+    SDLXX/base/Surface.h
     SDLXX/base/Object.cpp
     SDLXX/base/Object.h
     SDLXX/ttf/Font.cpp
     SDLXX/ttf/Font.h
+    SDLXX/gui/Button.cpp
+    SDLXX/gui/Button.h
     SDLXX/network/tcp/TCPClient.cpp
     SDLXX/network/tcp/TCPClient.h
     SDLXX/network/tcp/TCPServer.cpp
-    SDLXX/network/tcp/TCPServer.h SDLXX/base/Surface.cpp SDLXX/base/Surface.h)
+    SDLXX/network/tcp/TCPServer.h)
+
+
+add_library(TMX STATIC 
+    SDLXX/tmx/TMX_Utils.cpp
+    SDLXX/tmx/TMX_Utils.h
+    SDLXX/tmx/TMX_map.cpp
+    SDLXX/tmx/TMX_map.h
+    SDLXX/tmx/testTiny.cpp
+    SDLXX/tmx/TMX_tileset.cpp
+    SDLXX/tmx/TMX_tileset.h
+    SDLXX/tmx/TMX_offset.cpp
+    SDLXX/tmx/TMX_offset.h
+    SDLXX/tmx/TMX_image.cpp
+    SDLXX/tmx/TMX_image.h
+    SDLXX/tmx/TMX_layer.cpp
+    SDLXX/tmx/TMX_layer.h
+    SDLXX/tmx/TMX_data.cpp
+    SDLXX/tmx/TMX_data.h
+    tinyxml2/tinyxml2.cpp
+    tinyxml2/tinyxml2.h)
 
 add_library(SDLXX STATIC ${SOURCE_FILES})
 target_compile_definitions(SDLXX PRIVATE ${DEFINES})
@@ -117,6 +139,7 @@ add_executable(Game
 target_link_libraries(Game
     Box2D
     SDLXX
+    TMX
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_TTF_LIBRARY}
