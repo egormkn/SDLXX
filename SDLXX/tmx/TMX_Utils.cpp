@@ -161,3 +161,22 @@ std::string TMX_Utils::getAttributeString(const tinyxml2::XMLElement *element, c
     }
     return "";
 }
+
+//parsing matrix string
+
+std::vector<std::vector<int>> TMX_Utils::parseMatrix(int width, int height, const char *data) {
+    std::vector<std::vector<int>> matrix(height, std::vector<int>(width));
+    std::string number;
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            while (!isdigit((int) *data)) ++data;
+            while (isdigit((int) *data)) {
+                number.append(1, *data);
+                ++data;
+            }
+            matrix[i][j] = atoi(number.c_str());
+            number.clear();
+        }
+    }
+    return matrix;
+}

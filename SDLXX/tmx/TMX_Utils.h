@@ -3,6 +3,7 @@
 
 #include "../../tinyxml2/tinyxml2.h"
 #include <string>
+#include <vector>
 
 namespace TMX {
     //enum classes for map attributes
@@ -78,6 +79,10 @@ public:
     static int getAttributeInt(const tinyxml2::XMLElement *element, const char *name);
 
     static std::string getAttributeString(const tinyxml2::XMLElement *element, const char *name);
+
+    //parsing matrix string
+
+    static std::vector<std::vector<int>> parseMatrix(int width, int height, const char *data);
 };
 
 
