@@ -33,3 +33,6 @@
 
 # IntelliJ CLion files
 .idea/
+
+# SDL settings
+cmake/LibraryPaths.cmake
