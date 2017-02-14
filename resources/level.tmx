@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="49" height="25" tilewidth="70" tileheight="70" nextobjectid="7">
  <tileset firstgid="1" name="Industrial" tilewidth="70" tileheight="70" tilecount="112" columns="14">
-  <image source="platformerPack_industrial_tilesheet.png" width="980" height="560"/>
+  <tmx_image source="platformerPack_industrial_tilesheet.png" width="980" height="560"/>
  </tileset>
  <layer name="Blocks" width="49" height="25">
   <data encoding="csv">

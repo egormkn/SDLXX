@@ -6,6 +6,9 @@ TMX_offset::TMX_offset() {
 }
 
 void TMX_offset::init(const tinyxml2::XMLElement *element) {
+    if (element == nullptr) {
+        return;
+    }
     x = TMX_Utils::getAttributeInt(element, "x");
     y = TMX_Utils::getAttributeInt(element, "y");
 }

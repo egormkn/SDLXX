@@ -13,6 +13,9 @@ TMX_layer::TMX_layer() {
 }
 
 void TMX_layer::init(const tinyxml2::XMLElement *element) {
+    if (element == nullptr) {
+        return;
+    }
     name = TMX_Utils::getAttributeString(element, "name");
     x = TMX_Utils::getAttributeInt(element, "x");
     y = TMX_Utils::getAttributeInt(element, "y");
@@ -23,5 +26,5 @@ void TMX_layer::init(const tinyxml2::XMLElement *element) {
     offsetsx = TMX_Utils::getAttributeInt(element, "offsetsx");
     offsety = TMX_Utils::getAttributeInt(element, "offsety");
 
-    tmx_data.init(element->FirstChildElement("data"));
+    tmx_data.init(element->FirstChildElement("data"), height, width);
 }

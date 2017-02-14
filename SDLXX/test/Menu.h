@@ -42,7 +42,8 @@ namespace SDLXX {
         void onCreate(Window &w) override {
             Log::log("[" + getTitle() + "] Scene created");
             window = &w;
-            image2 = new Texture("resources/menu.png", w.getSDLRenderer());
+            //TODO: change image2 size
+            image2 = new Texture("resources/menu.png", w.getSDLRenderer(), 30, 30);
         }
 
         void onDestroy() override {

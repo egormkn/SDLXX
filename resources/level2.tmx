@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="16" tilewidth="256" tileheight="256" nextobjectid="37">
  <tileset firstgid="1" name="tiles" tilewidth="256" tileheight="256" tilecount="40" columns="8">
-  <image source="level/tiles.png" width="2048" height="1280"/>
+  <image source="resources/level/tiles.png" width="2048" height="1280"/>
   <terraintypes>
    <terrain name="Blocks" tile="-1"/>
   </terraintypes>
@@ -36,31 +36,31 @@
  </tileset>
  <tileset firstgid="41" name="objects" tilewidth="357" tileheight="464" tilecount="9" columns="0">
   <tile id="0">
-   <image width="177" height="238" source="Downloads/Level/Objects/Barrel (1).png"/>
+   <image width="177" height="238" source="resources/Downloads/Level/Objects/Barrel (1).png"/>
   </tile>
   <tile id="1">
-   <image width="177" height="238" source="Downloads/Level/Objects/Barrel (2).png"/>
+   <image width="177" height="238" source="resources/Downloads/Level/Objects/Barrel (2).png"/>
   </tile>
   <tile id="2">
-   <image width="256" height="256" source="Downloads/Level/Objects/Box.png"/>
+   <image width="256" height="256" source="resources/Downloads/Level/Objects/Box.png"/>
   </tile>
   <tile id="3">
-   <image width="280" height="464" source="Downloads/Level/Objects/DoorLocked.png"/>
+   <image width="280" height="464" source="resources/Downloads/Level/Objects/DoorLocked.png"/>
   </tile>
   <tile id="4">
-   <image width="280" height="464" source="Downloads/Level/Objects/DoorOpen.png"/>
+   <image width="280" height="464" source="resources/Downloads/Level/Objects/DoorOpen.png"/>
   </tile>
   <tile id="5">
-   <image width="281" height="464" source="Downloads/Level/Objects/DoorUnlocked.png"/>
+   <image width="281" height="464" source="resources/Downloads/Level/Objects/DoorUnlocked.png"/>
   </tile>
   <tile id="6">
-   <image width="357" height="361" source="Downloads/Level/Objects/Saw.png"/>
+   <image width="357" height="361" source="resources/Downloads/Level/Objects/Saw.png"/>
   </tile>
   <tile id="7">
-   <image width="72" height="257" source="Downloads/Level/Objects/Switch (1).png"/>
+   <image width="72" height="257" source="resources/Downloads/Level/Objects/Switch (1).png"/>
   </tile>
   <tile id="8">
-   <image width="72" height="257" source="Downloads/Level/Objects/Switch (2).png"/>
+   <image width="72" height="257" source="resources/Downloads/Level/Objects/Switch (2).png"/>
   </tile>
  </tileset>
  <layer name="Background" width="30" height="16">

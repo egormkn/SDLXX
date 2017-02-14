@@ -14,17 +14,18 @@ namespace SDLXX {
             SDL_QueryTexture(t, &format, &access, &width, &height);
         }
 
-        Texture(const std::string &path, SDL_Renderer *renderer) {
+        Texture(const std::string &path, SDL_Renderer *renderer, int w, int h) {
             SDL_Surface *surface = IMG_Load(path.c_str());
             if(surface == nullptr) {
-                throw Exception("Unable to load image", IMG_GetError());
+                throw Exception("Unable to load tmx_image", IMG_GetError());
             }
             SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0xFF)); // FIXME: For what?
             SDL_Rect stretchRect;
             stretchRect.x = 0;
             stretchRect.y = 0;
-            stretchRect.w = 30;
-            stretchRect.h = 30;
+            stretchRect.w = w;
+            stretchRect.h = h;
+            //FIXME: chack size of surface aster bliting
             SDL_BlitScaled( surface, NULL, surface, &stretchRect );
 
 
@@ -71,7 +72,7 @@ namespace SDLXX {
         }
 
         //Renders texture at given point
-        void render(SDL_Renderer *renderer, int x = 0, int y = 0, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
+        void render(SDL_Renderer *renderer, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
                     SDL_Point *center = nullptr,
                     SDL_RendererFlip flip = SDL_FLIP_NONE) {
             //Set rendering space and render to screen

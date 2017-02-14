@@ -20,8 +20,15 @@ TMX_map::TMX_map() {
     nextObjectID = TMX_Utils::DEFAULT_INT;
 }
 
-void TMX_map::init(const tinyxml2::XMLElement *map_) {
-    map = map_;
+bool TMX_map::init(const std::string fileDir) {
+    tinyxml2::XMLDocument document;
+    tinyxml2::XMLError result = document.LoadFile(fileDir.c_str());
+    if (result != tinyxml2::XML_SUCCESS) {
+        SDLXX::Log::error("[TMX_map] Can't open file");
+        return false;
+    }
+
+    map =  document.FirstChildElement("map");
     version = TMX_Utils::getAttributeDouble(map, "version");
     orientation = TMX_Utils::getOrientation(map);
     renderOrder = TMX_Utils::getRenderOrder(map);
@@ -35,7 +42,12 @@ void TMX_map::init(const tinyxml2::XMLElement *map_) {
     backgroundColor = TMX_Utils::getAttributeString(map, "backgroundcolor");
     nextObjectID = TMX_Utils::getAttributeInt(map, "nextobjectid");
 
-    tmx_tileset.init(map->FirstChildElement("tileset"));
+    for (const tinyxml2::XMLElement *e = map->FirstChildElement("tileset");
+         e != NULL; e = e->NextSiblingElement("tileset")) {
+        TMX_tileset tmxTileset;
+        tmxTileset.init(e);
+        tmx_tilesets.push_back(tmxTileset);
+    }
 
     for (const tinyxml2::XMLElement *e = map->FirstChildElement("layer");
          e != NULL; e = e->NextSiblingElement("layer")) {

@@ -5,6 +5,8 @@
 #include "../../tinyxml2/tinyxml2.h"
 #include "TMX_Utils.h"
 #include "TMX_image.h"
+#include "TMX_tile.h"
+#include <vector>
 
 class TMX_tileset {
 public:
@@ -19,6 +21,7 @@ public:
     int columns;
 
     TMX_image tmx_image;
+    std::vector<TMX_tile> tiles;
 
     TMX_tileset();
 

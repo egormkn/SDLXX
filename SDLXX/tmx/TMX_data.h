@@ -4,16 +4,17 @@
 #include "../../tinyxml2/tinyxml2.h"
 #include "TMX_Utils.h"
 #include <string>
+#include <vector>
 
 class TMX_data {
 public:
     TMX::Encoding encoding;
     TMX::Compression compression;
-    const char *data;
+    std::vector<std::vector<int>> data;
 
     TMX_data();
 
-    void init(const tinyxml2::XMLElement *element);
+    void init(const tinyxml2::XMLElement *element, int height, int width);
 };
 
 
