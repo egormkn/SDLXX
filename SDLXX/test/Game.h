@@ -63,6 +63,20 @@ public:
         body->CreateFixture(&dynamicBox, 2);
         body->SetUserData(&boxName);
 
+
+
+        /* Circle */
+        b2CircleShape circleShape;
+        circleShape.m_radius = 100/SCALE;
+        b2BodyDef bodyDef2;
+        bodyDef2.type = b2_dynamicBody;
+        bodyDef2.position.Set(400/SCALE, 100/SCALE);
+        b2Body *circleBody = world->CreateBody(&bodyDef2);
+
+        circleBody->CreateFixture(&circleShape, 2);
+
+
+
         image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getSDLRenderer());
     }
 
@@ -141,7 +155,14 @@ public:
             if (it->GetUserData() == &boxName) {
                 b2Vec2 pos = it->GetPosition();
                 float  angle = it->GetAngle();
-                image->render(renderer.getSDLRenderer(), (int) (pos.x * SCALE), (int) (pos.y * SCALE), nullptr, angle * DEG);
+                SDL_Rect clip = {
+                        0,0,30,30
+                };
+
+                SDL_Rect renderQuad = {0,0,30,30};
+
+
+                image->render(renderer.getSDLRenderer(), (int) (pos.x * SCALE), (int) (pos.y * SCALE), &clip, &renderQuad, angle * DEG);
             } else {
 
                 /*b2Vec2 position = it->GetPosition();

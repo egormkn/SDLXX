@@ -6,14 +6,9 @@
 
 class Box2DDrawer : public b2Draw {
 public:
-    Box2DDrawer(SDL_Renderer *r, float s) {
-        renderer = r;
-        scale = s;
-    }
+    Box2DDrawer(SDL_Renderer *r, float s);
 
-    void setScale(float s) {
-        scale = s;
-    }
+    void SetScale(float s);
 
     void DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) override;
 
@@ -32,7 +27,9 @@ public:
 private:
     SDL_Renderer *renderer = nullptr;
     float scale = 0.f;
+
+    void SetColor(const b2Color &color);
 };
 
 
-#endif //SDLXX_BOX2DDRAWER_H
+#endif // SDLXX_BOX2DDRAWER_H

@@ -27,6 +27,7 @@ int main(int argc, char *args[]) {
                       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
         Renderer renderer = window.setRenderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         renderer.setColor(Color(0xFFFFFFFF));
+        //SDL_RenderSetLogicalSize(renderer.getSDLRenderer(), 800, 600);
 
         SceneManager manager(window);
         manager.push(new Menu("MENU", window));
