@@ -130,6 +130,7 @@ namespace SDLXX {
         }
 
     private:
+        int* a, b;
         Window *window = nullptr;
         std::stack<Scene *> scenes;
     };

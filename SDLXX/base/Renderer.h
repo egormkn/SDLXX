@@ -47,8 +47,8 @@ namespace SDLXX {
             SDL_RenderClear(renderer);
         }
 
-        void renderCopy(const Texture &texture) {
-            int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), NULL, NULL);
+        void renderCopy(const Texture &texture, const SDL_Rect *src = NULL, const SDL_Rect *dest = NULL) {
+            int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), src, dest);
             if (result < 0) {
                 throw Exception("Failed to render a texture");
             }
