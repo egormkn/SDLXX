@@ -123,8 +123,6 @@ set(BOX2D_BUILD_STATIC TRUE)
 add_subdirectory(Box2D/Box2D/Box2D)
 include_directories(Box2D/Box2D)
 
-add_executable(TinyTest
-        SDLXX/tmx/testTiny.cpp)
 
 # Game
 add_executable(Game
@@ -142,12 +140,3 @@ target_link_libraries(Game
     ${SDL2_TTF_LIBRARY}
     ${SDL2_NET_LIBRARY}
     ${SDL2_MIXER_LIBRARY})
-
-target_link_libraries(TinyTest
-        Box2D
-        SDLXX
-        ${SDL2_LIBRARY}
-        ${SDL2_IMAGE_LIBRARY}
-        ${SDL2_TTF_LIBRARY}
-        ${SDL2_NET_LIBRARY}
-        ${SDL2_MIXER_LIBRARY})
