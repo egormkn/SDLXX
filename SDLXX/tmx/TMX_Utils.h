@@ -82,7 +82,7 @@ public:
 
     //parsing matrix string
 
-    static std::vector<std::vector<int>> parseMatrix(int width, int height, const char *data);
+    static std::vector<std::vector<int>> parseMatrix(unsigned int width, unsigned int height, const char *data);
 };
 
 

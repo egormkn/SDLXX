@@ -35,16 +35,16 @@ TMX::RenderOrder TMX_Utils::renderOrderFromString(const char *string) {
     if (string == NULL) {
         return TMX::RenderOrder::UNKNOWN;
     }
-    if (!strcmp(string, "right_down")) {
+    if (!strcmp(string, "right-down")) {
         return TMX::RenderOrder::RIGHT_DOWN;
     }
-    if (!strcmp(string, "right_up")) {
+    if (!strcmp(string, "right-up")) {
         return TMX::RenderOrder::RIGHT_UP;
     }
-    if (!strcmp(string, "left_down")) {
+    if (!strcmp(string, "left-down")) {
         return TMX::RenderOrder::LEFT_DOWN;
     }
-    if (!strcmp(string, "left_up")) {
+    if (!strcmp(string, "left-up")) {
         return TMX::RenderOrder::LEFT_UP;
     }
     return TMX::RenderOrder::UNKNOWN;
@@ -164,7 +164,10 @@ std::string TMX_Utils::getAttributeString(const tinyxml2::XMLElement *element, c
 
 //parsing matrix string
 
-std::vector<std::vector<int>> TMX_Utils::parseMatrix(int width, int height, const char *data) {
+std::vector<std::vector<int>> TMX_Utils::parseMatrix(unsigned int width, unsigned int height, const char *data) {
+    if (data == nullptr) {
+        return std::vector<std::vector<int>>();
+    }
     std::vector<std::vector<int>> matrix(height, std::vector<int>(width));
     std::string number;
     for (int i = 0; i < height; ++i) {

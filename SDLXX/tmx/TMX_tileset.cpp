@@ -13,6 +13,9 @@ TMX_tileset::TMX_tileset() {
 }
 
 void TMX_tileset::init(const tinyxml2::XMLElement *element) {
+    if (element == nullptr) {
+        return;
+    }
     firstgid = TMX_Utils::getAttributeInt(element, "firstgid");
     source = TMX_Utils::getAttributeString(element, "source");
     name = TMX_Utils::getAttributeString(element, "name");
@@ -24,6 +27,11 @@ void TMX_tileset::init(const tinyxml2::XMLElement *element) {
     columns = TMX_Utils::getAttributeInt(element, "columns");
 
     tmx_image.init(element->FirstChildElement("image"));
+    for (const tinyxml2::XMLElement *e = element->FirstChildElement("tile"); e != NULL; e = e->NextSiblingElement("tile")) {
+        TMX_tile tile;
+        tile.init(e);
+        tiles.push_back(tile);
+    }
 }
 
 #include "TMX_tileset.h"

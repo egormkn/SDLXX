@@ -115,7 +115,7 @@ add_library(TMX STATIC
     SDLXX/tmx/TMX_data.cpp
     SDLXX/tmx/TMX_data.h
     tinyxml2/tinyxml2.cpp
-    tinyxml2/tinyxml2.h)
+    tinyxml2/tinyxml2.h SDLXX/tmx/TMX_tile.cpp SDLXX/tmx/TMX_tile.h)
 
 add_library(SDLXX STATIC ${SOURCE_FILES})
 target_compile_definitions(SDLXX PRIVATE ${DEFINES})

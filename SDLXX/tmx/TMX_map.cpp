@@ -42,7 +42,12 @@ bool TMX_map::init(const std::string fileDir) {
     backgroundColor = TMX_Utils::getAttributeString(map, "backgroundcolor");
     nextObjectID = TMX_Utils::getAttributeInt(map, "nextobjectid");
 
-    tmx_tileset.init(map->FirstChildElement("tileset"));
+    for (const tinyxml2::XMLElement *e = map->FirstChildElement("tileset");
+         e != NULL; e = e->NextSiblingElement("tileset")) {
+        TMX_tileset tmxTileset;
+        tmxTileset.init(e);
+        tmx_tilesets.push_back(tmxTileset);
+    }
 
     for (const tinyxml2::XMLElement *e = map->FirstChildElement("layer");
          e != NULL; e = e->NextSiblingElement("layer")) {

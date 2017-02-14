@@ -27,7 +27,7 @@ public:
     std::string backgroundColor;
     int nextObjectID;
 
-    TMX_tileset tmx_tileset;
+    std::vector<TMX_tileset> tmx_tilesets;
     std::vector<TMX_layer>  tmx_layers;
 
     TMX_map();

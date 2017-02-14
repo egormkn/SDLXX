@@ -13,6 +13,9 @@ TMX_layer::TMX_layer() {
 }
 
 void TMX_layer::init(const tinyxml2::XMLElement *element) {
+    if (element == nullptr) {
+        return;
+    }
     name = TMX_Utils::getAttributeString(element, "name");
     x = TMX_Utils::getAttributeInt(element, "x");
     y = TMX_Utils::getAttributeInt(element, "y");
