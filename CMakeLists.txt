@@ -4,8 +4,8 @@ project(SDLXX CXX)
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/SDLXX")
 set(CMAKE_DIR "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_DIR}")
-set(CMAKE_C_FLAGS_RELEASE "-DSDLXX_RELEASE")
-set(CMAKE_CXX_FLAGS_RELEASE "-DSDLXX_RELEASE")
+set(CMAKE_C_FLAGS_RELEASE "-DSDLXX_RELEASE -static-libgcc -static-libstdc++")
+set(CMAKE_CXX_FLAGS_RELEASE "-DSDLXX_RELEASE -static-libgcc -static-libstdc++")
 
 include(${CMAKE_DIR}/LibraryPaths.cmake OPTIONAL)
 

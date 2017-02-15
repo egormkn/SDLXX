@@ -17,7 +17,7 @@ namespace SDLXX {
         Texture(const std::string &path, SDL_Renderer *renderer, int w, int h) {
             SDL_Surface *surface = IMG_Load(path.c_str());
             if(surface == nullptr) {
-                throw Exception("Unable to load tmx_image", IMG_GetError());
+                throw Exception("Unable to load image", IMG_GetError());
             }
             SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0xFF)); // FIXME: For what?
             SDL_Rect stretchRect;
