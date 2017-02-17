@@ -93,8 +93,8 @@ public:
             } else {
                 for (std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
                      tile != tileset->tmx_tiles.end(); ++tile) {
-                    textures.push_back(new Texture(tile->tmx_image.source, w.getSDLRenderer(), tile->width,
-                                                   tile->height));
+                    textures.push_back(new Texture(tile->tmx_image.source, w.getSDLRenderer(), tile->tmx_image.width,
+                                                   tile->tmx_image.height));
                     textureHolders.push_back(
                             TextureHolder(textures[textures.size() - 1], {0, 0, tile->width, tile->height},
                                           tile->tmx_objectgroup.tmx_objects));
