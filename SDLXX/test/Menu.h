@@ -28,6 +28,9 @@ namespace SDLXX {
         }
 
         ~Menu() {
+            delete background;
+            delete runButton;
+            delete exitButton;
         }
 
         void onCreate(Window &w) override {
@@ -37,8 +40,6 @@ namespace SDLXX {
 
         void onDestroy() override {
             delete background;
-            delete runButton;
-            delete exitButton;
         }
 
         void onPause() override {}

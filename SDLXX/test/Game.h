@@ -129,7 +129,7 @@ public:
         circleBody->CreateFixture(&circleShape, 2);*/
 
 
-        image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getSDLRenderer(), DEFAULT_BOX_SIZE,
+        image = new Texture("resources/Box.png", w.getSDLRenderer(), DEFAULT_BOX_SIZE,
                             DEFAULT_BOX_SIZE);
     }
 
