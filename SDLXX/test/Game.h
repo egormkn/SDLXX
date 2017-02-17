@@ -44,7 +44,7 @@ public:
         groundBox.SetAsBox(w / SCALE, h / SCALE);
 
         b2BodyDef groundBodyDef;
-        groundBodyDef.position.Set((x + w / 2) / SCALE, (y + h / 2) / SCALE);
+        groundBodyDef.position.Set((x + w) / SCALE, (y + h) / SCALE);
         b2Body *groundBody = world->CreateBody(&groundBodyDef);
         groundBody->CreateFixture(&groundBox, 1);
         //groundBody->SetUserData(&staticBoxName);
@@ -54,7 +54,7 @@ public:
         Log::log("[" + getTitle() + "] Scene created");
         window = &w;
 
-        b2Vec2 gravity(0.0f, 0.0f);
+        b2Vec2 gravity(0.0f, 9.8f);
         world = std::make_unique<b2World>(gravity);
         drawer = new Box2DDrawer(window->getSDLRenderer(), 30.f);
         drawer->SetFlags(0xFF);
@@ -318,8 +318,8 @@ public:
         int width = (int) (shape->m_vertices[2].x * 2 * SCALE);
         SDL_Rect renderQuad = {(int) ((pos.x + local_vec.x) * SCALE - camera.x),
                                (int) ((pos.y + local_vec.y) * SCALE - camera.y),
-                               TILE_HEIGHT,
-                               TILE_HEIGHT};
+                               height,
+                               width};
 
 
         //SDL_Point point = {(int) shape->m_vertices[2].x, (int) shape->m_vertices[2].y};
