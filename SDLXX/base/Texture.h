@@ -26,16 +26,18 @@ namespace SDLXX {
             stretchRect.w = w;
             stretchRect.h = h;
             //FIXME: chack size of surface aster bliting
-            SDL_BlitScaled( surface, NULL, surface, &stretchRect );
+            SDL_Surface *scaled = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
+            SDL_BlitScaled(surface, NULL, scaled, &stretchRect);
 
+            SDL_FreeSurface(surface);
 
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            texture = SDL_CreateTextureFromSurface(renderer, scaled);
             if(texture == nullptr) {
                 throw Exception("Unable to create texture", SDL_GetError());
             }
-            width = surface->w;
-            height = surface->h;
-            SDL_FreeSurface(surface);
+            width = scaled->w;
+            height = scaled->h;
+            SDL_FreeSurface(scaled);
         }
 
         Texture(const std::string &text, const Color &color, const Font &font, SDL_Renderer *renderer) {
