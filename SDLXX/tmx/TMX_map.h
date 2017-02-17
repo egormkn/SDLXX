@@ -10,9 +10,6 @@
 #include "../Log.h"
 
 class TMX_map {
-private:
-    const tinyxml2::XMLElement *map;
-
 public:
     double version;
     TMX::Orientation orientation;

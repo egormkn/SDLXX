@@ -21,7 +21,7 @@ public:
     int columns;
 
     TMX_image tmx_image;
-    std::vector<TMX_tile> tiles;
+    std::vector<TMX_tile> tmx_tiles;
 
     TMX_tileset();
 

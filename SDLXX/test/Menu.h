@@ -80,6 +80,6 @@ namespace SDLXX {
         Texture *background = nullptr;
         Window *window = nullptr;
     };
-}
+};
 
 #endif // SDLXX_SCENETEST_H

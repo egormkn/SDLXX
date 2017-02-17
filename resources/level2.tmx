@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="16" tilewidth="256" tileheight="256" nextobjectid="37">
- <tileset firstgid="1" name="tiles" tilewidth="256" tileheight="256" tilecount="40" columns="8">
-  <image source="resources/level/tiles.png" width="2048" height="1280"/>
+ <tileset firstgid="1" name="tmx_tiles" tilewidth="256" tileheight="256" tilecount="40" columns="8">
+  <image source="resources/level/tmx_tiles.png" width="2048" height="1280"/>
   <terraintypes>
    <terrain name="Blocks" tile="-1">
     <properties>

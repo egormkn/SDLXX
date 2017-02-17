@@ -30,7 +30,7 @@ void TMX_tileset::init(const tinyxml2::XMLElement *element) {
     for (const tinyxml2::XMLElement *e = element->FirstChildElement("tile"); e != NULL; e = e->NextSiblingElement("tile")) {
         TMX_tile tile;
         tile.init(e);
-        tiles.push_back(tile);
+        tmx_tiles.push_back(tile);
     }
 }
 
