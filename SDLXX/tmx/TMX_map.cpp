@@ -5,7 +5,6 @@
 #include "TMX_map.h"
 
 TMX_map::TMX_map() {
-    map = NULL;
     version = TMX_Utils::DEFAULT_DOUBLE;
     orientation = TMX::Orientation::UNKNOWN;
     renderOrder = TMX::RenderOrder::UNKNOWN;
@@ -28,7 +27,7 @@ bool TMX_map::init(const std::string fileDir) {
         return false;
     }
 
-    map =  document.FirstChildElement("map");
+    tinyxml2::XMLElement *map = document.FirstChildElement("map");
     version = TMX_Utils::getAttributeDouble(map, "version");
     orientation = TMX_Utils::getOrientation(map);
     renderOrder = TMX_Utils::getRenderOrder(map);

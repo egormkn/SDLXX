@@ -23,7 +23,12 @@ private:
     struct TextureHolder {
         Texture *texture;
         SDL_Rect rect;
+        std::vector<TMX_object> tmx_objects;
+
+        TextureHolder(Texture *texture, const SDL_Rect &rect, const std::vector<TMX_object> &tmx_objects)
+                : texture(texture), rect(rect), tmx_objects(tmx_objects) {}
     };
+
 public:
 
     Game(const std::string &title) : Scene(title) {
@@ -34,58 +39,65 @@ public:
         Log::log("[" + getTitle() + "] Scene destructed");
     }
 
-    void setStaticBox(int x, int y, int w, int h) {
+    void setStaticBox(int x, int y, float w, float h) {
         b2PolygonShape groundBox;
         groundBox.SetAsBox(w / SCALE, h / SCALE);
 
         b2BodyDef groundBodyDef;
-        groundBodyDef.position.Set(x / SCALE, y / SCALE);
+        groundBodyDef.position.Set((x + w / 2) / SCALE, (y + h / 2) / SCALE);
         b2Body *groundBody = world->CreateBody(&groundBodyDef);
         groundBody->CreateFixture(&groundBox, 1);
-        groundBody->SetUserData(&staticBoxName);
+        //groundBody->SetUserData(&staticBoxName);
     }
 
     void onCreate(Window &w) override {
         Log::log("[" + getTitle() + "] Scene created");
         window = &w;
 
-        b2Vec2 gravity(0.0f, 9.8f);
+        b2Vec2 gravity(0.0f, 0.0f);
         world = std::make_unique<b2World>(gravity);
         drawer = new Box2DDrawer(window->getSDLRenderer(), 30.f);
         drawer->SetFlags(0xFF);
         //world->SetDebugDraw(drawer);
 
-        map = new TMX_map();
-        map->init("resources/level.tmx");
-        DEFAULT_BOX_SIZE = 64;
-        MAP_HEIGHT = map->tmx_layers[0].height * DEFAULT_BOX_SIZE;
-        MAP_WIDTH = map->tmx_layers[0].width * DEFAULT_BOX_SIZE;
-
-
         map2 = new TMX_map();
-        map2->init("resources/level2.tmx");
+        map2->init("resources/map.tmx");
+        TILE_WIDTH = map2->tileWidth;
+        TILE_HEIGHT = map2->tileHeight;
+        MAP_HEIGHT = map2->tmx_layers[0].height * TILE_HEIGHT;
+        MAP_WIDTH = map2->tmx_layers[0].width * TILE_WIDTH;
 
         for (std::vector<TMX_tileset>::const_iterator tileset = map2->tmx_tilesets.begin();
              tileset != map2->tmx_tilesets.end(); ++tileset) {
             if (!tileset->tmx_image.source.empty()) {
                 int raw = tileset->tilecount / tileset->columns;
-                int width = DEFAULT_BOX_SIZE * tileset->columns;
-                int height = DEFAULT_BOX_SIZE * raw;
-                textures.push_back(new Texture(tileset->tmx_image.source, w.getSDLRenderer(), width, height));
+                textures.push_back(new Texture(tileset->tmx_image.source, w.getSDLRenderer(), tileset->tilewidth,
+                                               tileset->tileheight));
+                std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
                 for (int i = 0; i < raw; ++i) {
                     for (int j = 0; j < tileset->columns; ++j) {
-                        textureHolders.push_back(
-                                {textures[textures.size() - 1],
-                                 {j * DEFAULT_BOX_SIZE, i * DEFAULT_BOX_SIZE, DEFAULT_BOX_SIZE, DEFAULT_BOX_SIZE}});
+                        if (tile->id == i * tileset->columns + j) {
+                            textureHolders.push_back(TextureHolder(textures[textures.size() - 1],
+                                                                   {j * tileset->tilewidth, i * tileset->tileheight,
+                                                                    tileset->tilewidth, tileset->tileheight},
+                                                                   tile->tmx_objectgroup.tmx_objects));
+                            ++tile;
+                        } else {
+                            textureHolders.push_back(TextureHolder(textures[textures.size() - 1],
+                                                                   {j * tileset->tilewidth, i * tileset->tileheight,
+                                                                    tileset->tilewidth, tileset->tileheight},
+                                                                   std::vector<TMX_object>()));
+                        }
                     }
                 }
             } else {
-                for (std::vector<TMX_tile>::const_iterator tile = tileset->tiles.begin();
-                     tile != tileset->tiles.end(); ++tile) {
-                    textures.push_back(new Texture(tile->tmx_image.source, w.getSDLRenderer(), DEFAULT_BOX_SIZE,
-                                                   DEFAULT_BOX_SIZE));
+                for (std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
+                     tile != tileset->tmx_tiles.end(); ++tile) {
+                    textures.push_back(new Texture(tile->tmx_image.source, w.getSDLRenderer(), tile->width,
+                                                   tile->height));
                     textureHolders.push_back(
-                            {textures[textures.size() - 1], {0, 0, DEFAULT_BOX_SIZE, DEFAULT_BOX_SIZE}});
+                            TextureHolder(textures[textures.size() - 1], {0, 0, tile->width, tile->height},
+                                          tile->tmx_objectgroup.tmx_objects));
                 }
             }
         }
@@ -94,18 +106,37 @@ public:
         camera = {0, 0};
 
 
-        std::vector<std::vector<int>> vec = map->tmx_layers[0].tmx_data.data;
+        /*std::vector<std::vector<int>> vec = map->tmx_layers[0].tmx_data.data;
         for (int i = 0; i < vec.size(); ++i) {
             for (int j = 0; j < vec[i].size(); ++j) {
                 if (vec[i][j] != 0) {
-                    setStaticBox(j * DEFAULT_BOX_SIZE, i * DEFAULT_BOX_SIZE, DEFAULT_BOX_SIZE / 2,
-                                 DEFAULT_BOX_SIZE / 2);
+                    setStaticBox(j * TILE_WIDTH, i * TILE_HEIGHT, TILE_WIDTH / 2,
+                                 TILE_HEIGHT / 2);
+                }
+            }
+        }
+         */
+
+        for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();
+             tmx_layers != map2->tmx_layers.end(); ++tmx_layers) {
+            std::vector<std::vector<int>> vector = tmx_layers->tmx_data.data;
+            for (int i = 0; i < vector.size(); ++i) {
+                for (int j = 0; j < vector[i].size(); ++j) {
+                    if (vector[i][j] != 0) {
+                        for (std::vector<TMX_object>::const_iterator object = textureHolders[vector[i][j] -
+                                                                                             1].tmx_objects.begin();
+                             object != textureHolders[vector[i][j] - 1].tmx_objects.end(); ++object) {
+                            setStaticBox(j * TILE_WIDTH + object->x, i * TILE_HEIGHT + object->y,
+                                         ((float) object->width) / 2,
+                                         ((float) object->height) / 2);
+                        }
+                    }
                 }
             }
         }
 
         b2PolygonShape dynamicBox;
-        dynamicBox.SetAsBox(DEFAULT_BOX_SIZE / 2 / SCALE, DEFAULT_BOX_SIZE / 2 / SCALE);
+        dynamicBox.SetAsBox(TILE_WIDTH / 2 / SCALE, TILE_HEIGHT / 2 / SCALE);
 
         // Define the dynamic body. We set its position and call the body factory.
         b2BodyDef bodyDef;
@@ -129,8 +160,8 @@ public:
         circleBody->CreateFixture(&circleShape, 2);*/
 
 
-        image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getSDLRenderer(), DEFAULT_BOX_SIZE,
-                            DEFAULT_BOX_SIZE);
+        image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getSDLRenderer(), TILE_WIDTH,
+                            TILE_HEIGHT);
     }
 
     void onDestroy() override {
@@ -157,7 +188,6 @@ public:
         }
         delete drawer;
         delete image;
-        delete map;
         delete map2;
     }
 
@@ -197,6 +227,14 @@ public:
                         }
                     }
                 }
+            } else if (e.getEvent().key.keysym.sym == SDLK_DOWN) {
+                if (e.getEvent().key.repeat == 0) {
+                    for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
+                        if (it->GetUserData() == &boxName) {
+                            it->ApplyLinearImpulse(b2Vec2(0.f, 1000 / SCALE), body->GetWorldCenter(), true);
+                        }
+                    }
+                }
             }
         }
     }
@@ -214,10 +252,11 @@ public:
 
         for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
             if (it->GetUserData() == &boxName) {
-                //window->setTitle(std::to_string(it->GetPosition().x * SCALE) + " " + std::to_string(it->GetPosition().y * SCALE));
+                window->setTitle(std::to_string(it->GetPosition().x * SCALE) + " " +
+                                 std::to_string(it->GetPosition().y * SCALE));
                 camera.x = (int) (it->GetPosition().x * SCALE - SCREEN_WIDTH / 2);
-                camera.y = (int) (it->GetPosition().y * SCALE - SCREEN_HEIGHT/ 2);
-                if (camera.x <  0) {
+                camera.y = (int) (it->GetPosition().y * SCALE - SCREEN_HEIGHT / 2);
+                if (camera.x < 0) {
                     camera.x = 0;
                 }
                 if (camera.x + SCREEN_WIDTH > MAP_WIDTH) {
@@ -231,15 +270,17 @@ public:
                 }
             }
         }
-        window->setTitle(std::to_string(camera.x) + " " + std::to_string(camera.y));
+        //window->setTitle(std::to_string(camera.x) + " " + std::to_string(camera.y));
 
 
         std::vector<std::vector<int>> vec = map2->tmx_layers[0].tmx_data.data;
         for (int i = 0; i < vec.size(); ++i) {
             for (int j = 0; j < vec[i].size(); ++j) {
                 if (vec[i][j] != 0) {
-                    SDL_Rect rect = {j * DEFAULT_BOX_SIZE - camera.x, i * DEFAULT_BOX_SIZE - camera.y, DEFAULT_BOX_SIZE, DEFAULT_BOX_SIZE};
-                    textureHolders[vec[i][j] - 1].texture->render(renderer.getSDLRenderer(), &textureHolders[vec[i][j] - 1].rect, &rect);
+                    SDL_Rect rect = {j * TILE_WIDTH - camera.x, i * TILE_HEIGHT - camera.y, TILE_WIDTH,
+                                     TILE_HEIGHT};
+                    textureHolders[vec[i][j] - 1].texture->render(renderer.getSDLRenderer(),
+                                                                  &textureHolders[vec[i][j] - 1].rect, &rect);
                 }
             }
         }
@@ -272,13 +313,14 @@ public:
         b2Vec2 local_vec = shape->m_vertices[0];
         int height = (int) (shape->m_vertices[2].y * 2 * SCALE);
         int width = (int) (shape->m_vertices[2].x * 2 * SCALE);
-        SDL_Rect renderQuad = {(int) ((pos.x + local_vec.x) * SCALE - camera.x + DEFAULT_BOX_SIZE / 2),
-                               (int) ((pos.y + local_vec.y) * SCALE - camera.y + DEFAULT_BOX_SIZE / 2), DEFAULT_BOX_SIZE,
-                               DEFAULT_BOX_SIZE};
+        SDL_Rect renderQuad = {(int) ((pos.x + local_vec.x) * SCALE - camera.x),
+                               (int) ((pos.y + local_vec.y) * SCALE - camera.y),
+                               TILE_HEIGHT,
+                               TILE_HEIGHT};
 
 
-        SDL_Point point = {(int) (shape->m_vertices[2].x * SCALE), (int) (shape->m_vertices[2].y * SCALE)};
-        image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG, &point);
+        //SDL_Point point = {(int) shape->m_vertices[2].x, (int) shape->m_vertices[2].y};
+        image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG);
     }
 
 private:
@@ -300,9 +342,9 @@ private:
     int SCREEN_HEIGHT;
     int MAP_WIDTH;
     int MAP_HEIGHT;
-    int DEFAULT_BOX_SIZE;
+    int TILE_WIDTH;
+    int TILE_HEIGHT;
 
-    TMX_map *map;
     TMX_map *map2;
 };
 
