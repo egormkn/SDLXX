@@ -5,6 +5,7 @@
 #include <SDL_render.h>
 #include <SDL_image.h>
 #include "../ttf/Font.h"
+#include "../Log.h"
 
 namespace SDLXX {
     class Texture {
@@ -20,39 +21,27 @@ namespace SDLXX {
                 throw Exception("Unable to load image", IMG_GetError());
             }
             SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0xFF));
-            SDL_Rect stretchRect;
-            stretchRect.x = 0;
-            stretchRect.y = 0;
-            stretchRect.w = w;
-            stretchRect.h = h;
-            //FIXME: chack size of surface aster bliting
-            Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-            rmask = 0xff000000;
-            gmask = 0x00ff0000;
-            bmask = 0x0000ff00;
-            amask = 0x000000ff;
-#else
-            rmask = 0x000000ff;
-            gmask = 0x0000ff00;
-            bmask = 0x00ff0000;
-            amask = 0xff000000;
-#endif
 
-            SDL_Surface *scaled = SDL_CreateRGBSurface(0, w, h, 32,
-                                           rmask, gmask, bmask, amask);
-            SDL_SetColorKey(scaled, SDL_TRUE, SDL_MapRGB(scaled->format, 0, 0xFF, 0xFF));
-            SDL_BlitScaled(surface, NULL, scaled, &stretchRect);
+            /*if (w > 0 && h > 0) {
+                SDL_Rect stretchRect;
+                stretchRect.x = 0;
+                stretchRect.y = 0;
+                stretchRect.w = w;
+                stretchRect.h = h;
+                SDL_Surface *scaled = SDL_CreateRGBSurface(0, w, h, 32, 0,0,0,0);
+                SDL_BlitScaled(surface, NULL, scaled, &stretchRect);
+                SDL_SetColorKey(scaled, SDL_TRUE, SDL_MapRGB(scaled->format, 0, 0xFF, 0xFF));
+                SDL_FreeSurface(surface);
+                surface = scaled;
+            }*/
 
-            SDL_FreeSurface(surface);
-
-            texture = SDL_CreateTextureFromSurface(renderer, scaled);
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
             if(texture == nullptr) {
                 throw Exception("Unable to create texture", SDL_GetError());
             }
-            width = scaled->w;
-            height = scaled->h;
-            SDL_FreeSurface(scaled);
+            width = surface->w;
+            height = surface->h;
+            SDL_FreeSurface(surface);
         }
 
         Texture(const std::string &text, const Color &color, const Font &font, SDL_Renderer *renderer) {

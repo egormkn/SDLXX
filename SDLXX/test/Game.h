@@ -44,7 +44,7 @@ public:
         groundBox.SetAsBox(w / SCALE, h / SCALE);
 
         b2BodyDef groundBodyDef;
-        groundBodyDef.position.Set((x + w / 2) / SCALE, (y + h / 2) / SCALE);
+        groundBodyDef.position.Set((x + w) / SCALE, (y + h) / SCALE);
         b2Body *groundBody = world->CreateBody(&groundBodyDef);
         groundBody->CreateFixture(&groundBox, 1);
         //groundBody->SetUserData(&staticBoxName);
@@ -54,14 +54,14 @@ public:
         Log::log("[" + getTitle() + "] Scene created");
         window = &w;
 
-        b2Vec2 gravity(0.0f, 0.0f);
+        b2Vec2 gravity(0.0f, 9.8f);
         world = std::make_unique<b2World>(gravity);
         drawer = new Box2DDrawer(window->getSDLRenderer(), 30.f);
         drawer->SetFlags(0xFF);
         world->SetDebugDraw(drawer);
 
         map2 = new TMX_map();
-        map2->init("resources/map1.tmx");
+        map2->init("resources/map2.tmx");
         TILE_WIDTH = map2->tileWidth;
         TILE_HEIGHT = map2->tileHeight;
         MAP_HEIGHT = map2->tmx_layers[0].height * TILE_HEIGHT;
@@ -93,8 +93,8 @@ public:
             } else {
                 for (std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
                      tile != tileset->tmx_tiles.end(); ++tile) {
-                    textures.push_back(new Texture(tile->tmx_image.source, w.getSDLRenderer(), tile->width,
-                                                   tile->height));
+                    textures.push_back(new Texture(tile->tmx_image.source, w.getSDLRenderer(), tile->tmx_image.width,
+                                                   tile->tmx_image.height));
                     textureHolders.push_back(
                             TextureHolder(textures[textures.size() - 1], {0, 0, tile->width, tile->height},
                                           tile->tmx_objectgroup.tmx_objects));
@@ -292,7 +292,7 @@ public:
 
         for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
             if (it->GetUserData() == &boxName) {
-                renderPlayer(renderer, it);
+                renderBox(renderer, it);
             } else if (it->GetUserData() == &staticBoxName) {
                 renderBox(renderer, it);
                 /*b2Vec2 position = it->GetPosition();
@@ -306,7 +306,7 @@ public:
             }
         }
 
-        world->DrawDebugData();
+        //world->DrawDebugData();
         /**/
         renderer.render();
     }
@@ -328,7 +328,7 @@ public:
         image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG);
     }
 
-    void renderPlayer(Renderer &renderer, b2Body *boxBody) {
+    /*void renderPlayer(Renderer &renderer, b2Body *boxBody) {
         b2Vec2 pos = boxBody->GetPosition();
         float angle = boxBody->GetAngle();
         const b2PolygonShape *shape = (b2PolygonShape *) boxBody->GetFixtureList()->GetShape();
@@ -342,7 +342,7 @@ public:
 
         SDL_Point point = {(int) (shape->m_vertices[2].x * SCALE), (int) (shape->m_vertices[2].y * SCALE)};
         image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG, &point);
-    }
+    }*/
 
 private:
     Window *window = nullptr;
