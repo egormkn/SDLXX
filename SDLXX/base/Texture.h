@@ -99,6 +99,26 @@ namespace SDLXX {
             SDL_RenderCopyEx(renderer, texture, clip, dest, angle, center, flip);
         }
 
+        void fill(SDL_Renderer *renderer, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
+                    SDL_Point *center = nullptr,
+                    SDL_RendererFlip flip = SDL_FLIP_NONE) {
+
+            if (dest == nullptr) {
+                SDL_RenderCopyEx(renderer, texture, clip, dest, angle, center, flip);
+            } else {
+                for (int x = dest->x; x < dest->x + dest->w; x += width) {
+                    for (int y = dest->y; y < dest->y + dest->h; y += height) {
+                        SDL_Rect d;
+                        d.x = x;
+                        d.y = y;
+                        d.w = width;
+                        d.h = height;
+                        render(renderer, clip, &d, angle, center, flip);
+                    }
+                }
+            }
+        }
+
         int getWidth() const {
             return width;
         }

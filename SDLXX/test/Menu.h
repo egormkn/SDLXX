@@ -28,14 +28,13 @@ namespace SDLXX {
         }
 
         ~Menu() {
-            delete background;
             delete runButton;
             delete exitButton;
         }
 
         void onCreate(Window &w) override {
             window = &w;
-            background = new Texture("resources/menu.png", w.getSDLRenderer(), 800, 600);
+            background = new Texture("resources/menu.png", w.getSDLRenderer(), 256, 256);
         }
 
         void onDestroy() override {
@@ -62,7 +61,14 @@ namespace SDLXX {
         }
 
         void render(Renderer &renderer) override {
-            background->render(renderer.getSDLRenderer());
+            renderer.setColor(Color(0xFF000000));
+            renderer.clear();
+            SDL_Rect clip;
+            clip.x = 0;
+            clip.y = 0;
+            clip.w = window->getDimensions().getX() - 1;
+            clip.h = window->getDimensions().getY() - 1;
+            background->fill(renderer.getSDLRenderer(), nullptr, &clip);
             runButton->render(renderer);
             exitButton->render(renderer);
             renderer.render();
