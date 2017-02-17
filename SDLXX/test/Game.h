@@ -61,7 +61,7 @@ public:
         //world->SetDebugDraw(drawer);
 
         map2 = new TMX_map();
-        map2->init("resources/map.tmx");
+        map2->init("resources/map1.tmx");
         TILE_WIDTH = map2->tileWidth;
         TILE_HEIGHT = map2->tileHeight;
         MAP_HEIGHT = map2->tmx_layers[0].height * TILE_HEIGHT;
@@ -273,14 +273,17 @@ public:
         //window->setTitle(std::to_string(camera.x) + " " + std::to_string(camera.y));
 
 
-        std::vector<std::vector<int>> vec = map2->tmx_layers[0].tmx_data.data;
-        for (int i = 0; i < vec.size(); ++i) {
-            for (int j = 0; j < vec[i].size(); ++j) {
-                if (vec[i][j] != 0) {
-                    SDL_Rect rect = {j * TILE_WIDTH - camera.x, i * TILE_HEIGHT - camera.y, TILE_WIDTH,
-                                     TILE_HEIGHT};
-                    textureHolders[vec[i][j] - 1].texture->render(renderer.getSDLRenderer(),
-                                                                  &textureHolders[vec[i][j] - 1].rect, &rect);
+        for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();
+             tmx_layers != map2->tmx_layers.end(); ++tmx_layers) {
+            std::vector<std::vector<int>> vec = tmx_layers->tmx_data.data;
+            for (int i = 0; i < vec.size(); ++i) {
+                for (int j = 0; j < vec[i].size(); ++j) {
+                    if (vec[i][j] != 0) {
+                        SDL_Rect rect = {j * TILE_WIDTH - camera.x, i * TILE_HEIGHT - camera.y, TILE_WIDTH,
+                                         TILE_HEIGHT};
+                        textureHolders[vec[i][j] - 1].texture->render(renderer.getSDLRenderer(),
+                                                                      &textureHolders[vec[i][j] - 1].rect, &rect);
+                    }
                 }
             }
         }
