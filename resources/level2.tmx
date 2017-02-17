@@ -3,8 +3,19 @@
  <tileset firstgid="1" name="tmx_tiles" tilewidth="256" tileheight="256" tilecount="40" columns="8">
   <image source="resources/level/tmx_tiles.png" width="2048" height="1280"/>
   <terraintypes>
-   <terrain name="Blocks" tile="-1"/>
+   <terrain name="Blocks" tile="-1">
+    <properties>
+     <property name="test_parameter" value="value here"/>
+    </properties>
+   </terrain>
   </terraintypes>
+  <tile id="0">
+   <objectgroup draworder="index">
+    <object id="1" x="-2" y="89.7528">
+     <polyline points="0,0 33.3913,-3.75281 81.9605,2.81461 123.447,-2.81461 155.826,1.8764 189.217,-3.75281 226.656,4.69101 254.988,2.81461 256,163.247 2.02372,162.309 1.01186,0.938202"/>
+    </object>
+   </objectgroup>
+  </tile>
   <tile id="2" terrain="0,0,,"/>
   <tile id="3" terrain="0,0,,"/>
   <tile id="4" terrain="0,0,,"/>
@@ -23,7 +34,13 @@
   <tile id="21" terrain="0,,0,"/>
   <tile id="22" terrain="0,0,,"/>
   <tile id="23" terrain=",0,,0"/>
-  <tile id="24" terrain=",,0,0"/>
+  <tile id="24" terrain=",,0,0">
+   <objectgroup draworder="index">
+    <object id="1" x="3" y="251">
+     <polyline points="0,0 34,-134 60,-34 84,-124 98,-49 126,-155 150,-48 170,-112 190,-35 217,-142 250,2 0,0"/>
+    </object>
+   </objectgroup>
+  </tile>
   <tile id="25" terrain="0,0,,"/>
   <tile id="26" terrain="0,0,,"/>
   <tile id="27" terrain="0,0,,"/>
