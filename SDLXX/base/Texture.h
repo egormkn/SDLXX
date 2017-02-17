@@ -17,25 +17,42 @@ namespace SDLXX {
         Texture(const std::string &path, SDL_Renderer *renderer, int w, int h) {
             SDL_Surface *surface = IMG_Load(path.c_str());
             if(surface == nullptr) {
-                throw Exception("Unable to load tmx_image", IMG_GetError());
+                throw Exception("Unable to load image", IMG_GetError());
             }
-            SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0xFF)); // FIXME: For what?
+            SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0xFF));
             SDL_Rect stretchRect;
             stretchRect.x = 0;
             stretchRect.y = 0;
             stretchRect.w = w;
             stretchRect.h = h;
             //FIXME: chack size of surface aster bliting
-            SDL_BlitScaled( surface, NULL, surface, &stretchRect );
+            Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+            rmask = 0xff000000;
+            gmask = 0x00ff0000;
+            bmask = 0x0000ff00;
+            amask = 0x000000ff;
+#else
+            rmask = 0x000000ff;
+            gmask = 0x0000ff00;
+            bmask = 0x00ff0000;
+            amask = 0xff000000;
+#endif
 
+            SDL_Surface *scaled = SDL_CreateRGBSurface(0, w, h, 32,
+                                           rmask, gmask, bmask, amask);
+            SDL_SetColorKey(scaled, SDL_TRUE, SDL_MapRGB(scaled->format, 0, 0xFF, 0xFF));
+            SDL_BlitScaled(surface, NULL, scaled, &stretchRect);
 
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            SDL_FreeSurface(surface);
+
+            texture = SDL_CreateTextureFromSurface(renderer, scaled);
             if(texture == nullptr) {
                 throw Exception("Unable to create texture", SDL_GetError());
             }
-            width = surface->w;
-            height = surface->h;
-            SDL_FreeSurface(surface);
+            width = scaled->w;
+            height = scaled->h;
+            SDL_FreeSurface(scaled);
         }
 
         Texture(const std::string &text, const Color &color, const Font &font, SDL_Renderer *renderer) {
@@ -80,6 +97,26 @@ namespace SDLXX {
 
             //Render to screen
             SDL_RenderCopyEx(renderer, texture, clip, dest, angle, center, flip);
+        }
+
+        void fill(SDL_Renderer *renderer, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
+                    SDL_Point *center = nullptr,
+                    SDL_RendererFlip flip = SDL_FLIP_NONE) {
+
+            if (dest == nullptr) {
+                SDL_RenderCopyEx(renderer, texture, clip, dest, angle, center, flip);
+            } else {
+                for (int x = dest->x; x < dest->x + dest->w; x += width) {
+                    for (int y = dest->y; y < dest->y + dest->h; y += height) {
+                        SDL_Rect d;
+                        d.x = x;
+                        d.y = y;
+                        d.w = width;
+                        d.h = height;
+                        render(renderer, clip, &d, angle, center, flip);
+                    }
+                }
+            }
         }
 
         int getWidth() const {

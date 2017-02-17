@@ -58,7 +58,7 @@ public:
         world = std::make_unique<b2World>(gravity);
         drawer = new Box2DDrawer(window->getSDLRenderer(), 30.f);
         drawer->SetFlags(0xFF);
-        //world->SetDebugDraw(drawer);
+        world->SetDebugDraw(drawer);
 
         map2 = new TMX_map();
         map2->init("resources/map1.tmx");
@@ -144,7 +144,7 @@ public:
         bodyDef.position.Set(600 / SCALE, 100 / SCALE);
         body = world->CreateBody(&bodyDef);
 
-        body->CreateFixture(&dynamicBox, 2);
+        body->CreateFixture(&dynamicBox, 0.8);
         body->SetUserData(&boxName);
 
 
@@ -206,9 +206,11 @@ public:
             if (e.getEvent().key.keysym.sym == SDLK_ESCAPE) {
                 finish();
             } else if (e.getEvent().key.keysym.sym == SDLK_UP) {
-                for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
-                    if (it->GetUserData() == &boxName) {
-                        it->ApplyLinearImpulse(b2Vec2(0.f, -1000 / SCALE), body->GetWorldCenter(), true);
+                if (e.getEvent().key.repeat == 0) {
+                    for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
+                        if(it->GetUserData() == &boxName) {
+                            it->ApplyLinearImpulse(b2Vec2(0.f, -1000 / SCALE), body->GetWorldCenter(), true);
+                        }
                     }
                 }
             } else if (e.getEvent().key.keysym.sym == SDLK_RIGHT) {
@@ -290,7 +292,7 @@ public:
 
         for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
             if (it->GetUserData() == &boxName) {
-                renderBox(renderer, it);
+                renderPlayer(renderer, it);
             } else if (it->GetUserData() == &staticBoxName) {
                 renderBox(renderer, it);
                 /*b2Vec2 position = it->GetPosition();
@@ -326,8 +328,23 @@ public:
         image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG);
     }
 
+    void renderPlayer(Renderer &renderer, b2Body *boxBody) {
+        b2Vec2 pos = boxBody->GetPosition();
+        float angle = boxBody->GetAngle();
+        const b2PolygonShape *shape = (b2PolygonShape *) boxBody->GetFixtureList()->GetShape();
+        b2Vec2 local_vec = shape->m_vertices[0];
+        int height = (int) (shape->m_vertices[2].y * 2 * SCALE);
+        int width = (int) (shape->m_vertices[2].x * 2 * SCALE);
+        SDL_Rect renderQuad = {(int) ((pos.x + local_vec.x) * SCALE - camera.x + DEFAULT_BOX_SIZE / 2),
+                               (int) ((pos.y + local_vec.y) * SCALE - camera.y + DEFAULT_BOX_SIZE / 2), DEFAULT_BOX_SIZE,
+                               DEFAULT_BOX_SIZE};
+
+
+        SDL_Point point = {(int) (shape->m_vertices[2].x * SCALE), (int) (shape->m_vertices[2].y * SCALE)};
+        image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG, &point);
+    }
+
 private:
-    int pos = 0;
     Window *window = nullptr;
 
     std::unique_ptr<b2World> world;
