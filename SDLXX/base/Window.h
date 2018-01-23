@@ -11,82 +11,31 @@
 namespace SDLXX {
     class Window {
     public:
-        Window(SDL_Window *w) : window(w) {
-            SDL_Renderer *windowRenderer = SDL_GetRenderer(w);
-            if(windowRenderer != nullptr) {
-                renderer = new Renderer(windowRenderer);
-            }
-        }
+        Window(SDL_Window *w);
 
-        Window(const void *data) {
-            window = SDL_CreateWindowFrom(data);
-            if(window == nullptr) {
-                throw Exception("Window was not initialized", SDL_GetError());
-            }
-        }
+        Window(const void *data);
 
-        Window(const std::string &title, int posX = SDL_WINDOWPOS_UNDEFINED, int posY = SDL_WINDOWPOS_UNDEFINED, int width = 640, int height = 480, Uint32 flags = 0) {
-            window = SDL_CreateWindow(title.c_str(), posX, posY, width, height, flags);
-            if(window == nullptr) {
-                throw Exception("Window was not initialized", SDL_GetError());
-            }
-        }
+        Window(const std::string &title, int posX = SDL_WINDOWPOS_UNDEFINED, int posY = SDL_WINDOWPOS_UNDEFINED, int width = 640, int height = 480, Uint32 flags = 0);
 
-        ~Window() {
-            if(renderer != nullptr) {
-                delete renderer;
-                renderer = nullptr;
-            }
-            if(window != nullptr) {
-                SDL_DestroyWindow(window);
-                window = nullptr;
-            }
-        }
+        ~Window();
 
-        SDL_Window *getSDLWindow() const {
-            return window;
-        }
+        SDL_Window *getSDLWindow() const;
 
-        Renderer &setRenderer(int driver, Uint32 flags) {
-            if(renderer != nullptr) {
-                throw Exception("Window already has a renderer");
-            }
-            renderer = new Renderer(window, driver, flags);
-            if(renderer == nullptr) {
-                throw Exception("Renderer could not be created", SDL_GetError());
-            }
-            return *renderer;
-        }
+        Renderer &setRenderer(int driver, Uint32 flags);
 
-        Renderer &getRenderer() const {
-            return *renderer;
-        }
+        Renderer &getRenderer() const;
 
-        SDL_Renderer *getSDLRenderer() {
-            return renderer->getSDLRenderer();
-        }
+        SDL_Renderer *getSDLRenderer();
 
-        void setTitle(const std::string &title) {
-            SDL_SetWindowTitle(window, title.c_str());
-        }
+        void setTitle(const std::string &title);
 
-        void minimize() {
-            SDL_MinimizeWindow(window);
-        }
+        void minimize();
 
-        void maximize() {
-            SDL_MaximizeWindow(window);
-        }
+        void maximize();
 
-        void restore() {
-            SDL_RestoreWindow(window);
-        }
+        void restore();
 
-        Dimensions getDimensions() {
-            int w, h;
-            SDL_GetWindowSize(window, &w, &h);
-            return Dimensions(w, h);
-        }
+        Dimensions getDimensions();
 
 
     private:

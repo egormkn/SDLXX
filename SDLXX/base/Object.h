@@ -8,7 +8,7 @@
 namespace SDLXX {
     class Object {
     protected:
-        Object() {}
+        Object() = default;
 
     public:
         virtual void update(Uint32 t, Uint32 dt, const Dimensions &windowDimensions) = 0;

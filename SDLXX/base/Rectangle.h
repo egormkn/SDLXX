@@ -6,37 +6,19 @@
 namespace SDLXX {
     class Rectangle {
     public:
-        Rectangle(int x, int y, int width = 0, int height = 0) {
-            rectangle = new SDL_Rect;
-            rectangle->x = x;
-            rectangle->y = y;
-            rectangle->w = width;
-            rectangle->h = height;
-        }
+        Rectangle(int x, int y, int width = 0, int height = 0);
 
-        ~Rectangle() {
-            delete rectangle;
-        }
+        ~Rectangle();
 
-        SDL_Rect *getSDLRectangle() const {
-            return rectangle;
-        }
+        SDL_Rect *getSDLRectangle() const;
 
-        int getX() const {
-            return rectangle->x;
-        }
+        int getX() const;
 
-        int getY() const {
-            return rectangle->y;
-        }
+        int getY() const;
 
-        int getWidth() const {
-            return rectangle->w;
-        }
+        int getWidth() const;
 
-        int getHeight() const {
-            return rectangle->h;
-        }
+        int getHeight() const;
 
     private:
         SDL_Rect *rectangle = nullptr;
