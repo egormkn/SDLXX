@@ -84,16 +84,14 @@ set(SDL2_SEARCH_PATHS
 )
 
 find_path(SDL2_INCLUDE_DIR SDL.h
-    HINTS
-    $ENV{SDL2_DIR}
+    HINTS $ENV{SDL2_DIR} ${SDL2_DIR}
     PATH_SUFFIXES include/SDL2 include
     PATHS ${SDL2_SEARCH_PATHS}
 )
 
 find_library(SDL2_LIBRARY_TEMP
     NAMES SDL2
-    HINTS
-    $ENV{SDL2_DIR}
+    HINTS $ENV{SDL2_DIR} ${SDL2_DIR}
     PATH_SUFFIXES lib64 lib lib/x64 lib/x86
     PATHS ${SDL2_SEARCH_PATHS}
 )
@@ -106,8 +104,7 @@ if (NOT SDL2_BUILDING_LIBRARY)
         # necessarily need it.
         find_library(SDL2_MAIN_LIBRARY
             NAMES SDL2main
-            HINTS
-            $ENV{SDL2_DIR}
+            HINTS $ENV{SDL2_DIR} ${SDL2_DIR}
             PATH_SUFFIXES lib64 lib lib/x64 lib/x86
             PATHS ${SDL2_SEARCH_PATHS}
         )
