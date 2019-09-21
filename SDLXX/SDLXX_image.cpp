@@ -9,7 +9,7 @@ bool SDLXX::SDL_image::initialized = false;
 
 SDLXX::SDL_image::SDL_image(Uint32 flags) {
 #ifndef SDLXX_RELEASE
-    Log::log("Initializing SDL tmx_image system...");
+    Log::log("Initializing SDL_image system...");
 #endif
     {
         std::lock_guard<std::mutex> lock(mutex);

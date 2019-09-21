@@ -25,49 +25,39 @@ private:
         SDL_Rect rect;
         std::vector<TMX_object> tmx_objects;
 
-        TextureHolder(Texture *texture, const SDL_Rect &rect, const std::vector<TMX_object> &tmx_objects)
-                : texture(texture), rect(rect), tmx_objects(tmx_objects) {}
+        TextureHolder(Texture *texture, const SDL_Rect &rect, const std::vector<TMX_object> &tmx_objects);
     };
 
 public:
 
-    Game(const std::string &title) : Scene(title) {
-        Log::log("[" + getTitle() + "] Scene constructed");
-    }
+    Game(const std::string &title);
 
-    ~Game() {
-        Log::log("[" + getTitle() + "] Scene destructed");
-    }
+    ~Game();
 
-    void setStaticBox(int x, int y, float w, float h) {
-        b2PolygonShape groundBox;
-        groundBox.SetAsBox(w / SCALE, h / SCALE);
+    void setStaticBox(int x, int y, float w, float h);
 
-        b2BodyDef groundBodyDef;
+/*        b2BodyDef groundBodyDef;
         groundBodyDef.position.Set((x + w) / SCALE, (y + h) / SCALE);
         b2Body *groundBody = world->CreateBody(&groundBodyDef);
         groundBody->CreateFixture(&groundBox, 1);
         //groundBody->SetUserData(&staticBoxName);
-    }
+    }*/
+  
+    void onCreate(Window &w) override;
 
-    void onCreate(Window &w) override {
-        Log::log("[" + getTitle() + "] Scene created");
-        window = &w;
+    void onDestroy() override;
 
-        b2Vec2 gravity(0.0f, 9.8f);
+        /*b2Vec2 gravity(0.0f, 9.8f);
         world = std::make_unique<b2World>(gravity);
         drawer = new Box2DDrawer(window->getSDLRenderer(), 30.f);
         drawer->SetFlags(0xFF);
-        //world->SetDebugDraw(drawer);
+        //world->SetDebugDraw(drawer);*/
 
-        map2 = new TMX_map();
-        map2->init("resources/map1.tmx");
-        TILE_WIDTH = map2->tileWidth;
-        TILE_HEIGHT = map2->tileHeight;
-        MAP_HEIGHT = map2->tmx_layers[0].height * TILE_HEIGHT;
-        MAP_WIDTH = map2->tmx_layers[0].width * TILE_WIDTH;
+    void onPause() override;
 
-        for (std::vector<TMX_tileset>::const_iterator tileset = map2->tmx_tilesets.begin();
+    void onResume() override;
+
+        /*for (std::vector<TMX_tileset>::const_iterator tileset = map2->tmx_tilesets.begin();
              tileset != map2->tmx_tilesets.end(); ++tileset) {
             if (!tileset->tmx_image.source.empty()) {
                 int raw = tileset->tilecount / tileset->columns;
@@ -100,24 +90,18 @@ public:
                                           tile->tmx_objectgroup.tmx_objects));
                 }
             }
-        }
+        }*/
 
-        //default camera position
-        camera = {0, 0};
+    void handleEvent(Event &e) override;
+
+    void update(Uint32 t, Uint32 dt) override;
+
+    void render(Renderer &renderer) override;
+
+    void renderBox(Renderer &renderer, b2Body *boxBody);
 
 
-        /*std::vector<std::vector<int>> vec = map->tmx_layers[0].tmx_data.data;
-        for (int i = 0; i < vec.size(); ++i) {
-            for (int j = 0; j < vec[i].size(); ++j) {
-                if (vec[i][j] != 0) {
-                    setStaticBox(j * TILE_WIDTH, i * TILE_HEIGHT, TILE_WIDTH / 2,
-                                 TILE_HEIGHT / 2);
-                }
-            }
-        }
-         */
-
-        for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();
+        /*for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();
              tmx_layers != map2->tmx_layers.end(); ++tmx_layers) {
             std::vector<std::vector<int>> vector = tmx_layers->tmx_data.data;
             for (int i = 0; i < vector.size(); ++i) {
@@ -149,15 +133,14 @@ public:
 
 
 
-        /* Circle */
-        /*b2CircleShape circleShape;
+        b2CircleShape circleShape;
         circleShape.m_radius = 100 / SCALE;
         b2BodyDef bodyDef2;
         bodyDef2.type = b2_dynamicBody;
         bodyDef2.position.Set(400 / SCALE, 100 / SCALE);
         b2Body *circleBody = world->CreateBody(&bodyDef2);
 
-        circleBody->CreateFixture(&circleShape, 2);*/
+        circleBody->CreateFixture(&circleShape, 2);
 
 
         image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getSDLRenderer(), TILE_WIDTH,
@@ -169,7 +152,7 @@ public:
         // Free resources
 
 
-        /*delete world;
+        delete world;
         world = nullptr;
 
         delete groundBodyDef;
@@ -181,7 +164,7 @@ public:
         delete fixtureDef;
 
         delete gravity;
-        gravity = nullptr;*/
+        gravity = nullptr;
 
         for (std::vector<Texture *>::iterator iterator = textures.begin(); iterator != textures.end(); ++iterator) {
             delete *iterator;
@@ -293,19 +276,19 @@ public:
                 renderBox(renderer, it);
             } else if (it->GetUserData() == &staticBoxName) {
                 renderBox(renderer, it);
-                /*b2Vec2 position = it->GetPosition();
+                b2Vec2 position = it->GetPosition();
 
                 SDL_Rect fillRect = {
                         (int) (position.x * SCALE), (int) (position.y * SCALE), 100, 100
                 };
 
                 renderer.setColor(Color(0xFF8888FF));
-                renderer.fillRect(&fillRect);*/
+                renderer.fillRect(&fillRect);
             }
         }
 
         world->DrawDebugData();
-        /**/
+      
         renderer.render();
     }
 
@@ -325,6 +308,9 @@ public:
         //SDL_Point point = {(int) shape->m_vertices[2].x, (int) shape->m_vertices[2].y};
         image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG);
     }
+*/
+    
+  void renderPlayer(Renderer &renderer, b2Body *boxBody);
 
 private:
     int pos = 0;

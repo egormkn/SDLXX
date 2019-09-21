@@ -12,85 +12,50 @@ namespace SDLXX {
 
     public:
         virtual void onCreate(Window &window) = 0;
+
         virtual void onDestroy() = 0;
+
         virtual void onPause() = 0;
+
         virtual void onResume() = 0;
 
         virtual void handleEvent(Event &e) = 0;
+
         virtual void update(Uint32 t, Uint32 dt) = 0;
+
         virtual void render(Renderer &renderer) = 0;
 
-        virtual ~Scene() {
-            if (intent != nullptr) {
-                delete intent;
-            }
-        }
+        virtual ~Scene();
 
     protected:
-        Scene(const std::string &t) {
-            initialized = false;
-            paused = false;
-            finished = false;     ///< If the scene was cleaned up and needs to be destroyed
-            intent = nullptr;
-            title = t;
-        }
+        Scene(const std::string &t);
 
-        virtual void runIntent(Scene *newIntent) final {
-            Log::log("[" + title + "] Running intent");
-            if (intent != nullptr) {
-                delete intent;
-            }
-            intent = newIntent;
-        }
+        virtual void runIntent(Scene *newIntent) final;
 
-        virtual void finish() final {
-            setFinished(true);
-        }
+        virtual void finish() final;
 
-        virtual bool hasIntent() const final {
-            return intent != nullptr;
-        }
+        virtual bool hasIntent() const final;
 
-        virtual const std::string &getTitle() const final {
-            return title;
-        }
+        virtual const std::string &getTitle() const final;
 
     private:
         bool initialized, paused, finished;
         Scene *intent;
         std::string title;
 
-        bool isInitialized() const {
-            return initialized;
-        }
+        bool isInitialized() const;
 
-        bool isFinished() const {
-            return finished;
-        }
+        bool isFinished() const;
 
-        bool isPaused() const {
-            return paused;
-        }
+        bool isPaused() const;
 
-        void setInitialized(bool state) {
-            Log::log("[" + title + "] Initialized: " + std::to_string(state));
-            initialized = state;
-        }
+        void setInitialized(bool state);
 
-        void setFinished(bool state) {
-            Log::log("[" + title + "] Finished: " + std::to_string(state));
-            finished = state;
-        }
+        void setFinished(bool state);
 
-        void setPaused(bool state) {
-            paused = state;
-        }
+        void setPaused(bool state);
 
-        Scene *getIntent() {
-            Scene *runner = intent;
-            intent = nullptr;
-            return runner;
-        }
+        Scene *getIntent();
     };
 }
 

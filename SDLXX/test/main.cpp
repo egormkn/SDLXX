@@ -15,7 +15,7 @@ int main(int argc, char *args[]) {
         SDL sdl(SDL_INIT_VIDEO);
         sdl.setHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
         SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
-        SDL_mixer sdl_mixer(/*MIX_INIT_FLAC | */MIX_INIT_MP3 | MIX_INIT_OGG);
+        SDL_mixer sdl_mixer(0/*MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG*/);
         SDL_net sdl_net;
         SDL_ttf sdl_ttf;
 

@@ -6,26 +6,15 @@
 namespace SDLXX {
     class Surface {
     public:
-        Surface(SDL_Surface *s) {
-            surface = s;
-        }
+        Surface(SDL_Surface *s);
 
-        ~Surface() {
-            SDL_FreeSurface(surface);
-            surface = nullptr;
-        }
+        ~Surface();
 
-        SDL_Surface *getSDLSurface() const {
-            return surface;
-        }
+        SDL_Surface *getSDLSurface() const;
 
-        int getWidth() const {
-            return surface->w;
-        }
+        int getWidth() const;
 
-        int getHeight() const {
-            return surface->h;
-        }
+        int getHeight() const;
 
     private:
         SDL_Surface *surface = nullptr;

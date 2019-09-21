@@ -11,59 +11,25 @@
 namespace SDLXX {
     class Renderer {
     public:
-        Renderer(SDL_Renderer *r) : renderer(r) {}
+        Renderer(SDL_Renderer *r);
 
-        Renderer(SDL_Window *w, int driver, Uint32 flags) {
-            renderer = SDL_CreateRenderer(w, driver, flags);
-            if(renderer == nullptr) {
-                Log::warning("Could not create hardware accelerated renderer, trying software fallback");
-                renderer = SDL_CreateRenderer(w, -1, SDL_RENDERER_SOFTWARE);
-                if(renderer == nullptr) {
-                    throw Exception("Renderer could not be created", SDL_GetError());
-                }
-            }
-        }
+        Renderer(SDL_Window *w, int driver, Uint32 flags);
 
-        ~Renderer() {
-            if(renderer != nullptr) {
-                SDL_DestroyRenderer(renderer);
-                renderer = nullptr;
-            }
-        }
+        ~Renderer();
 
-        SDL_Renderer *getSDLRenderer() const {
-            return renderer;
-        }
+        SDL_Renderer *getSDLRenderer() const;
 
-        void setColor(const Color &color) {
-            SDL_SetRenderDrawColor(renderer, color.r(), color.g(), color.b(), color.a());
-        }
+        void setColor(const Color &color);
 
-        void render() {
-            SDL_RenderPresent(renderer);
-        }
+        void render();
 
-        void clear() {
-            SDL_RenderClear(renderer);
-        }
+        void clear();
 
-        void renderCopy(const Texture &texture, const SDL_Rect *src = NULL, const SDL_Rect *dest = NULL) {
-            int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), src, dest);
-            if (result < 0) {
-                throw Exception("Failed to render a texture");
-            }
-        }
+        void renderCopy(const Texture &texture, const SDL_Rect *src = NULL, const SDL_Rect *dest = NULL);
 
-        void renderCopy(const Texture &texture, const Rectangle &src, const Rectangle &dest) {
-            int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), src.getSDLRectangle(), dest.getSDLRectangle());
-            if (result < 0) {
-                throw Exception("Failed to render a texture");
-            }
-        }
+        void renderCopy(const Texture &texture, const Rectangle &src, const Rectangle &dest);
 
-        void fillRect(SDL_Rect *rect) {
-            SDL_RenderFillRect(renderer, rect);
-        }
+        void fillRect(SDL_Rect *rect);
 
     private:
         SDL_Renderer *renderer = nullptr;
