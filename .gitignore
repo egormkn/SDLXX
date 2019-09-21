@@ -31,8 +31,11 @@
 *.out
 *.app
 
-# IntelliJ CLion files
+# IntelliJ files
 .idea/
 
-# SDL settings
-cmake/LibraryPaths.cmake
+# Visual Studio Code files
+.vscode/
+
+# Build files
+build/
