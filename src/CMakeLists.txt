@@ -7,4 +7,3 @@ add_subdirectory(net)
 add_subdirectory(ttf)
 
 add_subdirectory(tmx)
-add_subdirectory(game)

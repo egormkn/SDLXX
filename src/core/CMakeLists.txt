@@ -10,17 +10,17 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/core/*.h"
 set(SOURCE_LIST
     Animation.cpp
     Color.cpp
-    Event.cpp 
+    Event.cpp
     Exception.cpp
     Log.cpp
-    Object.cpp 
-    Point.cpp 
-    Rectangle.cpp 
-    Renderer.cpp 
-    Scene.cpp 
-    SceneManager.cpp 
+    Object.cpp
+    Point.cpp
+    Rectangle.cpp
+    Renderer.cpp
+    Scene.cpp
+    SceneManager.cpp
     SDLXX.cpp
-    Surface.cpp 
+    Surface.cpp
     Texture.cpp
     Utils.cpp
     Window.cpp)
@@ -33,7 +33,7 @@ target_include_directories(SDLXX_core PUBLIC "${PROJECT_SOURCE_DIR}/include/core
 
 # This depends on SDL2
 find_package(SDL2 CONFIG REQUIRED)
-target_link_libraries(SDLXX_core PRIVATE SDL2::SDL2main SDL2::SDL2-static)
+target_link_libraries(SDLXX_core PUBLIC SDL2::SDL2main SDL2::SDL2-static)
 
 # Temporary dependencies (TODO: Move to corresponding packages)
 find_package(sdl2-image CONFIG REQUIRED)
