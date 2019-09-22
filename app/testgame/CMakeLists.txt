@@ -36,3 +36,9 @@ target_compile_features(SDLXX_game PRIVATE cxx_std_17)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
     PREFIX "Header Files"
     FILES ${HEADER_LIST})
+
+# Copy assets to the build directory
+add_custom_command(TARGET SDLXX_game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/resources
+        $<TARGET_FILE_DIR:SDLXX_game>/resources)
