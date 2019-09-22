@@ -1,7 +1,7 @@
 #include <sstream>
-#include "SDLXX.h"
-#include "Exception.h"
-#include "Log.h"
+#include <sdlxx/core/SDLXX.h>
+#include <sdlxx/core/Exception.h>
+#include <sdlxx/core/Log.h>
 
 std::mutex SDLXX::SDL::mutex;
 

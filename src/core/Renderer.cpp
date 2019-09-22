@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include <sdlxx/core/Renderer.h>
 
 SDLXX::Renderer::Renderer(SDL_Renderer *r) : renderer(r) {}
 

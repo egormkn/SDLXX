@@ -1,4 +1,4 @@
-#include "Window.h"
+#include <sdlxx/core/Window.h>
 
 /*
  *

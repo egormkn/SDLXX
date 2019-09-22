@@ -1,4 +1,4 @@
-#include "Rectangle.h"
+#include <sdlxx/core/Rectangle.h>
 
 SDLXX::Rectangle::Rectangle(int x, int y, int width, int height) {
     rectangle = new SDL_Rect;

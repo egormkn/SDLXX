@@ -2,7 +2,7 @@
 #include <fstream>
 #include "TCPServer.h"
 #include <thread>
-#include "../../Log.h"
+#include <sdlxx/core/Log.h>
 
 int TCPServer::fileSize(const char *filename) {
     std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);

@@ -1,4 +1,4 @@
-#include "Event.h"
+#include <sdlxx/core/Event.h>
 
 SDLXX::Event::Event() {
     event = new SDL_Event;

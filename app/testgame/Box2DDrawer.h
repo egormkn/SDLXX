@@ -2,7 +2,7 @@
 #define SDLXX_BOX2DDRAWER_H
 
 #include <Box2D/Common/b2Draw.h>
-#include "../core/Renderer.h"
+#include <sdlxx/core/Renderer.h>
 
 class Box2DDrawer : public b2Draw {
 public:

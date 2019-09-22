@@ -1,4 +1,4 @@
-#include "Font.h"
+#include <sdlxx/ttf/Font.h>
 
 SDLXX::Font::Font(TTF_Font *f) {
     font = f;

@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <SDL_net.h>
-#include "../../Log.h"
+#include <sdlxx/core/Log.h>
 
 /*
  * TCPClient

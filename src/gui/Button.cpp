@@ -1,4 +1,4 @@
-#include "Button.h"
+#include <sdlxx/gui/Button.h>
 
 SDLXX::Button::Button(int x, int y, int width, int height) {
     absPos.setPoint(x, y);

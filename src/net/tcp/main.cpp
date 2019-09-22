@@ -6,7 +6,7 @@
 
 #include "TCPClient.h"
 #include "TCPServer.h"
-#include "../../Log.h"
+#include <sdlxx/core/Log.h>
 
 TCPClient *client;
 TCPServer *server;

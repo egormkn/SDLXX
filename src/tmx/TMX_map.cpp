@@ -23,7 +23,7 @@ bool TMX_map::init(const std::string fileDir) {
     tinyxml2::XMLDocument document;
     tinyxml2::XMLError result = document.LoadFile(fileDir.c_str());
     if (result != tinyxml2::XML_SUCCESS) {
-        SDLXX::Log::error("[TMX_map] Can't open file");
+        std::cout << "[TMX_map] Can't open file" << std::endl;
         return false;
     }
 

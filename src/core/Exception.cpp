@@ -1,5 +1,5 @@
 #include <sstream>
-#include "Exception.h"
+#include <sdlxx/core/Exception.h>
 
 SDLXX::Exception::Exception() :
         exception(), msg("Error") {}

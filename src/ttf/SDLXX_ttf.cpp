@@ -1,7 +1,7 @@
 #include <sstream>
-#include "SDLXX_ttf.h"
-#include "Exception.h"
-#include "Log.h"
+#include <sdlxx/ttf/SDLXX_ttf.h>
+#include <sdlxx/core/Exception.h>
+#include <sdlxx/core/Log.h>
 
 std::mutex SDLXX::SDL_ttf::mutex;
 

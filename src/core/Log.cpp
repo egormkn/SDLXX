@@ -1,4 +1,4 @@
-#include "Log.h"
+#include <sdlxx/core/Log.h>
 #include <sstream>
 #include <iostream>
 #include <SDL_log.h>

@@ -2,7 +2,7 @@
 // Created by egorm on 09.02.2017.
 //
 
-#include "Surface.h"
+#include <sdlxx/core/Surface.h>
 
 SDLXX::Surface::Surface(SDL_Surface *s) {
     surface = s;

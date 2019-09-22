@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include <sdlxx/core/Texture.h>
 
 SDLXX::Texture::Texture(SDL_Texture *t) {
     texture = t;

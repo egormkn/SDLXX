@@ -1,4 +1,4 @@
-#include "Point.h"
+#include <sdlxx/core/Point.h>
 
 SDLXX::Point::Point(int x, int y) {
     point = new SDL_Point;

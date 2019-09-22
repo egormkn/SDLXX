@@ -1,4 +1,4 @@
-#include "SceneManager.h"
+#include <sdlxx/core/SceneManager.h>
 
 SDLXX::SceneManager::SceneManager(SDLXX::Window &w) {
     window = &w;

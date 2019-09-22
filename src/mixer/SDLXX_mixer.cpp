@@ -1,7 +1,7 @@
 #include <sstream>
-#include "SDLXX_mixer.h"
-#include "Log.h"
-#include "Exception.h"
+#include <sdlxx/mixer/SDLXX_mixer.h>
+#include <sdlxx/core/Exception.h>
+#include <sdlxx/core/Log.h>
 
 std::mutex SDLXX::SDL_mixer::mutex;
 

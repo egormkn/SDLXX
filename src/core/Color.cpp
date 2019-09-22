@@ -1,5 +1,5 @@
-#include "Color.h"
-#include "Utils.h"
+#include <sdlxx/core/Color.h>
+#include <sdlxx/core/Utils.h>
 
 SDLXX::Color::Color() : red(0), green(0), blue(0), alpha(255) {}
 

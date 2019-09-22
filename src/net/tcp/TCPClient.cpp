@@ -4,7 +4,7 @@
 #include <memory>
 #include <fstream>
 #include <SDL_net.h>
-#include "../../Log.h"
+#include <sdlxx/core/Log.h>
 
 
 TCPClient::TCPClient(const std::string &ip_, uint16_t port_) {

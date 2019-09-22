@@ -1,10 +1,10 @@
-#include "../core/SDLXX.h"
-#include "../image/SDLXX_image.h"
-#include "../net/SDLXX_net.h"
-#include "../ttf/SDLXX_ttf.h"
-#include "../mixer/SDLXX_mixer.h"
-#include "../core/Window.h"
-#include "../core/SceneManager.h"
+#include <sdlxx/core/SDLXX.h>
+#include <sdlxx/image/SDLXX_image.h>
+#include <sdlxx/net/SDLXX_net.h>
+#include <sdlxx/ttf/SDLXX_ttf.h>
+#include <sdlxx/mixer/SDLXX_mixer.h>
+#include <sdlxx/core/Window.h>
+#include <sdlxx/core/SceneManager.h>
 #include "Menu.h"
 
 using namespace SDLXX;

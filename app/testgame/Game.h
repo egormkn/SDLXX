@@ -4,9 +4,9 @@
 #include <fstream>
 #include <SDL_timer.h>
 #include <vector>
-#include "../image/SDLXX_image.h"
-#include "../core/Scene.h"
-#include "../core/Texture.h"
+#include <sdlxx/image/SDLXX_image.h>
+#include <sdlxx/core/Scene.h>
+#include <sdlxx/core/Texture.h>
 #include "Box2DDrawer.h"
 #include "../tmx/TMX_map.h"
 #include "../tmx/TMX_map.h"
@@ -42,7 +42,7 @@ public:
         groundBody->CreateFixture(&groundBox, 1);
         //groundBody->SetUserData(&staticBoxName);
     }*/
-  
+
     void onCreate(Window &w) override;
 
     void onDestroy() override;
@@ -288,7 +288,7 @@ public:
         }
 
         world->DrawDebugData();
-      
+
         renderer.render();
     }
 
@@ -309,7 +309,7 @@ public:
         image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG);
     }
 */
-    
+
   void renderPlayer(Renderer &renderer, b2Body *boxBody);
 
 private:

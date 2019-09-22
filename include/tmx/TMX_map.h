@@ -7,7 +7,6 @@
 #include "TMX_Utils.h"
 #include "TMX_layer.h"
 #include <vector>
-#include "Log.h"
 
 class TMX_map {
 public:

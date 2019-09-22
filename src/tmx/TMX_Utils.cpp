@@ -1,7 +1,6 @@
 #include "TMX_Utils.h"
 #include <vector>
 #include <iostream>
-#include "Log.h"
 
 //initialization of static constants
 

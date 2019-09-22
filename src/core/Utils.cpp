@@ -1,4 +1,4 @@
-#include "Utils.h"
+#include <sdlxx/core/Utils.h>
 
 #include <sstream>   // sstream
 #include <algorithm> // find_if

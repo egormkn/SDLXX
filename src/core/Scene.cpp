@@ -1,4 +1,4 @@
-#include "Scene.h"
+#include <sdlxx/core/Scene.h>
 
 SDLXX::Scene::~Scene() {
     if (intent != nullptr) {
