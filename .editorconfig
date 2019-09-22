@@ -1,0 +1,22 @@
+# Configuration file for EditorConfig
+# More information is available at http://EditorConfig.org
+
+# Ignore any other EditorConfig files further up in the file system
+root = true
+
+# Configuration for all files
+[*]
+# Enforce Unix style line endings (\n only)
+end_of_line = lf
+# Always end files with a blank line
+insert_final_newline = true
+# Force space characters for indentation
+indent_style = space
+# Remove whitespace characters at the end of line
+trim_trailing_whitespace = true
+# Use UTF-8 charset
+charset = utf-8
+
+# Tab indentation for Makefile
+[Makefile]
+indent_style = tab
