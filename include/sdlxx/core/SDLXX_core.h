@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef SDLXX_H
 #define SDLXX_H
 
@@ -9,14 +11,14 @@
 #include <SDL.h>
 #include <SDL_video.h>
 
-namespace SDLXX {
-    class SDL {
+namespace sdlxx::core {
+    class SDLXX {
     public:
         // Init SDL
-        SDL(Uint32 flags);
+        SDLXX(Uint32 flags);
 
         // Quit SDL
-        ~SDL();
+        ~SDLXX();
 
         void printDebugInfo() {
             SDL_DisplayMode current;
@@ -61,20 +63,20 @@ namespace SDLXX {
 
         // Deleted copy constructor
         // This class is not copyable
-        SDL(const SDL &other) = delete;
+        SDLXX(const SDLXX &other) = delete;
 
         // Deleted assignment operator
         // This class is not copyable
-        SDL &operator=(const SDL &other) = delete;
+        SDLXX &operator=(const SDLXX &other) = delete;
 
         // Deleted move constructor
         // This class is not movable
-        SDL(SDL &&other) = delete;
+        SDLXX(SDLXX &&other) = delete;
 
         // Deleted move assignment operator
         // This class is not movable
-        SDL &operator=(SDL &&other) = delete;
+        SDLXX &operator=(SDLXX &&other) = delete;
     };
-}
+} // namespace sdlxx::core::core
 
 #endif // SDLXX_H

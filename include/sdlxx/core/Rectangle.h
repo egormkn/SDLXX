@@ -3,7 +3,7 @@
 
 #include <SDL_rect.h>
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Rectangle {
     public:
         Rectangle(int x, int y, int width = 0, int height = 0);

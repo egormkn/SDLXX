@@ -3,21 +3,21 @@
 #include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
-std::mutex SDLXX::SDL_ttf::mutex;
+std::mutex sdlxx::ttf::SDL_ttf::mutex;
 
-bool SDLXX::SDL_ttf::initialized = false;
+bool sdlxx::ttf::SDL_ttf::initialized = false;
 
-SDLXX::SDL_ttf::SDL_ttf() {
+sdlxx::ttf::SDL_ttf::SDL_ttf() {
 #ifndef SDLXX_RELEASE
-    Log::log("Initializing SDL font rendering system...");
+    sdlxx::core::Log::log("Initializing SDL font rendering system...");
 #endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
-            throw Exception("SDL_ttf already initialized");
+            throw sdlxx::core::Exception("SDL_ttf already initialized");
         }
         if(TTF_Init() == -1) {
-            throw Exception("Unable to initialize SDL_ttf", TTF_GetError());
+            throw sdlxx::core::Exception("Unable to initialize SDL_ttf", TTF_GetError());
         }
         initialized = true;
     }
@@ -30,15 +30,15 @@ SDLXX::SDL_ttf::SDL_ttf() {
                    << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
     linkedString << "Linked against SDL_ttf v" << (int) linked->major
                  << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    Log::log(compiledString.str());
-    Log::log(linkedString.str());
-    Log::newline();
+    sdlxx::core::Log::log(compiledString.str());
+    sdlxx::core::Log::log(linkedString.str());
+    sdlxx::core::Log::newline();
 #endif
 }
 
-SDLXX::SDL_ttf::~SDL_ttf() {
+sdlxx::ttf::SDL_ttf::~SDL_ttf() {
 #ifndef SDLXX_RELEASE
-    Log::log("Cleaning up SDL font rendering system...");
+    sdlxx::core::Log::log("Cleaning up SDL font rendering system...");
 #endif
     std::lock_guard<std::mutex> lock(mutex);
     TTF_Quit();

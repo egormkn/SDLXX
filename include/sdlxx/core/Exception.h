@@ -4,7 +4,7 @@
 #include <exception>
 #include <string>
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Exception : public std::exception {
     public:
         Exception();

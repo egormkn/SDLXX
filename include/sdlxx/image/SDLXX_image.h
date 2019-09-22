@@ -4,7 +4,7 @@
 #include <mutex>
 #include <SDL_image.h>
 
-namespace SDLXX {
+namespace sdlxx::image {
     class SDL_image {
     public:
         // Init SDL_image

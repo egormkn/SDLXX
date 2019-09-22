@@ -1,11 +1,11 @@
 #include <sdlxx/core/Texture.h>
 
-SDLXX::Texture::Texture(SDL_Texture *t) {
+sdlxx::core::Texture::Texture(SDL_Texture *t) {
     texture = t;
     SDL_QueryTexture(t, &format, &access, &width, &height);
 }
 
-SDLXX::Texture::Texture(const std::string &path, SDL_Renderer *renderer, int w, int h) {
+sdlxx::core::Texture::Texture(const std::string &path, SDL_Renderer *renderer, int w, int h) {
     SDL_Surface *surface = IMG_Load(path.c_str());
     if(surface == nullptr) {
         throw Exception("Unable to load image", IMG_GetError());
@@ -34,9 +34,9 @@ SDLXX::Texture::Texture(const std::string &path, SDL_Renderer *renderer, int w, 
     SDL_FreeSurface(surface);
 }
 
-SDLXX::Texture::Texture(const std::string &text, const SDLXX::Color &color, const SDLXX::Font &font,
+sdlxx::core::Texture::Texture(const std::string &text, const sdlxx::core::Color &color, const sdlxx::ttf::Font &font,
                         SDL_Renderer *renderer) {
-    Surface surface = font.render(text, TTF_MODE_BLENDED, color);
+    Surface surface = font.render(text, sdlxx::ttf::TTF_MODE_BLENDED, color);
     texture = SDL_CreateTextureFromSurface(renderer, surface.getSDLSurface());
     if(texture == nullptr) {
         throw Exception("Unable to create texture", SDL_GetError());
@@ -45,7 +45,7 @@ SDLXX::Texture::Texture(const std::string &text, const SDLXX::Color &color, cons
     height = surface.getHeight();
 }
 
-SDLXX::Texture::~Texture() {
+sdlxx::core::Texture::~Texture() {
     width = 0;
     height = 0;
     access = SDL_TEXTUREACCESS_STATIC;
@@ -56,19 +56,19 @@ SDLXX::Texture::~Texture() {
     }
 }
 
-void SDLXX::Texture::setColor(Uint8 red, Uint8 green, Uint8 blue) {
+void sdlxx::core::Texture::setColor(Uint8 red, Uint8 green, Uint8 blue) {
     SDL_SetTextureColorMod(texture, red, green, blue);
 }
 
-void SDLXX::Texture::setBlendMode(SDL_BlendMode blending) {
+void sdlxx::core::Texture::setBlendMode(SDL_BlendMode blending) {
     SDL_SetTextureBlendMode(texture, blending);
 }
 
-void SDLXX::Texture::setAlpha(Uint8 alpha) {
+void sdlxx::core::Texture::setAlpha(Uint8 alpha) {
     SDL_SetTextureAlphaMod(texture, alpha);
 }
 
-void SDLXX::Texture::render(SDL_Renderer *renderer, SDL_Rect *clip, SDL_Rect *dest, double angle, SDL_Point *center,
+void sdlxx::core::Texture::render(SDL_Renderer *renderer, SDL_Rect *clip, SDL_Rect *dest, double angle, SDL_Point *center,
                             SDL_RendererFlip flip) {
     //Set rendering space and render to screen
 
@@ -77,7 +77,7 @@ void SDLXX::Texture::render(SDL_Renderer *renderer, SDL_Rect *clip, SDL_Rect *de
     SDL_RenderCopyEx(renderer, texture, clip, dest, angle, center, flip);
 }
 
-void SDLXX::Texture::fill(SDL_Renderer *renderer, SDL_Rect *clip, SDL_Rect *dest, double angle, SDL_Point *center,
+void sdlxx::core::Texture::fill(SDL_Renderer *renderer, SDL_Rect *clip, SDL_Rect *dest, double angle, SDL_Point *center,
                           SDL_RendererFlip flip) {
 
     if (dest == nullptr) {
@@ -96,14 +96,14 @@ void SDLXX::Texture::fill(SDL_Renderer *renderer, SDL_Rect *clip, SDL_Rect *dest
     }
 }
 
-int SDLXX::Texture::getWidth() const {
+int sdlxx::core::Texture::getWidth() const {
     return width;
 }
 
-int SDLXX::Texture::getHeight() const {
+int sdlxx::core::Texture::getHeight() const {
     return height;
 }
 
-SDL_Texture *SDLXX::Texture::getSDLTexture() const {
+SDL_Texture *sdlxx::core::Texture::getSDLTexture() const {
     return texture;
 }

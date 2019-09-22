@@ -1,20 +1,20 @@
 #include <sdlxx/ttf/Font.h>
 
-SDLXX::Font::Font(TTF_Font *f) {
+sdlxx::ttf::Font::Font(TTF_Font *f) {
     font = f;
 }
 
-SDLXX::Font::Font(const std::string &path, int ptsize, int index) {
+sdlxx::ttf::Font::Font(const std::string &path, int ptsize, int index) {
     if((font = TTF_OpenFontIndex(path.c_str(), ptsize, index)) == nullptr) {
-        throw Exception("Failed to load font", TTF_GetError());
+        throw sdlxx::core::Exception("Failed to load font", TTF_GetError());
     }
 }
 
-SDLXX::Font::Font(SDLXX::Font &&other) noexcept : font(other.font) {
+sdlxx::ttf::Font::Font(sdlxx::ttf::Font &&other) noexcept : font(other.font) {
     other.font = nullptr;
 }
 
-SDLXX::Font &SDLXX::Font::operator=(SDLXX::Font &&other) noexcept {
+sdlxx::ttf::Font &sdlxx::ttf::Font::operator=(sdlxx::ttf::Font &&other) noexcept {
     if(&other != this) {
         if(font != nullptr) {
             TTF_CloseFont(font);
@@ -25,19 +25,19 @@ SDLXX::Font &SDLXX::Font::operator=(SDLXX::Font &&other) noexcept {
     return *this;
 }
 
-TTF_Font *SDLXX::Font::getSDLFont() const {
+TTF_Font *sdlxx::ttf::Font::getSDLFont() const {
     return font;
 }
 
-SDLXX::Font::~Font() {
+sdlxx::ttf::Font::~Font() {
     if(font != nullptr) {
         TTF_CloseFont(font);
         font = nullptr;
     }
 }
 
-SDLXX::Surface
-SDLXX::Font::render(const std::string &text, int mode, const SDLXX::Color &color, const SDLXX::Color &bg) const {
+sdlxx::core::Surface
+sdlxx::ttf::Font::render(const std::string &text, int mode, const sdlxx::core::Color &color, const sdlxx::core::Color &bg) const {
     SDL_Surface *sdlSurface = nullptr;
     switch (mode) {
         case TTF_MODE_BLENDED:
@@ -52,12 +52,12 @@ SDLXX::Font::render(const std::string &text, int mode, const SDLXX::Color &color
             break;
     }
     if(sdlSurface == nullptr) {
-        throw Exception("Unable to render text", TTF_GetError());
+        throw sdlxx::core::Exception("Unable to render text", TTF_GetError());
     }
-    return Surface(sdlSurface);
+    return sdlxx::core::Surface(sdlSurface);
 }
 
-SDLXX::Surface SDLXX::Font::render(Uint16 ch, int mode, const SDLXX::Color &color, const SDLXX::Color &bg) const {
+sdlxx::core::Surface sdlxx::ttf::Font::render(Uint16 ch, int mode, const sdlxx::core::Color &color, const sdlxx::core::Color &bg) const {
     SDL_Surface *sdlSurface = nullptr;
     switch (mode) {
         case TTF_MODE_BLENDED:
@@ -72,7 +72,7 @@ SDLXX::Surface SDLXX::Font::render(Uint16 ch, int mode, const SDLXX::Color &colo
             break;
     }
     if(sdlSurface == nullptr) {
-        throw Exception("Unable to render glyph", TTF_GetError());
+        throw sdlxx::core::Exception("Unable to render glyph", TTF_GetError());
     }
-    return Surface(sdlSurface);
+    return sdlxx::core::Surface(sdlSurface);
 }

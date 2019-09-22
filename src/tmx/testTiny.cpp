@@ -2,7 +2,7 @@
 // Created by Vlad on 09.02.2017.
 //
 #include "tinyxml2.h"
-#include "TMX_map.h"
+#include <tmx/TMX_map.h>
 #include <vector>
 
 int main(int argc, char *args[]) {

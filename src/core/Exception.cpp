@@ -1,24 +1,24 @@
 #include <sstream>
 #include <sdlxx/core/Exception.h>
 
-SDLXX::Exception::Exception() :
+sdlxx::core::Exception::Exception() :
         exception(), msg("Error") {}
 
-SDLXX::Exception::Exception(const std::string &m) :
+sdlxx::core::Exception::Exception(const std::string &m) :
         exception(), msg(m) {}
 
-SDLXX::Exception::Exception(const std::string &m, const std::string &e) :
+sdlxx::core::Exception::Exception(const std::string &m, const std::string &e) :
         exception() {
     std::stringstream s;
     s << m << ": " << e;
     msg = s.str();
 }
 
-SDLXX::Exception::Exception(const SDLXX::Exception &other) :
+sdlxx::core::Exception::Exception(const sdlxx::core::Exception &other) :
         exception(), msg(other.what()) {}
 
-SDLXX::Exception::~Exception() {}
+sdlxx::core::Exception::~Exception() {}
 
-const char *SDLXX::Exception::what() const noexcept {
+const char *sdlxx::core::Exception::what() const noexcept {
     return msg.c_str();
 }

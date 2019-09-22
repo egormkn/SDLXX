@@ -1,4 +1,4 @@
-#include "TMX_tile.h"
+#include <tmx/TMX_tile.h>
 
 TMX_tile::TMX_tile() {
     id = -1;

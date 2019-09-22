@@ -3,7 +3,7 @@
 
 #include <SDL_surface.h>
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Surface {
     public:
         Surface(SDL_Surface *s);

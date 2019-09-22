@@ -1,4 +1,4 @@
-#include "TMX_layer.h"
+#include <tmx/TMX_layer.h>
 
 TMX_layer::TMX_layer() {
     name = TMX_Utils::DEFAULT_STRING;

@@ -1,4 +1,4 @@
-#include "TMX_tileset.h"
+#include <tmx/TMX_tileset.h>
 
 TMX_tileset::TMX_tileset() {
     firstgid = TMX_Utils::DEFAULT_INT;
@@ -34,4 +34,4 @@ void TMX_tileset::init(const tinyxml2::XMLElement *element) {
     }
 }
 
-#include "TMX_tileset.h"
+#include <tmx/TMX_tileset.h>

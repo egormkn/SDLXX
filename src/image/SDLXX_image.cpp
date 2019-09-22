@@ -3,22 +3,22 @@
 #include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
-std::mutex SDLXX::SDL_image::mutex;
+std::mutex sdlxx::image::SDL_image::mutex;
 
-bool SDLXX::SDL_image::initialized = false;
+bool sdlxx::image::SDL_image::initialized = false;
 
-SDLXX::SDL_image::SDL_image(Uint32 flags) {
+sdlxx::image::SDL_image::SDL_image(Uint32 flags) {
 #ifndef SDLXX_RELEASE
-    Log::log("Initializing SDL_image system...");
+    sdlxx::core::Log::log("Initializing SDL_image system...");
 #endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
-            throw Exception("SDL_image already initialized");
+            throw sdlxx::core::Exception("SDL_image already initialized");
         }
         int initted = IMG_Init(flags);
         if((initted & flags) != flags) {
-            throw Exception("Unable to initialize SDL_image", IMG_GetError());
+            throw sdlxx::core::Exception("Unable to initialize SDL_image", IMG_GetError());
         }
         initialized = true;
     }
@@ -31,15 +31,15 @@ SDLXX::SDL_image::SDL_image(Uint32 flags) {
                    << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
     linkedString << "Linked against SDL_image v" << (int) linked->major
                  << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    Log::log(compiledString.str());
-    Log::log(linkedString.str());
-    Log::newline();
+    sdlxx::core::Log::log(compiledString.str());
+    sdlxx::core::Log::log(linkedString.str());
+    sdlxx::core::Log::newline();
 #endif
 }
 
-SDLXX::SDL_image::~SDL_image() {
+sdlxx::image::SDL_image::~SDL_image() {
 #ifndef SDLXX_RELEASE
-    Log::log("Cleaning up SDL tmx_image system...");
+    sdlxx::core::Log::log("Cleaning up SDL tmx_image system...");
 #endif
     std::lock_guard<std::mutex> lock(mutex);
     IMG_Quit();

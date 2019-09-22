@@ -7,14 +7,14 @@
 #include "../ttf/Font.h"
 #include "Log.h"
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Texture {
     public:
         Texture(SDL_Texture *t);
 
         Texture(const std::string &path, SDL_Renderer *renderer, int w, int h);
 
-        Texture(const std::string &text, const Color &color, const Font &font, SDL_Renderer *renderer);
+        Texture(const std::string &text, const Color &color, const sdlxx::ttf::Font &font, SDL_Renderer *renderer);
 
         ~Texture();
 

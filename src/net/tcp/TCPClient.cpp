@@ -10,18 +10,18 @@
 TCPClient::TCPClient(const std::string &ip_, uint16_t port_) {
     ip = ip_;
     port = port_;
-    SDLXX::Log::verbose("[TCPClient] created");
+    sdlxx::net::Log::verbose("[TCPClient] created");
 }
 
 TCPClient::TCPClient(TCPsocket newSocket) {
     tcpSocket = newSocket;
-    SDLXX::Log::verbose("[TCPClient] created");
+    sdlxx::net::Log::verbose("[TCPClient] created");
 }
 
 TCPClient::~TCPClient() {
     isConnectedFlag = false;
     SDLNet_TCP_Close(tcpSocket);
-    SDLXX::Log::verbose("[TCPClient] closed");
+    sdlxx::net::Log::verbose("[TCPClient] closed");
 }
 
 bool TCPClient::init() {
@@ -32,11 +32,11 @@ bool TCPClient::setupIpAddress() {
     int result = SDLNet_ResolveHost(&ipAddress, ip.c_str(), port);
 
     if (result == -1) {
-        SDLXX::Log::warning("[TCPClient] failed to resolve host");
+        sdlxx::net::Log::warning("[TCPClient] failed to resolve host");
         return false;
     }
 
-    SDLXX::Log::verbose("[TCPClient] host resolved");
+    sdlxx::net::Log::verbose("[TCPClient] host resolved");
     return true;
 }
 
@@ -44,13 +44,13 @@ bool TCPClient::openConnectionToServer() {
     tcpSocket = SDLNet_TCP_Open(&ipAddress);
 
     if (tcpSocket == nullptr) {
-        SDLXX::Log::warning("[TCPClient] failed to open connection:\n" + std::string(SDLNet_GetError()));
+        sdlxx::net::Log::warning("[TCPClient] failed to open connection:\n" + std::string(SDLNet_GetError()));
         return false;
     }
 
     isConnectedFlag = true;
 
-    SDLXX::Log::verbose("[TCPClient] connection opened");
+    sdlxx::net::Log::verbose("[TCPClient] connection opened");
     return true;
 }
 
@@ -78,7 +78,7 @@ void TCPClient::readFile() {
     }
     out.close();
     delete[] buffer;
-    SDLXX::Log::verbose("[TCPClient] information successfully achieved");
+    sdlxx::net::Log::verbose("[TCPClient] information successfully achieved");
 }
 
 TCPsocket TCPClient::getSocket() {
@@ -86,7 +86,7 @@ TCPsocket TCPClient::getSocket() {
 }
 
 void TCPClient::sendRequest(int32_t request_code) {
-    SDLXX::Log::debug("[TCPClient] trying to send request with code: " + std::to_string(request_code));
+    sdlxx::net::Log::debug("[TCPClient] trying to send request with code: " + std::to_string(request_code));
     SDLNet_TCP_Send(tcpSocket, &request_code, 4);
     if (request_code == 1) {
         readFile();

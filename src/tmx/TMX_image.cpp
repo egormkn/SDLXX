@@ -1,4 +1,4 @@
-#include "TMX_image.h"
+#include <tmx/TMX_image.h>
 
 TMX_image::TMX_image() {
     format = TMX_Utils::DEFAULT_STRING;

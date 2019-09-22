@@ -10,7 +10,7 @@ int TCPServer::fileSize(const char *filename) {
 }
 
 void TCPServer::serverManager() {
-    SDLXX::Log::debug("[TCPServer] server thread started");
+    sdlxx::net::Log::debug("[TCPServer] server thread started");
     while (true) {
         //if (canAcceptConnection()) {
             acceptConnection();
@@ -25,14 +25,14 @@ void TCPServer::serverManager() {
         }
         server_mut.unlock();
     }
-    SDLXX::Log::verbose("[TCPServer] thread closed");
+    sdlxx::net::Log::verbose("[TCPServer] thread closed");
 }
 
 TCPServer::TCPServer(uint16_t port_) {
     clientSocketSet = SDLNet_AllocSocketSet(10);
     port = port_;
     server_flag = true;
-    SDLXX::Log::verbose("[TCPServer] created with port :" + std::to_string(port));
+    sdlxx::net::Log::verbose("[TCPServer] created with port :" + std::to_string(port));
 }
 
 TCPServer::~TCPServer() {
@@ -41,7 +41,7 @@ TCPServer::~TCPServer() {
     server_mut.unlock();
     server_tread.join();
     SDLNet_FreeSocketSet(clientSocketSet);
-    SDLXX::Log::verbose("[TCPServer] closed");
+    sdlxx::net::Log::verbose("[TCPServer] closed");
 }
 
 bool TCPServer::init() {
@@ -57,11 +57,11 @@ bool TCPServer::setupPort() {
     int result = SDLNet_ResolveHost(&ipAddress, nullptr, port);
 
     if (result == -1) {
-        SDLXX::Log::warning("[TCPServer] failed to resolve port");
+        sdlxx::net::Log::warning("[TCPServer] failed to resolve port");
         return false;
     }
 
-    SDLXX::Log::verbose("[TCPServer] port resolved");
+    sdlxx::net::Log::verbose("[TCPServer] port resolved");
     return true;
 }
 
@@ -71,11 +71,11 @@ bool TCPServer::openPortForListening() {
     tcpSocket = SDLNet_TCP_Open(&ipAddress);
 
     if (tcpSocket == nullptr) {
-        SDLXX::Log::warning("[TCPServer] failed opening port for listening");
+        sdlxx::net::Log::warning("[TCPServer] failed opening port for listening");
         return false;
     }
 
-    SDLXX::Log::verbose("[TCPServer] port opened for listening");
+    sdlxx::net::Log::verbose("[TCPServer] port opened for listening");
     return true;
 }
 
@@ -83,7 +83,7 @@ void TCPServer::acceptConnection() {
     TCPsocket newSocket = SDLNet_TCP_Accept(tcpSocket);
 
     if (newSocket == nullptr) {
-        //SDLXX::Log::warning("[TCPServer] cannot accept TCP connection: " + std::string(SDLNet_GetError()));
+        //sdlxx::net::Log::warning("[TCPServer] cannot accept TCP connection: " + std::string(SDLNet_GetError()));
         return;
     }
 
@@ -91,7 +91,7 @@ void TCPServer::acceptConnection() {
     SDLNet_TCP_AddSocket(clientSocketSet, newSocket);
     clientConnections.push_back(std::move(connection));
 
-    SDLXX::Log::debug("[TCPServer] connection accepted");
+    sdlxx::net::Log::debug("[TCPServer] connection accepted");
 }
 
 bool TCPServer::checkForRequests() {
@@ -105,7 +105,7 @@ std::string TCPServer::getInformation() {
 
 void TCPServer::sendFile(int number, std::string file_dir) {
     if (number >= clientConnections.size()) {
-        SDLXX::Log::warning("[TCPServer] No client with such number: " + std::to_string(number));
+        sdlxx::net::Log::warning("[TCPServer] No client with such number: " + std::to_string(number));
     }
     TCPsocket socket = clientConnections[number]->getSocket();
     int buffer_size = 1024 * 128;
@@ -129,11 +129,11 @@ void TCPServer::sendFile(int number, std::string file_dir) {
         //std::cout << "Tried to send " << messageSize << "\tsent : " << bytes_send << "\n";
         if (bytes_send < messageSize) {
             std::cout << "\tSend failed : " << SDLNet_GetError() << "\n";
-            SDLXX::Log::debug("[TCPServer] file send failed");
+            sdlxx::net::Log::debug("[TCPServer] file send failed");
             break;
         }
     }
-    SDLXX::Log::debug("[TCPServer] information successfully sent");
+    sdlxx::net::Log::debug("[TCPServer] information successfully sent");
     delete[] buffer;
     in.close();
 }
@@ -163,7 +163,7 @@ void TCPServer::answerRequests() {
 
             int numused = SDLNet_TCP_DelSocket(clientSocketSet, clientConnections[i]->getSocket());
             if (numused < 0) {
-                SDLXX::Log::warning("[TCPServer] cannot delete " + std::to_string(i) + " client from set: " +
+                sdlxx::net::Log::warning("[TCPServer] cannot delete " + std::to_string(i) + " client from set: " +
                                     std::string(SDLNet_GetError()));
             }
             clientConnections.erase(clientConnections.begin() + i);
@@ -178,7 +178,7 @@ void TCPServer::answerRequests() {
                 sendFile(i, "info.xml");
                 break;
             case 2:
-                SDLXX::Log::debug("[TCPServer] " + std::to_string(i) + " client wants to join the game");
+                sdlxx::net::Log::debug("[TCPServer] " + std::to_string(i) + " client wants to join the game");
                 //TODO: write joining the game
                 break;
                 //std::cout << "ERROR: unknown request code received from " << i << " client\n" <<

@@ -6,7 +6,7 @@
 #include "Renderer.h"
 #include "Window.h"
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Scene {
         friend class SceneManager;
 

@@ -8,12 +8,13 @@
 #include <sdlxx/core/Scene.h>
 #include <sdlxx/core/Texture.h>
 #include "Box2DDrawer.h"
-#include "../tmx/TMX_map.h"
-#include "../tmx/TMX_map.h"
+#include <tmx/TMX_map.h>
 
 #include <Box2D/Box2D.h>
 
-using namespace SDLXX;
+using namespace sdlxx::core;
+using namespace sdlxx::image;
+using namespace sdlxx::ttf;
 
 const float SCALE = 30.f;
 const float DEG = 57.29577f;

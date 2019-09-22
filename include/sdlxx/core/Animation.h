@@ -5,7 +5,7 @@
 #include "Texture.h"
 #include "Renderer.h"
 
-namespace SDLXX {
+namespace sdlxx::core {
 
     struct Fragment {
         int lengthOfLine;
@@ -21,11 +21,11 @@ namespace SDLXX {
 
         void update(double t, double dt);
 
-        void render(SDLXX::Renderer *renderer, SDL_Rect *rect);
+        void render(sdlxx::core::Renderer *renderer, SDL_Rect *rect);
 
     private:
         std::vector<std::vector<SDL_Rect>> mainRect;
-        SDLXX::Texture *ourTexture = nullptr;
+        sdlxx::core::Texture *ourTexture = nullptr;
     };
 }
 

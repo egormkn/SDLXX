@@ -5,7 +5,7 @@
 #include <string>
 #include <SDL_pixels.h>
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Color {
     public:
         /// Creates a black opaque color.

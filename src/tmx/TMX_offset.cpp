@@ -1,4 +1,4 @@
-#include "TMX_offset.h"
+#include <tmx/TMX_offset.h>
 
 TMX_offset::TMX_offset() {
     x = TMX_Utils::DEFAULT_INT;

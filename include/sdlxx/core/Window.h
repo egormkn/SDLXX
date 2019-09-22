@@ -3,13 +3,13 @@
 #ifndef SDLXX_CORE_WINDOW_HPP
 #define SDLXX_CORE_WINDOW_HPP
 
-#include "SDLXX.h"
+#include "SDLXX_core.h"
 #include "Exception.h"
 #include "Renderer.h"
 #include "Point.h"
 #include <string>
 
-namespace SDLXX {
+namespace sdlxx::core {
 
     class Window {
     public:

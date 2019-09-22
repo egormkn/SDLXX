@@ -18,7 +18,7 @@ set(SOURCE_LIST
     Renderer.cpp
     Scene.cpp
     SceneManager.cpp
-    SDLXX.cpp
+    SDLXX_core.cpp
     Surface.cpp
     Texture.cpp
     Utils.cpp

@@ -3,7 +3,7 @@
 
 #include <SDL_rect.h>
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Point {
     public:
         Point(int x = 0, int y = 0);

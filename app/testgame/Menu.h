@@ -11,34 +11,34 @@
 #include <sdlxx/core/Texture.h>
 #include "Game.h"
 
-namespace SDLXX {
-    class Menu : public Scene {
-    public:
+using namespace sdlxx::gui;
 
-        Menu(const std::string &title, Window &w);
+class Menu : public Scene {
+public:
 
-        ~Menu();
+    Menu(const std::string &title, Window &w);
 
-        void onCreate(Window &w) override;
+    ~Menu();
 
-        void onDestroy() override;
+    void onCreate(Window &w) override;
 
-        void onPause() override {}
+    void onDestroy() override;
 
-        void onResume() override {}
+    void onPause() override {}
 
-        void handleEvent(Event &e) override;
+    void onResume() override {}
 
-        void update(Uint32 t, Uint32 dt) override;
+    void handleEvent(Event &e) override;
 
-        void render(Renderer &renderer) override;
+    void update(Uint32 t, Uint32 dt) override;
 
-    private:
-        Button *runButton = nullptr;
-        Button *exitButton = nullptr;
-        Texture *background = nullptr;
-        Window *window = nullptr;
-    };
+    void render(Renderer &renderer) override;
+
+private:
+    Button *runButton = nullptr;
+    Button *exitButton = nullptr;
+    Texture *background = nullptr;
+    Window *window = nullptr;
 };
 
 #endif // SDLXX_SCENETEST_H

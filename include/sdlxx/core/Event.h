@@ -4,7 +4,7 @@
 #include <SDL_events.h>
 #include "Exception.h"
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Event {
     public:
         Event();

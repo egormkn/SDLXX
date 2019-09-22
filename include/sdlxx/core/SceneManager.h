@@ -6,7 +6,7 @@
 #include "Window.h"
 #include "Scene.h"
 
-namespace SDLXX {
+namespace sdlxx::core {
     class SceneManager {
     public:
         SceneManager(Window &w);

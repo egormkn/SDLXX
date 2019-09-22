@@ -1,13 +1,13 @@
 #include <sstream>
-#include <sdlxx/core/SDLXX.h>
+#include <sdlxx/core/SDLXX_core.h>
 #include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
-std::mutex SDLXX::SDL::mutex;
+std::mutex sdlxx::core::SDLXX::mutex;
 
-bool SDLXX::SDL::initialized = false;
+bool sdlxx::core::SDLXX::initialized = false;
 
-SDLXX::SDL::SDL(Uint32 flags) {
+sdlxx::core::SDLXX::SDLXX(Uint32 flags) {
 #ifndef SDLXX_RELEASE
     Log::log("Initializing SDL subsystems...");
 #endif
@@ -36,7 +36,7 @@ SDLXX::SDL::SDL(Uint32 flags) {
 #endif
 }
 
-SDLXX::SDL::~SDL() {
+sdlxx::core::SDLXX::~SDLXX() {
 #ifndef SDLXX_RELEASE
     Log::log("Cleaning up SDL subsystems...");
 #endif
@@ -45,23 +45,23 @@ SDLXX::SDL::~SDL() {
     initialized = false;
 }
 
-Uint32 SDLXX::SDL::wasInit(Uint32 flags) {
+Uint32 sdlxx::core::SDLXX::wasInit(Uint32 flags) {
     return SDL_WasInit(flags);
 }
 
-void SDLXX::SDL::initSubSystem(Uint32 flags) {
+void sdlxx::core::SDLXX::initSubSystem(Uint32 flags) {
     SDL_InitSubSystem(flags);
 }
 
-void SDLXX::SDL::quitSubSystem(Uint32 flags) {
+void sdlxx::core::SDLXX::quitSubSystem(Uint32 flags) {
     SDL_QuitSubSystem(flags);
 }
 
-void SDLXX::SDL::setMainReady() {
+void sdlxx::core::SDLXX::setMainReady() {
     SDL_SetMainReady();
 }
 
-void SDLXX::SDL::setHint(const std::string &name, const std::string &value) {
+void sdlxx::core::SDLXX::setHint(const std::string &name, const std::string &value) {
     if(SDL_SetHint(name.c_str(), value.c_str()) == SDL_FALSE) {
         Log::warning(("Failed to set " + name).c_str());
     }

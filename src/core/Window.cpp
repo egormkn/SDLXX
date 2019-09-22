@@ -254,28 +254,28 @@ bool LWindow::isShown() {
 
  */
 
-SDLXX::Window::Window(SDL_Window *w) : window(w) {
+sdlxx::core::Window::Window(SDL_Window *w) : window(w) {
     SDL_Renderer *windowRenderer = SDL_GetRenderer(w);
     if(windowRenderer != nullptr) {
         renderer = new Renderer(windowRenderer);
     }
 }
 
-SDLXX::Window::Window(const void *data) {
+sdlxx::core::Window::Window(const void *data) {
     window = SDL_CreateWindowFrom(data);
     if(window == nullptr) {
         throw Exception("Window was not initialized", SDL_GetError());
     }
 }
 
-SDLXX::Window::Window(const std::string &title, int posX, int posY, int width, int height, Uint32 flags) {
+sdlxx::core::Window::Window(const std::string &title, int posX, int posY, int width, int height, Uint32 flags) {
     window = SDL_CreateWindow(title.c_str(), posX, posY, width, height, flags);
     if(window == nullptr) {
         throw Exception("Window was not initialized", SDL_GetError());
     }
 }
 
-SDLXX::Window::~Window() {
+sdlxx::core::Window::~Window() {
     if(renderer != nullptr) {
         delete renderer;
         renderer = nullptr;
@@ -286,11 +286,11 @@ SDLXX::Window::~Window() {
     }
 }
 
-SDL_Window *SDLXX::Window::getSDLWindow() const {
+SDL_Window *sdlxx::core::Window::getSDLWindow() const {
     return window;
 }
 
-SDLXX::Renderer &SDLXX::Window::setRenderer(int driver, Uint32 flags) {
+sdlxx::core::Renderer &sdlxx::core::Window::setRenderer(int driver, Uint32 flags) {
     if(renderer != nullptr) {
         throw Exception("Window already has a renderer");
     }
@@ -301,31 +301,31 @@ SDLXX::Renderer &SDLXX::Window::setRenderer(int driver, Uint32 flags) {
     return *renderer;
 }
 
-SDLXX::Renderer &SDLXX::Window::getRenderer() const {
+sdlxx::core::Renderer &sdlxx::core::Window::getRenderer() const {
     return *renderer;
 }
 
-SDL_Renderer *SDLXX::Window::getSDLRenderer() {
+SDL_Renderer *sdlxx::core::Window::getSDLRenderer() {
     return renderer->getSDLRenderer();
 }
 
-void SDLXX::Window::setTitle(const std::string &title) {
+void sdlxx::core::Window::setTitle(const std::string &title) {
     SDL_SetWindowTitle(window, title.c_str());
 }
 
-void SDLXX::Window::minimize() {
+void sdlxx::core::Window::minimize() {
     SDL_MinimizeWindow(window);
 }
 
-void SDLXX::Window::maximize() {
+void sdlxx::core::Window::maximize() {
     SDL_MaximizeWindow(window);
 }
 
-void SDLXX::Window::restore() {
+void sdlxx::core::Window::restore() {
     SDL_RestoreWindow(window);
 }
 
-SDLXX::Dimensions SDLXX::Window::getDimensions() {
+sdlxx::core::Dimensions sdlxx::core::Window::getDimensions() {
     int w, h;
     SDL_GetWindowSize(window, &w, &h);
     return Dimensions(w, h);

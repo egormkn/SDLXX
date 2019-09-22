@@ -6,7 +6,7 @@
 #include "../core/Surface.h"
 #include "../core/Color.h"
 
-namespace SDLXX {
+namespace sdlxx::ttf {
     enum {
         TTF_MODE_SOLID,
         TTF_MODE_SHADED,
@@ -31,10 +31,10 @@ namespace SDLXX {
 
         ~Font();
 
-        Surface render(const std::string &text, int mode,
-                       const Color &color, const Color &bg = Color(0x00000000)) const;
+        sdlxx::core::Surface render(const std::string &text, int mode,
+                       const sdlxx::core::Color &color, const sdlxx::core::Color &bg = sdlxx::core::Color(0x00000000)) const;
 
-        Surface render(Uint16 ch, int mode, const Color &color, const Color &bg = Color(0x00000000)) const;
+        sdlxx::core::Surface render(Uint16 ch, int mode, const sdlxx::core::Color &color, const sdlxx::core::Color &bg = sdlxx::core::Color(0x00000000)) const;
 
         // TODO: Open font by file descriptor
         // TODO: Get font properties

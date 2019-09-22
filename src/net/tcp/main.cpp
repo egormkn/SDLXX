@@ -18,7 +18,7 @@ bool isServer;
 void GetSettingsFromUser();
 
 int main(int argv, char **args) {
-    SDLXX::Log::debugMode(true);
+    sdlxx::net::Log::debugMode(true);
     if (SDLNet_Init() == -1) {
         std::cout << "Can't init\n";
         std::cout << SDLNet_GetError() << "\n";
@@ -35,7 +35,7 @@ int main(int argv, char **args) {
 
     if (isServer) {
         if (server->init()) {
-            SDLXX::Log::debug("server init");
+            sdlxx::net::Log::debug("server init");
         } else {
             delete server;
             SDLNet_Quit();
@@ -63,7 +63,7 @@ int main(int argv, char **args) {
         }
     } else {
         if (client->init()) {
-            SDLXX::Log::debug("client init");
+            sdlxx::net::Log::debug("client init");
         } else {
             delete client;
             SDLNet_Quit();

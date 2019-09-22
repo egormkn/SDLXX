@@ -5,7 +5,7 @@
 
 #include <SDL_ttf.h>
 
-namespace SDLXX {
+namespace sdlxx::ttf {
     class SDL_ttf {
     public:
         // Init SDL_ttf

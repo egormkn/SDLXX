@@ -5,7 +5,7 @@
 
 #include <SDL_net.h>
 
-namespace SDLXX {
+namespace sdlxx::net {
     class SDL_net {
     public:
         // Init SDL_net

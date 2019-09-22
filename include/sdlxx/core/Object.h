@@ -5,7 +5,7 @@
 #include "Renderer.h"
 #include "Point.h"
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Object {
     protected:
         Object() = default;

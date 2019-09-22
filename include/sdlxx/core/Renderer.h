@@ -8,7 +8,7 @@
 #include "Texture.h"
 #include "Rectangle.h"
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Renderer {
     public:
         Renderer(SDL_Renderer *r);

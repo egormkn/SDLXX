@@ -2,7 +2,7 @@
 // Created by Vlad on 08.02.2017.
 //
 
-#include "TMX_map.h"
+#include <tmx/TMX_map.h>
 
 TMX_map::TMX_map() {
     version = TMX_Utils::DEFAULT_DOUBLE;

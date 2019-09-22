@@ -5,7 +5,7 @@
 
 #include <SDL_mixer.h>
 
-namespace SDLXX {
+namespace sdlxx::mixer {
     class SDL_mixer {
     public:
         // Init SDL_mixer

@@ -1,31 +1,31 @@
 #include <sdlxx/core/SceneManager.h>
 
-SDLXX::SceneManager::SceneManager(SDLXX::Window &w) {
+sdlxx::core::SceneManager::SceneManager(sdlxx::core::Window &w) {
     window = &w;
 }
 
-SDLXX::SceneManager::~SceneManager() {
+sdlxx::core::SceneManager::~SceneManager() {
     clear();
     window = nullptr;
 }
 
-void SDLXX::SceneManager::push(SDLXX::Scene *s) {
+void sdlxx::core::SceneManager::push(sdlxx::core::Scene *s) {
     scenes.push(s);
 }
 
-void SDLXX::SceneManager::pop() {
+void sdlxx::core::SceneManager::pop() {
     scenes.pop();
 }
 
-void SDLXX::SceneManager::setWindow(SDLXX::Window &w) {
+void sdlxx::core::SceneManager::setWindow(sdlxx::core::Window &w) {
     window = &w;
 }
 
-SDLXX::Window &SDLXX::SceneManager::getWindow() {
+sdlxx::core::Window &sdlxx::core::SceneManager::getWindow() {
     return *window;
 }
 
-void SDLXX::SceneManager::clear() {
+void sdlxx::core::SceneManager::clear() {
     while (scenes.size() > 0) {
         Scene *scene = scenes.top();
         if (scene->isInitialized()) {
@@ -38,7 +38,7 @@ void SDLXX::SceneManager::clear() {
     }
 }
 
-void SDLXX::SceneManager::run() {
+void sdlxx::core::SceneManager::run() {
     Uint32 t = 0, dt = 10, accumulator = 0;
     Uint32 currentTime = SDL_GetTicks();
 

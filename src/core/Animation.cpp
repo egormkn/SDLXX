@@ -1,6 +1,6 @@
 #include <sdlxx/core/Animation.h>
 
-/*SDLXX::Animation::Animation(SDLXX::Texture *texture, std::vector<Fragments> &fragments) {
+/*sdlxx::core::Animation::Animation(sdlxx::core::Texture *texture, std::vector<Fragments> &fragments) {
     ourTexture = texture;
     int counter = 0;
     int mainX = 0, mainY = 0;
@@ -19,15 +19,15 @@
 }*/
 
 
-SDL_Rect SDLXX::Animation::setState(int number) {
+SDL_Rect sdlxx::core::Animation::setState(int number) {
     return mainRect[number][0];
 }
 
-void SDLXX::Animation::update(double t, double dt) {
+void sdlxx::core::Animation::update(double t, double dt) {
 
 }
 
-void SDLXX::Animation::render(SDLXX::Renderer *renderer, SDL_Rect *rect) {
+void sdlxx::core::Animation::render(sdlxx::core::Renderer *renderer, SDL_Rect *rect) {
     SDL_Rect tmpRect = {0, 0, 0, 0};
     if (rect != nullptr) {
         tmpRect.w = rect -> w;

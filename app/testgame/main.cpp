@@ -1,4 +1,4 @@
-#include <sdlxx/core/SDLXX.h>
+#include <sdlxx/core/SDLXX_core.h>
 #include <sdlxx/image/SDLXX_image.h>
 #include <sdlxx/net/SDLXX_net.h>
 #include <sdlxx/ttf/SDLXX_ttf.h>
@@ -7,12 +7,17 @@
 #include <sdlxx/core/SceneManager.h>
 #include "Menu.h"
 
-using namespace SDLXX;
+using namespace sdlxx::core;
+using namespace sdlxx::gui;
+using namespace sdlxx::image;
+using namespace sdlxx::net;
+using namespace sdlxx::mixer;
+using namespace sdlxx::ttf;
 
 int main(int argc, char *args[]) {
     try {
 
-        SDL sdl(SDL_INIT_VIDEO);
+        SDLXX sdl(SDL_INIT_VIDEO);
         sdl.setHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
         SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
         SDL_mixer sdl_mixer(0/*MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG*/);

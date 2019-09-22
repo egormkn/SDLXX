@@ -3,21 +3,21 @@
 #include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
-std::mutex SDLXX::SDL_net::mutex;
+std::mutex sdlxx::net::SDL_net::mutex;
 
-bool SDLXX::SDL_net::initialized = false;
+bool sdlxx::net::SDL_net::initialized = false;
 
-SDLXX::SDL_net::SDL_net() {
+sdlxx::net::SDL_net::SDL_net() {
 #ifndef SDLXX_RELEASE
-    Log::log("Initializing SDL network system...");
+    sdlxx::core::Log::log("Initializing SDL network system...");
 #endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
-            throw Exception("SDL_net already initialized");
+            throw sdlxx::core::Exception("SDL_net already initialized");
         }
         if(SDLNet_Init() == -1) {
-            throw Exception("Unable to initialize SDL_net", SDLNet_GetError());
+            throw sdlxx::core::Exception("Unable to initialize SDL_net", SDLNet_GetError());
         }
         initialized = true;
     }
@@ -30,15 +30,15 @@ SDLXX::SDL_net::SDL_net() {
                    << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
     linkedString << "Linked against SDL_net v" << (int) linked->major
                  << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    Log::log(compiledString.str());
-    Log::log(linkedString.str());
-    Log::newline();
+    sdlxx::core::Log::log(compiledString.str());
+    sdlxx::core::Log::log(linkedString.str());
+    sdlxx::core::Log::newline();
 #endif
 }
 
-SDLXX::SDL_net::~SDL_net() {
+sdlxx::net::SDL_net::~SDL_net() {
 #ifndef SDLXX_RELEASE
-    Log::log("Cleaning up SDL network system...");
+    sdlxx::core::Log::log("Cleaning up SDL network system...");
 #endif
     std::lock_guard<std::mutex> lock(mutex);
     SDLNet_Quit();

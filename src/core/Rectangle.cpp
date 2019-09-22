@@ -1,6 +1,6 @@
 #include <sdlxx/core/Rectangle.h>
 
-SDLXX::Rectangle::Rectangle(int x, int y, int width, int height) {
+sdlxx::core::Rectangle::Rectangle(int x, int y, int width, int height) {
     rectangle = new SDL_Rect;
     rectangle->x = x;
     rectangle->y = y;
@@ -8,26 +8,26 @@ SDLXX::Rectangle::Rectangle(int x, int y, int width, int height) {
     rectangle->h = height;
 }
 
-SDLXX::Rectangle::~Rectangle() {
+sdlxx::core::Rectangle::~Rectangle() {
     delete rectangle;
 }
 
-SDL_Rect *SDLXX::Rectangle::getSDLRectangle() const {
+SDL_Rect *sdlxx::core::Rectangle::getSDLRectangle() const {
     return rectangle;
 }
 
-int SDLXX::Rectangle::getX() const {
+int sdlxx::core::Rectangle::getX() const {
     return rectangle->x;
 }
 
-int SDLXX::Rectangle::getY() const {
+int sdlxx::core::Rectangle::getY() const {
     return rectangle->y;
 }
 
-int SDLXX::Rectangle::getWidth() const {
+int sdlxx::core::Rectangle::getWidth() const {
     return rectangle->w;
 }
 
-int SDLXX::Rectangle::getHeight() const {
+int sdlxx::core::Rectangle::getHeight() const {
     return rectangle->h;
 }

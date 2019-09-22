@@ -1,4 +1,4 @@
-#include "TMX_data.h"
+#include <tmx/TMX_data.h>
 
 TMX_data::TMX_data() {
     encoding = TMX::Encoding::UNKNOWN;

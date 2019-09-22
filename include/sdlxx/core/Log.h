@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace SDLXX {
+namespace sdlxx::core {
     class Log {
     public:
         static void error(std::string msg);
