@@ -7,8 +7,27 @@ project(SDLXX VERSION 1.0.0
               HOMEPAGE_URL "https://github.com/egormkn/SDLXX"
               LANGUAGES CXX)
 
-# If this is the main project, and not included through add_subdirectory
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+# Require out-of-source builds
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
+    message(FATAL_ERROR "You cannot build in a source directory.")
+endif()
+
+# Use cmake folder for helper modules (Find*.cmake)
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+# Determine if project is built as the main project or as a subproject
+set(MAIN_PROJECT OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(MAIN_PROJECT ON)
+    message(STATUS "Main project: ${CMAKE_PROJECT_NAME}")
+    message(STATUS "CMake version: ${CMAKE_VERSION}")
+endif()
+
+# If this is the main project and not included through add_subdirectory
+if(MAIN_PROJECT)
+
+    # Optionally set things like CMAKE_CXX_STANDARD or
+    # CMAKE_POSITION_INDEPENDENT_CODE here
 
     # Disable compiler extensions for better compatibility
     set(CMAKE_CXX_EXTENSIONS OFF)
@@ -17,6 +36,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
     # Enable testing if this is the main project
+    # Note this needs to be done in the main CMakeLists
+    # since it calls enable_testing, which must be in the
+    # main CMakeLists.
     include(CTest)
 
     # Enable documentation if this is the main project
@@ -31,7 +53,11 @@ endif()
 # The compiled library code is here
 add_subdirectory(src)
 
+# The executable code is here
+add_subdirectory(app)
+
 # Testing only available if this is the main project
-if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME) AND BUILD_TESTING)
-    add_subdirectory(tests)
+if(MAIN_PROJECT AND BUILD_TESTING)
+    add_subdirectory(test)
 endif()
+
