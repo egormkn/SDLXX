@@ -48,6 +48,32 @@ if(MAIN_PROJECT)
     else()
 	    message(STATUS "Doxygen not found, not building docs")
     endif()
+
+    if(ENABLE_LINTING)
+        # Enable clang-tidy linter if this is the main project
+        find_program(CLANG_TIDY
+            NAMES clang-tidy
+            DOC "Path to the clang-tidy tool")
+        if(CLANG_TIDY)
+            message(STATUS "Found clang-tidy: ${CLANG_TIDY}")
+            set(CLANG_TIDY_CHECKS "*")
+            set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY};-config=;-header-filter=\"${CMAKE_SOURCE_DIR}/include/*\"")
+        else()
+            message(STATUS "Clang-tidy not found, skipping checks")
+        endif()
+
+        # Enable include-what-you-use linter if this is the main project
+        find_program(INCLUDE_WHAT_YOU_USE
+            NAMES include-what-you-use iwyu
+            DOC "Path to the include-what-you-use tool")
+        if(INCLUDE_WHAT_YOU_USE)
+            message(STATUS "Found include-what-you-use: ${INCLUDE_WHAT_YOU_USE}")
+            set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${INCLUDE_WHAT_YOU_USE})
+            set(CMAKE_C_INCLUDE_WHAT_YOU_USE ${INCLUDE_WHAT_YOU_USE})
+        else()
+            message(STATUS "Include-what-you-use not found, skipping checks")
+        endif()
+    endif()
 endif()
 
 # The compiled library code is here
