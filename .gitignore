@@ -39,4 +39,4 @@
 !.vscode/extensions.json
 
 # Build files
-build/
+*build*/
