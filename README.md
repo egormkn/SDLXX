@@ -13,18 +13,21 @@ TODO: Write a README :)
 
 Install IDE (VSCode or CLion preferred), Git, CMake 3.15+, vcpkg
 
-For VSCode: open project and install all suggested VSCode extensions.
-Then go to preferences and set these parameters:
+*   For VSCode: open project and install all suggested VSCode extensions.
+    Then go to preferences and set these parameters:
 
-```
-...
-    "C_Cpp.clang_format_fallbackStyle": "Google",
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
-    "cmake.configureSettings": {
-        "CMAKE_TOOLCHAIN_FILE": "PATH_TO_VCPKG_CMAKE_TOOLCHAIN_HERE"
-    }
-...
-```
+    ```
+    ...
+        "C_Cpp.clang_format_fallbackStyle": "Google",
+        "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+        "cmake.configureSettings": {
+            "CMAKE_TOOLCHAIN_FILE": "PATH_TO_VCPKG_CMAKE_TOOLCHAIN_HERE"
+        }
+    ...
+    ```
 
-Open CMake panel, right-click SDLXX/app/testgame/SDLXX_game and choose
-"Run in terminal".
+    Open CMake panel, right-click SDLXX/app/testgame/SDLXX_game and choose
+    "Run in terminal".
+*   For CLion: open project, go to CLion settings -> Build -> CMake and add to
+    CMake options:
+    ```-DCMAKE_TOOLCHAIN_FILE=PATH_TO_VCPKG_CMAKE_TOOLCHAIN_HERE```

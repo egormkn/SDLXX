@@ -39,7 +39,9 @@ if(MAIN_PROJECT)
     # Note this needs to be done in the main CMakeLists
     # since it calls enable_testing, which must be in the
     # main CMakeLists.
-    include(CTest)
+    if(BUILD_TESTING)
+        include(CTest)
+    endif()
 
     # Enable documentation if this is the main project
     find_package(Doxygen)
