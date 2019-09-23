@@ -1,8 +1,29 @@
-# Use the Google style in this project.
+# Use the Google style
 BasedOnStyle: Google
 
-# Some folks prefer to write "int& foo" while others prefer "int &foo".  The
-# Google Style Guide only asks for consistency within a project, we chose
-# "int& foo" for this project:
-DerivePointerAlignment: false
+# Align references to the left as in "int& foo"
 PointerAlignment: Left
+DerivePointerAlignment: false
+
+# Align access modifiers to the left
+AccessModifierOffset: -2
+
+# Don't add indentation level for namespaces
+NamespaceIndentation: None
+
+# Sort includes by category and in alphabetical order inside category
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:    '^<[^.]*>$'
+    Priority: 1
+  - Regex:    '^<.*>$'
+    Priority: 2
+  - Regex:    '^".*"$'
+    Priority: 3
+  - Regex:    '.*'
+    Priority: 4
+SortIncludes: true
+
+# Disable tabs
+TabWidth: 2
+UseTab: Never
