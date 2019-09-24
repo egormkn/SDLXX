@@ -1,68 +1,138 @@
+#include <numeric>
 #include <sstream>
+#include <system_error>
+#include <unordered_set>
+
+#include <SDL.h>
+#include <SDL_video.h>
 #include <sdlxx/core/SDLXX_core.h>
-#include <sdlxx/core/Exception.h>
-#include <sdlxx/core/Log.h>
 
-std::mutex sdlxx::core::SDLXX::mutex;
+using namespace sdlxx::core;
 
-bool sdlxx::core::SDLXX::initialized = false;
+bool SDLXX::initialized = false;
 
-sdlxx::core::SDLXX::SDLXX(Uint32 flags) {
-#ifndef SDLXX_RELEASE
-    Log::log("Initializing SDL subsystems...");
-#endif
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        if(initialized) {
-            throw Exception("SDL already initialized");
-        }
-        if(SDL_Init(flags) != 0) {
-            throw Exception("Unable to initialize SDL");
-        }
-        initialized = true;
+SDLXX::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
+    : major_version(major), minor_version(minor), patch_version(patch) {}
+
+SDLXX::Version SDLXX::Version::getCompiledSdlVersion() {
+  SDL_version compiled;
+  SDL_VERSION(&compiled);
+  return {compiled.major, compiled.minor, compiled.patch};
+}
+
+SDLXX::Version SDLXX::Version::getLinkedSdlVersion() {
+  SDL_version linked;
+  SDL_GetVersion(&linked);
+  return {linked.major, linked.minor, linked.patch};
+}
+
+SDLXX::SDLXX(const std::unordered_set<Subsystem>& subsystems) {
+  if (initialized) {
+    throw std::runtime_error("SDLXX is already initialized");
+  }
+  Uint32 flags =
+      std::accumulate(subsystems.begin(), subsystems.end(), 0,
+                      [](Uint32 flags, const Subsystem& subsystem) {
+                        return flags | static_cast<uint32_t>(subsystem);
+                      });
+  int return_code = SDL_Init(flags);
+  if (return_code != 0) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to initialize SDL: " + std::string(SDL_GetError()));
+  }
+  initialized = true;
+}
+
+SDLXX::~SDLXX() {
+  SDL_Quit();
+  initialized = false;
+}
+
+void SDLXX::initSubsystem(const Subsystem& subsystem) {
+  Uint32 flag = static_cast<uint32_t>(subsystem);
+  int return_code = SDL_InitSubSystem(flag);
+  if (return_code != 0) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to initialize subsystem: " + std::string(SDL_GetError()));
+  }
+}
+
+void SDLXX::initSubsystem(const std::unordered_set<Subsystem>& subsystems) {
+  Uint32 flags =
+      std::accumulate(subsystems.begin(), subsystems.end(), 0,
+                      [](Uint32 flags, const Subsystem& subsystem) {
+                        return flags | static_cast<uint32_t>(subsystem);
+                      });
+  int return_code = SDL_InitSubSystem(flags);
+  if (return_code != 0) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to initialize subsystems: " + std::string(SDL_GetError()));
+  }
+}
+
+void SDLXX::quitSubsystem(const Subsystem& subsystem) {
+  Uint32 flag = static_cast<uint32_t>(subsystem);
+  SDL_QuitSubSystem(flag);
+}
+
+void SDLXX::quitSubsystem(const std::unordered_set<Subsystem>& subsystems) {
+  Uint32 flags =
+      std::accumulate(subsystems.begin(), subsystems.end(), 0,
+                      [](Uint32 flags, const Subsystem& subsystem) {
+                        return flags | static_cast<uint32_t>(subsystem);
+                      });
+  SDL_QuitSubSystem(flags);
+}
+
+std::unordered_set<SDLXX::Subsystem> SDLXX::wasInit(
+    const std::unordered_set<Subsystem>& subsystems) {
+  Uint32 flags =
+      std::accumulate(subsystems.begin(), subsystems.end(), 0,
+                      [](Uint32 flags, const Subsystem& subsystem) {
+                        return flags | static_cast<uint32_t>(subsystem);
+                      });
+  Uint32 initialized = SDL_WasInit(flags);
+  std::unordered_set<Subsystem> result;
+  for (const Subsystem& s :
+       {Subsystem::TIMER, Subsystem::AUDIO, Subsystem::VIDEO,
+        Subsystem::JOYSTICK, Subsystem::HAPTIC, Subsystem::GAMECONTROLLER,
+        Subsystem::EVENTS, Subsystem::SENSOR}) {
+    if (static_cast<uint32_t>(s) & initialized) {
+      result.insert(s);
     }
-#ifndef SDLXX_RELEASE
-    SDL_version compiled, linked;
-    SDL_VERSION(&compiled);
-    SDL_GetVersion(&linked);
-    std::stringstream compiledString, linkedString;
-    compiledString << "Compiled against SDL v" << (int) compiled.major
-                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
-    linkedString << "Linked against SDL v" << (int) linked.major
-                 << '.' << (int) linked.minor << '.' << (int) linked.patch;
-    Log::log(compiledString.str());
-    Log::log(linkedString.str());
-    Log::newline();
-#endif
+  }
+  return result;
 }
 
-sdlxx::core::SDLXX::~SDLXX() {
-#ifndef SDLXX_RELEASE
-    Log::log("Cleaning up SDL subsystems...");
-#endif
-    std::lock_guard<std::mutex> lock(mutex);
-    SDL_Quit();
-    initialized = false;
+bool SDLXX::wasInit(const Subsystem& subsystem) {
+  Uint32 flag = static_cast<uint32_t>(subsystem);
+  return SDL_WasInit(flag) != 0;
 }
 
-Uint32 sdlxx::core::SDLXX::wasInit(Uint32 flags) {
-    return SDL_WasInit(flags);
+bool SDLXX::setHint(const std::string& name, const std::string& value,
+                    const HintPriority& priority) {
+  return SDL_SetHintWithPriority(name.c_str(), value.c_str(),
+                                 static_cast<SDL_HintPriority>(priority));
 }
 
-void sdlxx::core::SDLXX::initSubSystem(Uint32 flags) {
-    SDL_InitSubSystem(flags);
+std::optional<std::string> SDLXX::getHint(const std::string& name) {
+  const char* value = SDL_GetHint(name.c_str());
+  if (value == nullptr) {
+    return {std::string(value)};
+  } else {
+    return std::nullopt;
+  }
 }
 
-void sdlxx::core::SDLXX::quitSubSystem(Uint32 flags) {
-    SDL_QuitSubSystem(flags);
+std::optional<bool> SDLXX::getHintBoolean(const std::string& name) {
+  const char* value = SDL_GetHint(name.c_str());
+  if (!value || !*value) {
+    return std::nullopt;
+  }
+  return {*value != '0' && SDL_strcasecmp(value, "false") != 0};
 }
 
-void sdlxx::core::SDLXX::setMainReady() {
-    SDL_SetMainReady();
-}
-
-void sdlxx::core::SDLXX::setHint(const std::string &name, const std::string &value) {
-    if(SDL_SetHint(name.c_str(), value.c_str()) == SDL_FALSE) {
-        Log::warning(("Failed to set " + name).c_str());
-    }
-}
+void SDLXX::clearHints() { SDL_ClearHints(); }

@@ -16,17 +16,15 @@ using namespace sdlxx::ttf;
 
 int main(int argc, char *args[]) {
     try {
-
-        SDLXX sdl(SDL_INIT_VIDEO);
-        sdl.setHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+        SDLXX sdlxx({
+            SDLXX::Subsystem::VIDEO,
+            SDLXX::Subsystem::EVENTS
+        });
+        SDLXX::setHint("SDL_RENDER_SCALE_QUALITY", "1");
         SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
         SDL_mixer sdl_mixer(0/*MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG*/);
         SDL_net sdl_net;
         SDL_ttf sdl_ttf;
-
-#ifndef SDLXX_RELEASE
-        sdl.printDebugInfo();
-#endif
 
         Window window("The Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600,
                       SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
