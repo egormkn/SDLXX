@@ -4,6 +4,9 @@ set(DOXYGEN_EXTRACT_ALL YES)
 # Improve STL support for documentation
 set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
 
+# Hide include guards from the documentation
+set(DOXYGEN_EXCLUDE_SYMBOLS "SDLXX_*_H" "SDLXX_*_HPP")
+
 # Add target for building documentation
 doxygen_add_docs(docs
     "${PROJECT_SOURCE_DIR}/include"
