@@ -1,7 +1,7 @@
 /**
  * @file SDLXX_core.h
  * @author Egor Makarenko
- * @brief Core SDLXX object for library initialization
+ * @brief Class that represents core SDLXX object
  */
 
 #pragma once
@@ -16,29 +16,31 @@
 namespace sdlxx::core {
 
 /**
- * @brief Main object that allows to work with SDLXX library
+ * @brief Main object that allows to work with SDLXX core library
  */
 class SDLXX {
 public:
+  /**
+   * @brief An enumeration of SDLXX subsystems
+   */
   enum class Subsystem : uint32_t {
-    /** Timer subsystem */
+    /// Timer subsystem
     TIMER = 0x00000001u,  // SDL_INIT_TIMER
-    /** Audio subsystem */
+    /// Audio subsystem
     AUDIO = 0x00000010u,  // SDL_INIT_AUDIO
-    /** Video subsystem; automatically initializes the events subsystem */
+    /// Video subsystem; automatically initializes the events subsystem
     VIDEO = 0x00000020u,  // SDL_INIT_VIDEO
-    /** Joystick subsystem; automatically initializes the events subsystem */
+    /// Joystick subsystem; automatically initializes the events subsystem
     JOYSTICK = 0x00000200u,  // SDL_INIT_JOYSTICK
-    /** Haptic (force feedback) subsystem */
+    /// Haptic (force feedback) subsystem
     HAPTIC = 0x00001000u,  // SDL_INIT_HAPTIC,
-    /** Controller subsystem; automatically initializes the joystick subsystem
-     */
+    /// Controller subsystem; automatically initializes the joystick subsystem
     GAMECONTROLLER = 0x00002000u,  // SDL_INIT_GAMECONTROLLER
-    /** Events subsystem */
+    /// Events subsystem
     EVENTS = 0x00004000u,  // SDL_INIT_EVENTS
-    /** Sensor subsystem */
+    /// Sensor subsystem
     SENSOR = 0x00008000u,  // SDL_INIT_SENSOR
-    /** All subsystems */
+    /// All subsystems
     EVERYTHING = TIMER | AUDIO | VIDEO | JOYSTICK | HAPTIC | GAMECONTROLLER |
                  EVENTS | SENSOR,  // SDL_INIT_EVERYTHING
     // _ = SDL_INIT_NOPARACHUTE /* Compatibility; this value is ignored */
@@ -48,18 +50,18 @@ public:
    * @brief An enumeration of hint priorities
    */
   enum class HintPriority {
-    /** Low priority, used for default values */
+    /// Low priority, used for default values
     DEFAULT,  // SDL_HINT_DEFAULT
-    /** Medium priority */
+    /// Medium priority
     NORMAL,  // SDL_HINT_NORMAL
-    /** High priority */
+    /// High priority
     OVERRIDE  // SDL_HINT_OVERRIDE
   };
 
   /**
-   * @brief Class that contains information about the version of a library
+   * @brief Class that contains information about the version of the library
    *
-   * Represents the library's version as three levels: major revision
+   * Represents the library version as three levels: major revision
    * (increments with massive changes, additions, and enhancements), minor
    * revision (increments with backwards-compatible changes to the major
    * revision), and patchlevel (increments with fixes to the minor revision).
@@ -81,6 +83,13 @@ public:
      */
     const uint8_t patch_version;
 
+    /**
+     * @brief Construct a new Version object
+     *
+     * @param major Major revision
+     * @param minor Minor revision
+     * @param patch Patchlevel
+     */
     Version(uint8_t major, uint8_t minor, uint8_t patch);
 
     /**
@@ -96,7 +105,7 @@ public:
     static Version getCompiledSdlVersion();
 
     /**
-     * @brief Get the version of SDL that is linked against the SDLXX library.
+     * @brief Get the version of SDL that is linked against the SDLXX library
      *
      * If you are linking to SDL dynamically, then it is possible that the
      * current version will be different than the version you compiled against.
@@ -104,20 +113,26 @@ public:
      * @return Version of SDL the library was linked against
      */
     static Version getLinkedSdlVersion();
+
+    // TODO: operator< and others
   };
 
   /**
-   * @brief Construct a new SDLXX object that initializes the SDL library.
+   * @brief Construct a new SDLXX object that initializes the specified
+   *        Subsystems of the library
    *
    * This object must be constructed before using most other SDLXX functions.
    *
-   * @param subsystems Subsystems that should be initialized. Note that some
-   * subsystems may automatically initialize other.
+   * @param subsystems Subsystems that should be initialized
+   *
+   * @note Some subsystems may automatically initialize other
    */
   explicit SDLXX(const std::unordered_set<Subsystem>& subsystems = {});
 
   /**
    * @brief Destroy the SDLXX object cleaning up all initialized subsystems.
+   *
+   * @note You should call this function upon all exit conditions.
    */
   ~SDLXX();
 
@@ -127,8 +142,8 @@ public:
    * Subsystem initialization is ref-counted, you must call
    * SDLXX::quitSubsystem() for each SDLXX::initSubsystem() to correctly
    * shutdown a subsystem manually (or destroy SDLXX object to force shutdown).
-   * If a subsystem is already loaded then this call will
-   * increase the ref-count and return.
+   * If a subsystem is already loaded then this call will increase the ref-count
+   * and return.
    */
   void initSubsystem(const Subsystem& subsystem);
 
@@ -188,7 +203,7 @@ public:
    * initialized
    */
   std::unordered_set<Subsystem> wasInit(
-      const std::unordered_set<Subsystem>& subsystems = {});
+      const std::unordered_set<Subsystem>& subsystems = {}) const;
 
   /**
    * @brief Return true if a specified subsystem has previously been initialized
@@ -201,7 +216,7 @@ public:
    * @return true if a specified subsystem has previously been initialized
    * @return false otherwise
    */
-  bool wasInit(const Subsystem& subsystem);
+  bool wasInit(const Subsystem& subsystem) const;
 
   /**
    * @brief Set a hint with a specific priority. If priority is not specified,
