@@ -41,14 +41,14 @@ sdlxx::ttf::Font::render(const std::string &text, int mode, const sdlxx::core::C
     SDL_Surface *sdlSurface = nullptr;
     switch (mode) {
         case TTF_MODE_BLENDED:
-            sdlSurface = TTF_RenderUTF8_Blended(font, text.c_str(), color.getSDLColor());
+            sdlSurface = TTF_RenderUTF8_Blended(font, text.c_str(), {color.red, color.green, color.blue, color.alpha});
             break;
         case TTF_MODE_SHADED:
-            sdlSurface = TTF_RenderUTF8_Shaded(font, text.c_str(), color.getSDLColor(), bg.getSDLColor());
+            sdlSurface = TTF_RenderUTF8_Shaded(font, text.c_str(), {color.red, color.green, color.blue, color.alpha}, {bg.red, bg.green, bg.blue, bg.alpha});
             break;
         case TTF_MODE_SOLID:
         default:
-            sdlSurface = TTF_RenderUTF8_Solid(font, text.c_str(), color.getSDLColor());
+            sdlSurface = TTF_RenderUTF8_Solid(font, text.c_str(), {color.red, color.green, color.blue, color.alpha});
             break;
     }
     if(sdlSurface == nullptr) {
@@ -61,14 +61,14 @@ sdlxx::core::Surface sdlxx::ttf::Font::render(Uint16 ch, int mode, const sdlxx::
     SDL_Surface *sdlSurface = nullptr;
     switch (mode) {
         case TTF_MODE_BLENDED:
-            sdlSurface = TTF_RenderGlyph_Blended(font, ch, color.getSDLColor());
+            sdlSurface = TTF_RenderGlyph_Blended(font, ch, {color.red, color.green, color.blue, color.alpha});
             break;
         case TTF_MODE_SHADED:
-            sdlSurface = TTF_RenderGlyph_Shaded(font, ch, color.getSDLColor(), bg.getSDLColor());
+            sdlSurface = TTF_RenderGlyph_Shaded(font, ch, {color.red, color.green, color.blue, color.alpha}, {bg.red, bg.green, bg.blue, bg.alpha});
             break;
         case TTF_MODE_SOLID:
         default:
-            sdlSurface = TTF_RenderGlyph_Solid(font, ch, color.getSDLColor());
+            sdlSurface = TTF_RenderGlyph_Solid(font, ch, {color.red, color.green, color.blue, color.alpha});
             break;
     }
     if(sdlSurface == nullptr) {

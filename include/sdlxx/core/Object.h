@@ -1,24 +1,34 @@
-#ifndef SDLXX_OBJECT_H
-#define SDLXX_OBJECT_H
+/**
+ * @file Object.h
+ * @author Egor Makarenko
+ * @brief Class that represents a 2D object
+ */
 
-#include "Event.h"
-#include "Renderer.h"
-#include "Point.h"
+#pragma once
+
+#ifndef SDLXX_CORE_OBJECT_H
+#define SDLXX_CORE_OBJECT_H
+
+#include <sdlxx/core/Event.h>
+#include <sdlxx/core/Point.h>
+#include <sdlxx/core/Renderer.h>
 
 namespace sdlxx::core {
-    class Object {
-    protected:
-        Object() = default;
 
-    public:
-        virtual void update(Uint32 t, Uint32 dt, const Dimensions &windowDimensions) = 0;
+class Object {
+protected:
+  Object() = default;
 
-        virtual void render(Renderer &renderer) = 0;
+public:
+  virtual void update(Uint32 t, Uint32 dt, const Point& windowPoint) = 0;
 
-        virtual bool handleEvent(Event &e) = 0;
+  virtual void render(Renderer& renderer) = 0;
 
-        virtual ~Object() {}
-    };
-}
+  virtual bool handleEvent(Event& e) = 0;
 
-#endif // SDLXX_OBJECT_H
+  virtual ~Object() {}
+};
+
+}  // namespace sdlxx::core
+
+#endif  // SDLXX_CORE_OBJECT_H

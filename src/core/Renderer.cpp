@@ -1,56 +1,84 @@
+#include <numeric>
+
+#include <SDL_render.h>
 #include <sdlxx/core/Renderer.h>
 
-sdlxx::core::Renderer::Renderer(SDL_Renderer *r) : renderer(r) {}
+using namespace sdlxx::core;
 
-sdlxx::core::Renderer::Renderer(SDL_Window *w, int driver, Uint32 flags) {
-    renderer = SDL_CreateRenderer(w, driver, flags);
-    if(renderer == nullptr) {
-        Log::warning("Could not create hardware accelerated renderer, trying software fallback");
-        renderer = SDL_CreateRenderer(w, -1, SDL_RENDERER_SOFTWARE);
-        if(renderer == nullptr) {
-            throw Exception("Renderer could not be created", SDL_GetError());
-        }
+Renderer::Renderer(void* window, int driver,
+                   const std::unordered_set<Option>& options) {
+  Uint32 flags = std::accumulate(options.begin(), options.end(), 0,
+                                 [](Uint32 flags, const Option& option) {
+                                   return flags | static_cast<uint32_t>(option);
+                                 });
+  renderer =
+      SDL_CreateRenderer(static_cast<SDL_Window*>(window), driver, flags);
+  if (renderer == nullptr) {
+    // std::cout << "Could not create hardware accelerated renderer, trying "
+    //              "software fallback";
+    renderer = SDL_CreateRenderer(static_cast<SDL_Window*>(window), -1,
+                                  SDL_RENDERER_SOFTWARE);
+    if (renderer == nullptr) {
+      throw std::runtime_error("Renderer could not be created" +
+                               std::string(SDL_GetError()));
     }
+  }
 }
 
-sdlxx::core::Renderer::~Renderer() {
-    if(renderer != nullptr) {
-        SDL_DestroyRenderer(renderer);
-        renderer = nullptr;
-    }
+Renderer::~Renderer() {
+  if (renderer != nullptr) {
+    SDL_DestroyRenderer(static_cast<SDL_Renderer*>(renderer));
+    renderer = nullptr;
+  }
 }
 
-SDL_Renderer *sdlxx::core::Renderer::getSDLRenderer() const {
-    return renderer;
+void Renderer::setLogicalSize(int width, int height) {
+  SDL_RenderSetLogicalSize(static_cast<SDL_Renderer*>(renderer), width, height);
 }
 
-void sdlxx::core::Renderer::setColor(const sdlxx::core::Color &color) {
-    SDL_SetRenderDrawColor(renderer, color.r(), color.g(), color.b(), color.a());
+void Renderer::setColor(const Color& color) {
+  int result =
+      SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer), color.red,
+                             color.green, color.blue, color.alpha);
+  if (result != 0) {
+    throw std::runtime_error("Failed to set color for renderer: " +
+                             std::string(SDL_GetError()));
+  }
 }
 
-void sdlxx::core::Renderer::render() {
-    SDL_RenderPresent(renderer);
+// SDL_Renderer* Renderer::getSDLRenderer() const { return renderer; }
+
+void Renderer::render() { SDL_RenderPresent(static_cast<SDL_Renderer*>(renderer)); }
+
+void Renderer::clear() { SDL_RenderClear(static_cast<SDL_Renderer*>(renderer)); }
+
+// void Renderer::renderCopy(const Texture& texture, const SDL_Rect* src,
+//                           const SDL_Rect* dest) {
+//   int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), src, dest);
+//   if (result < 0) {
+//     throw Exception("Failed to render a texture");
+//   }
+// }
+
+void Renderer::renderCopy(const Texture& texture, const Rectangle& src,
+                          const Rectangle& dest) {
+  int result = SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer), texture.getSDLTexture(),
+                              src.getSDLRectangle(), dest.getSDLRectangle());
+  if (result < 0) {
+    throw Exception("Failed to render a texture");
+  }
 }
 
-void sdlxx::core::Renderer::clear() {
-    SDL_RenderClear(renderer);
+void Renderer::renderCopy(const Texture& texture,
+                          const Rectangle& dest) {
+  int result = SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer), texture.getSDLTexture(),
+                              nullptr, dest.getSDLRectangle());
+  if (result < 0) {
+    throw Exception("Failed to render a texture");
+  }
 }
 
-void sdlxx::core::Renderer::renderCopy(const sdlxx::core::Texture &texture, const SDL_Rect *src, const SDL_Rect *dest) {
-    int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), src, dest);
-    if (result < 0) {
-        throw Exception("Failed to render a texture");
-    }
-}
-
-void
-sdlxx::core::Renderer::renderCopy(const sdlxx::core::Texture &texture, const sdlxx::core::Rectangle &src, const sdlxx::core::Rectangle &dest) {
-    int result = SDL_RenderCopy(renderer, texture.getSDLTexture(), src.getSDLRectangle(), dest.getSDLRectangle());
-    if (result < 0) {
-        throw Exception("Failed to render a texture");
-    }
-}
-
-void sdlxx::core::Renderer::fillRect(SDL_Rect *rect) {
-    SDL_RenderFillRect(renderer, rect);
+void Renderer::fillRect(const Rectangle& rectangle) {
+  SDL_RenderFillRect(static_cast<SDL_Renderer*>(renderer),
+                     rectangle.getSDLRectangle());
 }

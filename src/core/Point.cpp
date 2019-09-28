@@ -1,36 +1,9 @@
 #include <sdlxx/core/Point.h>
 
-sdlxx::core::Point::Point(int x, int y) {
-    point = new SDL_Point;
-    point->x = x;
-    point->y = y;
-}
+using namespace sdlxx::core;
 
-sdlxx::core::Point::~Point() {
-    delete point;
-}
+Point::Point(int x, int y) : x(x), y(y) {}
 
-int sdlxx::core::Point::getX() const {
-    return point->x;
-}
+int Point::getX() const { return x; }
 
-int sdlxx::core::Point::getY() const {
-    return point->y;
-}
-
-void sdlxx::core::Point::setPoint(int x, int y) {
-    point->x = x;
-    point->y = y;
-}
-
-void sdlxx::core::Point::setX(int x) {
-    point->x = x;
-}
-
-void sdlxx::core::Point::setY(int y) {
-    point->y = y;
-}
-
-SDL_Point &sdlxx::core::Point::getSDLPoint() {
-    return *point;
-}
+int Point::getY() const { return y; }

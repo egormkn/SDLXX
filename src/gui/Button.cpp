@@ -1,25 +1,28 @@
 #include <sdlxx/gui/Button.h>
 
-sdlxx::gui::Button::Button(int x, int y, int width, int height) {
-    absPos.setPoint(x, y);
-    absDim.setPoint(width, height);
+using namespace sdlxx::gui;
+
+Button::Button(int x, int y, int width, int height) {
+  sdlxx::core::Point t = {x, y};
+  absPos = {x, y};
+  absDim = {width, height};
 }
 
-sdlxx::gui::Button::~Button() {
+Button::~Button() {
     if (textTexture != nullptr) {
         delete textTexture;
     }
 }
 
-void sdlxx::gui::Button::setRelativePosition(int x, int y) {
-    relPos.setPoint(x, y);
+void Button::setRelativePosition(int x, int y) {
+    relPos = {x, y};
 }
 
-void sdlxx::gui::Button::setRelativeSize(int x, int y) {
-    relDim.setPoint(x, y);
+void Button::setRelativeSize(int x, int y) {
+    relDim = {x, y};
 }
 
-bool sdlxx::gui::Button::handleEvent(sdlxx::core::Event &e) {
+bool Button::handleEvent(sdlxx::core::Event &e) {
     SDL_Rect fillRect = {
             (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX(),
             (int) (relPos.getY() * windowDim.getY() / 100.0f) + absPos.getY(),
@@ -57,11 +60,11 @@ bool sdlxx::gui::Button::handleEvent(sdlxx::core::Event &e) {
     }
 }
 
-void sdlxx::gui::Button::update(Uint32 t, Uint32 dt, const sdlxx::core::Dimensions &windowDimensions) {
-    windowDim.setPoint(windowDimensions.getX(), windowDimensions.getY());
+void Button::update(Uint32 t, Uint32 dt, const sdlxx::core::Point &windowPoint) {
+    windowDim = {windowPoint.getX(), windowPoint.getY()};
 }
 
-void sdlxx::gui::Button::render(sdlxx::core::Renderer &renderer) {
+void Button::render(sdlxx::core::Renderer &renderer) {
     int w = (int) (relDim.getX() * windowDim.getX() / 100.0f) + absDim.getX();
     int h = (int) (relDim.getY() * windowDim.getY() / 100.0f) + absDim.getY();
     SDL_Rect fillRect = {
@@ -72,7 +75,7 @@ void sdlxx::gui::Button::render(sdlxx::core::Renderer &renderer) {
     };
 
     renderer.setColor(mouseOver ? sdlxx::core::Color(0xFF8888FF) : sdlxx::core::Color(0xCCCCCCFF));
-    renderer.fillRect(&fillRect);
+    renderer.fillRect({fillRect.x, fillRect.y, fillRect.w, fillRect.h});
 
     SDL_Rect fillRect2 = {
             (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX() + (w - textTexture->getWidth()) / 2,
@@ -82,10 +85,10 @@ void sdlxx::gui::Button::render(sdlxx::core::Renderer &renderer) {
 
     };
 
-    renderer.renderCopy(*textTexture, NULL, &fillRect2);
+    renderer.renderCopy(*textTexture, {fillRect2.x, fillRect2.y, fillRect2.w, fillRect2.h});
 }
 
-void sdlxx::gui::Button::setText(const std::string &text, SDL_Renderer *renderer) {
+void Button::setText(const std::string &text, const sdlxx::core::Renderer& renderer) {
     Button::text = text;
     if (textTexture != nullptr) {
         delete textTexture;

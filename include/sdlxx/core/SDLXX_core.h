@@ -1,7 +1,7 @@
 /**
  * @file SDLXX_core.h
- *
- * Core SDLXX object for library initialization
+ * @author Egor Makarenko
+ * @brief Core SDLXX object for library initialization
  */
 
 #pragma once
@@ -267,6 +267,7 @@ private:
   // This class is not movable
   SDLXX& operator=(SDLXX&& other) = delete;
 };
+
 }  // namespace sdlxx::core
 
 #endif  // SDLXX_CORE_H
