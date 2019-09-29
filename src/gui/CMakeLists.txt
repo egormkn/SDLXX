@@ -7,7 +7,9 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS
 
 # Add source files
 set(SOURCE_LIST
-    Button.cpp)
+    Button.cpp
+    Scene.cpp
+    SceneManager.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(SDLXX_gui ${HEADER_LIST} ${SOURCE_LIST})

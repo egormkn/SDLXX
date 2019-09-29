@@ -5,7 +5,7 @@
 #include <SDL_timer.h>
 #include <vector>
 #include <sdlxx/image/SDLXX_image.h>
-#include <sdlxx/core/Scene.h>
+#include <sdlxx/gui/Scene.h>
 #include <sdlxx/core/Texture.h>
 #include "Box2DDrawer.h"
 #include <tmx/TMX_map.h>
@@ -13,6 +13,7 @@
 #include <Box2D/Box2D.h>
 
 using namespace sdlxx::core;
+using namespace sdlxx::gui;
 using namespace sdlxx::image;
 using namespace sdlxx::ttf;
 

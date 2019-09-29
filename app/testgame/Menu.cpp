@@ -1,15 +1,18 @@
 #include "Menu.h"
 
 Menu::Menu(const std::string &title, Window &w) : Scene(title) {
-    runButton = new Button(-150, -25, 100, 50);
-    runButton->setRelativePosition(80, 50);
-    runButton->setRelativeSize(20, 0);
-    runButton->setText("Новая игра", *w.getRenderer());
+  Renderer test1 = w.getRenderer();
+  Renderer test2 = w.getRenderer();
+  Renderer test3 = w.getRenderer();
+  runButton = new Button(-150, -25, 100, 50);
+  runButton->setRelativePosition(80, 50);
+  runButton->setRelativeSize(20, 0);
+  runButton->setText("Новая игра", w.getRenderer());
 
-    exitButton = new Button(-150, 35, 100, 50);
-    exitButton->setRelativePosition(80, 50);
-    exitButton->setRelativeSize(20, 0);
-    exitButton->setText("Выход", *w.getRenderer());
+  exitButton = new Button(-150, 35, 100, 50);
+  exitButton->setRelativePosition(80, 50);
+  exitButton->setRelativeSize(20, 0);
+  exitButton->setText("Выход", w.getRenderer());
 }
 
 Menu::~Menu() {
@@ -19,7 +22,7 @@ Menu::~Menu() {
 
 void Menu::onCreate(Window &w) {
     window = &w;
-    background = new Texture("resources/menu.png", *w.getRenderer(), 256, 256);
+    background = new Texture("resources/menu.png", w.getRenderer(), 256, 256);
 }
 
 void Menu::onDestroy() {
@@ -36,7 +39,7 @@ void Menu::handleEvent(Event &e) {
 }
 
 void Menu::update(Uint32 t, Uint32 dt) {
-    Dimensions dimensions = window->getDimensions();
+    Dimensions dimensions = window->getSize();
     Point d = {dimensions.width, dimensions.height};
     runButton->update(t, dt, d);
     exitButton->update(t, dt, d);
@@ -48,9 +51,9 @@ void Menu::render(Renderer &renderer) {
     SDL_Rect clip;
     clip.x = 0;
     clip.y = 0;
-    clip.w = window->getDimensions().width - 1;
-    clip.h = window->getDimensions().height - 1;
-    background->fill(static_cast<SDL_Renderer*>(renderer.renderer), nullptr, &clip);
+    clip.w = window->getSize().width - 1;
+    clip.h = window->getSize().height - 1;
+    background->fill(static_cast<SDL_Renderer*>(renderer.renderer_ptr), nullptr, &clip);
     runButton->render(renderer);
     exitButton->render(renderer);
     renderer.render();

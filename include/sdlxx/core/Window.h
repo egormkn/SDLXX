@@ -1,7 +1,7 @@
 /**
  * @file Window.h
  * @author Egor Makarenko
- * @brief Class that represents graphical windows
+ * @brief Class that represents a graphical window
  */
 
 #pragma once
@@ -16,12 +16,14 @@
 
 #include <sdlxx/core/Dimensions.h>
 #include <sdlxx/core/Point.h>
-#include <sdlxx/core/Renderer.h>
 
 namespace sdlxx::core {
 
+// Forward declaration of Renderer class
+class Renderer;
+
 /**
- * @brief Class that represents graphical windows
+ * @brief Class that represents a graphical window
  */
 class Window {
 public:
@@ -252,31 +254,17 @@ public:
 
   // TODO: window surface methods, set/get grab and other methods
 
-  // TODO: Move createRenderer and getRenderer to Renderer class
-
   /**
-   * @brief Create a new renderer and attach it to this window
+   * @brief Get the renderer associated with the window
    *
-   * @return Renderer that is attached to this window
+   * @return Renderer The renderer that is associated with the window
    */
-  std::shared_ptr<Renderer> createRenderer(
-      int driver_index = -1,
-      const std::unordered_set<Renderer::Option>& options = {});
-
-  /**
-   * @brief Get the renderer attached to this window
-   *
-   * @return Renderer that is attached to this window
-   */
-  std::shared_ptr<Renderer> getRenderer() const;
+  Renderer getRenderer() const;
 
   friend class Renderer;
 
 private:
-  void* window = nullptr;
-  std::shared_ptr<Renderer> renderer;
-
-  static std::unordered_map<uint32_t, void*> active_windows;
+  void* window_ptr = nullptr;
 };
 
 }  // namespace sdlxx::core

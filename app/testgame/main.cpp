@@ -1,5 +1,5 @@
 #include <sdlxx/core/SDLXX_core.h>
-#include <sdlxx/core/SceneManager.h>
+#include <sdlxx/gui/SceneManager.h>
 #include <sdlxx/core/Window.h>
 #include <sdlxx/image/SDLXX_image.h>
 #include <sdlxx/mixer/SDLXX_mixer.h>
@@ -35,7 +35,8 @@ int main(int argc, char* args[]) {
     renderer.setColor(0xFFFFFF);
 
     SceneManager manager(window);
-    manager.push(new Menu("MENU", window));
+    std::shared_ptr<Menu> menu = std::make_shared<Menu>("MENU", window);
+    manager.push(menu);
     manager.run();
   } catch (std::exception& e) {
     Log::error(e.what());

@@ -7,7 +7,7 @@
 #include <sdlxx/core/Object.h>
 #include <sdlxx/gui/Button.h>
 #include <sdlxx/image/SDLXX_image.h>
-#include <sdlxx/core/Scene.h>
+#include <sdlxx/gui/Scene.h>
 #include <sdlxx/core/Texture.h>
 #include "Game.h"
 

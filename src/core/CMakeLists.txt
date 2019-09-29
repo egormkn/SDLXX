@@ -16,8 +16,6 @@ set(SOURCE_LIST
     Point.cpp
     Rectangle.cpp
     Renderer.cpp
-    Scene.cpp
-    SceneManager.cpp
     SDLXX_core.cpp
     Surface.cpp
     Texture.cpp

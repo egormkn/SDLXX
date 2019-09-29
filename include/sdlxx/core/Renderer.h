@@ -20,8 +20,6 @@ class Box2DDrawer;
 
 namespace sdlxx::core {
 
-class Window;
-
 class Texture;
 
 /**
@@ -39,7 +37,7 @@ public:
   };
 
   Renderer(Window& window, int driver,
-           const std::unordered_set<Option>& options);
+                     const std::unordered_set<Option>& options);
 
   ~Renderer();
 
@@ -66,16 +64,18 @@ public:
 
   void fillRect(const Rectangle& rectangle);
 
-  friend class Window;
+  friend Renderer Window::getRenderer() const;
 
   friend class Texture;
 
   friend class Box2DDrawer;
 
-  void* renderer = nullptr;
+  void* renderer_ptr = nullptr;
 
 private:
-  Renderer(void* window, int driver, const std::unordered_set<Option>& options);
+  Renderer(void* window_ptr, int driver, const std::unordered_set<Option>& options);
+
+  Renderer(void* renderer_ptr);
 };
 
 }  // namespace sdlxx::core

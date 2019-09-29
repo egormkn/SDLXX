@@ -1,38 +1,41 @@
 #include <SDL_timer.h>
 #include <sdlxx/core/Log.h>
-#include <sdlxx/core/SceneManager.h>
+#include <sdlxx/gui/SceneManager.h>
+#include <memory>
 
-sdlxx::core::SceneManager::SceneManager(sdlxx::core::Window& w) { window = &w; }
+using namespace sdlxx::core;
+using namespace sdlxx::gui;
 
-sdlxx::core::SceneManager::~SceneManager() {
+SceneManager::SceneManager(Window& w) { window = std::shared_ptr<Window>(&w); }
+
+SceneManager::~SceneManager() {
   clear();
   window = nullptr;
 }
 
-void sdlxx::core::SceneManager::push(sdlxx::core::Scene* s) { scenes.push(s); }
+void SceneManager::push(std::shared_ptr<Scene> s) { scenes.push(s); }
 
-void sdlxx::core::SceneManager::pop() { scenes.pop(); }
+void SceneManager::pop() { scenes.pop(); }
 
-void sdlxx::core::SceneManager::setWindow(sdlxx::core::Window& w) {
-  window = &w;
+void SceneManager::setWindow(Window& w) {
+  window = std::shared_ptr<Window>(&w);
 }
 
-sdlxx::core::Window& sdlxx::core::SceneManager::getWindow() { return *window; }
+Window& SceneManager::getWindow() { return *window; }
 
-void sdlxx::core::SceneManager::clear() {
+void SceneManager::clear() {
   while (scenes.size() > 0) {
-    Scene* scene = scenes.top();
+    std::shared_ptr<Scene> scene = scenes.top();
     if (scene->isInitialized()) {
       scene->setFinished(true);
       scene->setInitialized(false);
       scene->onDestroy();
     }
-    delete scene;
     scenes.pop();
   }
 }
 
-void sdlxx::core::SceneManager::run() {
+void SceneManager::run() {
   Uint32 t = 0, dt = 10, accumulator = 0;
   Uint32 currentTime = SDL_GetTicks();
 
@@ -44,16 +47,16 @@ void sdlxx::core::SceneManager::run() {
     Uint32 frameTime = std::min(newTime - currentTime, (Uint32)250);
     currentTime = newTime;
 
-    Scene* currentScene = scenes.top();
+    std::shared_ptr<Scene> currentScene = scenes.top();
 
     if (currentScene->isFinished()) {
-      Scene* intent = nullptr;
+      std::shared_ptr<Scene> intent = nullptr;
       if (currentScene->hasIntent()) {
-        intent = currentScene->getIntent();
+        intent = std::shared_ptr<Scene>(currentScene->getIntent());
       }
       currentScene->setInitialized(false);
       currentScene->onDestroy();
-      delete currentScene;
+      // delete currentScene;
       scenes.pop();
       if (intent != nullptr) {
         scenes.push(intent);
@@ -66,7 +69,7 @@ void sdlxx::core::SceneManager::run() {
       currentScene->setInitialized(false);
       currentScene->setFinished(false);
       currentScene->onDestroy();
-      scenes.push(currentScene->getIntent());
+      scenes.push(std::shared_ptr<Scene>(currentScene->getIntent()));
       continue;
     }
 
@@ -109,8 +112,8 @@ void sdlxx::core::SceneManager::run() {
     // state.v = current.v * alpha + previous.v * (1 - alpha);
     // render( state );
     if (!currentScene->isFinished()) {
-      std::shared_ptr<Renderer> renderer_ptr = window->getRenderer();
-      currentScene->render(*renderer_ptr);
+      Renderer renderer = window->getRenderer();
+      currentScene->render(renderer);
     }
   }
 }

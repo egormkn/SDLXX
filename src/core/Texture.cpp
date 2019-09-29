@@ -28,7 +28,7 @@ Texture::Texture(const std::string &path, const Renderer& renderer, int w, int h
         surface = scaled;
     }*/
 
-    texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.renderer), surface);
+    texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.renderer_ptr), surface);
     if(texture == nullptr) {
         throw std::runtime_error("Unable to create texture" + std::string(SDL_GetError()));
     }
@@ -40,7 +40,7 @@ Texture::Texture(const std::string &path, const Renderer& renderer, int w, int h
 Texture::Texture(const std::string &text, const Color &color, const sdlxx::ttf::Font &font,
                         const Renderer& renderer) {
     Surface surface = font.render(text, sdlxx::ttf::TTF_MODE_BLENDED, color);
-    texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.renderer), surface.getSDLSurface());
+    texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.renderer_ptr), surface.getSDLSurface());
     if(texture == nullptr) {
         throw std::runtime_error("Unable to create texture" + std::string(SDL_GetError()));
     }

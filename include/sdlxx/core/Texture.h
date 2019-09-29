@@ -13,10 +13,9 @@
 
 #include <SDL_image.h>
 #include <SDL_render.h>
+#include <sdlxx/core/Log.h>
 #include <sdlxx/core/Renderer.h>
-
-#include "../ttf/Font.h"
-#include "Log.h"
+#include <sdlxx/ttf/Font.h>
 
 namespace sdlxx::core {
 

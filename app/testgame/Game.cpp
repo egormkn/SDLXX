@@ -30,7 +30,7 @@ void Game::onCreate(Window &w) {
 
     b2Vec2 gravity(0.0f, 9.8f);
     world = std::make_unique<b2World>(gravity);
-    drawer = new Box2DDrawer(*window->getRenderer(), 30.f);
+    drawer = new Box2DDrawer(window->getRenderer(), 30.f);
     drawer->SetFlags(0xFF);
     world->SetDebugDraw(drawer);
 
@@ -45,7 +45,7 @@ void Game::onCreate(Window &w) {
          tileset != map2->tmx_tilesets.end(); ++tileset) {
         if (!tileset->tmx_image.source.empty()) {
             int raw = tileset->tilecount / tileset->columns;
-            textures.push_back(new Texture(tileset->tmx_image.source, *w.getRenderer(), tileset->tilewidth,
+            textures.push_back(new Texture(tileset->tmx_image.source, w.getRenderer(), tileset->tilewidth,
                                            tileset->tileheight));
             std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
             for (int i = 0; i < raw; ++i) {
@@ -67,7 +67,7 @@ void Game::onCreate(Window &w) {
         } else {
             for (std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
                  tile != tileset->tmx_tiles.end(); ++tile) {
-                textures.push_back(new Texture(tile->tmx_image.source, *w.getRenderer(), tile->tmx_image.width,
+                textures.push_back(new Texture(tile->tmx_image.source, w.getRenderer(), tile->tmx_image.width,
                                                tile->tmx_image.height));
                 textureHolders.push_back(
                         TextureHolder(textures[textures.size() - 1], {0, 0, tile->width, tile->height},
@@ -134,7 +134,7 @@ void Game::onCreate(Window &w) {
     circleBody->CreateFixture(&circleShape, 2);*/
 
 
-    image = new Texture("resources/Downloads/Level/Objects/Box.png", *w.getRenderer(), TILE_WIDTH,
+    image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getRenderer(), TILE_WIDTH,
                         TILE_HEIGHT);
 }
 
@@ -222,7 +222,7 @@ void Game::update(Uint32 t, Uint32 dt) {
 void Game::render(Renderer &renderer) {
     renderer.setColor(Color(0xFFFFFFFF));
     renderer.clear();
-    Dimensions dimensions = window->getDimensions();
+    Dimensions dimensions = window->getSize();
     SCREEN_WIDTH = dimensions.width;
     SCREEN_HEIGHT = dimensions.height;
     window->setTitle(std::to_string(SCREEN_WIDTH) + " " + std::to_string(SCREEN_HEIGHT));
@@ -258,7 +258,7 @@ void Game::render(Renderer &renderer) {
                 if (vec[i][j] != 0) {
                     SDL_Rect rect = {j * TILE_WIDTH - camera.x, i * TILE_HEIGHT - camera.y, TILE_WIDTH,
                                      TILE_HEIGHT};
-                    textureHolders[vec[i][j] - 1].texture->render(static_cast<SDL_Renderer*>(renderer.renderer),
+                    textureHolders[vec[i][j] - 1].texture->render(static_cast<SDL_Renderer*>(renderer.renderer_ptr),
                                                                   &textureHolders[vec[i][j] - 1].rect, &rect);
                 }
             }
@@ -300,7 +300,7 @@ void Game::renderBox(Renderer &renderer, b2Body *boxBody) {
 
 
     //SDL_Point point = {(int) shape->m_vertices[2].x, (int) shape->m_vertices[2].y};
-    image->render(static_cast<SDL_Renderer*>(renderer.renderer), nullptr, &renderQuad, angle * DEG);
+    image->render(static_cast<SDL_Renderer*>(renderer.renderer_ptr), nullptr, &renderQuad, angle * DEG);
 }
 
 void Game::renderPlayer(Renderer &renderer, b2Body *boxBody) {
