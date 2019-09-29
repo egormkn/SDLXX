@@ -1,45 +1,36 @@
-#include <sstream>
+#include <system_error>
+#include <SDL_ttf.h>
 #include <sdlxx/ttf/SDLXX_ttf.h>
-#include <sdlxx/core/Log.h>
 
-std::mutex sdlxx::ttf::SDL_ttf::mutex;
+using namespace sdlxx::core;
+using namespace sdlxx::ttf;
 
-bool sdlxx::ttf::SDL_ttf::initialized = false;
+SDLXX_ttf::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
+    : SDLXX::Version::Version(major, minor, patch) {}
 
-sdlxx::ttf::SDL_ttf::SDL_ttf() {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Initializing SDL font rendering system...");
-#endif
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        if(initialized) {
-            throw std::runtime_error("SDL_ttf already initialized");
-        }
-        if(TTF_Init() == -1) {
-            throw std::runtime_error("Unable to initialize SDL_ttf" + std::string(TTF_GetError()));
-        }
-        initialized = true;
-    }
-#ifndef SDLXX_RELEASE
-    SDL_version compiled;
-    const SDL_version *linked = TTF_Linked_Version();
-    SDL_TTF_VERSION(&compiled);
-    std::stringstream compiledString, linkedString;
-    compiledString << "Compiled against SDL_ttf v" << (int) compiled.major
-                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
-    linkedString << "Linked against SDL_ttf v" << (int) linked->major
-                 << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    sdlxx::core::Log::log(compiledString.str());
-    sdlxx::core::Log::log(linkedString.str());
-    sdlxx::core::Log::newline();
-#endif
+SDLXX_ttf::Version SDLXX_ttf::Version::getCompiledSdlTtfVersion() {
+  SDL_version compiled;
+  SDL_TTF_VERSION(&compiled);
+  return {compiled.major, compiled.minor, compiled.patch};
 }
 
-sdlxx::ttf::SDL_ttf::~SDL_ttf() {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Cleaning up SDL font rendering system...");
-#endif
-    std::lock_guard<std::mutex> lock(mutex);
-    TTF_Quit();
-    initialized = false;
+SDLXX_ttf::Version SDLXX_ttf::Version::getLinkedSdlTtfVersion() {
+  const SDL_version* linked = TTF_Linked_Version();
+  return {linked->major, linked->minor, linked->patch};
 }
+
+SDLXX_ttf::SDLXX_ttf() {
+  if (SDLXX_ttf::wasInit()) {
+    throw std::runtime_error("SDLXX_ttf is already initialized");
+  }
+  int return_code = TTF_Init();
+  if (return_code != 0) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to initialize SDLXX_ttf: " + std::string(TTF_GetError()));
+  }
+}
+
+bool SDLXX_ttf::wasInit() { return TTF_WasInit(); }
+
+SDLXX_ttf::~SDLXX_ttf() { TTF_Quit(); }
