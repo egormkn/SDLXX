@@ -1,7 +1,7 @@
 /**
  * @file Color.h
  * @author Egor Makarenko
- * @brief Class that describes color
+ * @brief Class that represents a color
  */
 
 #pragma once
@@ -14,15 +14,18 @@
 
 namespace sdlxx::core {
 
+/**
+ * @brief Class that represents a color
+ */
 class Color {
 public:
   /**
-   * @brief Construct a black opaque Color
+   * @brief Construct a black opaque color
    */
   Color();
 
   /**
-   * @brief Construct an opaque Color based on its hexadecimal value
+   * @brief Construct a color from its hexadecimal ARGB value
    *
    * Examples:
    *
@@ -30,41 +33,26 @@ public:
    * Color(0x0000FF) should give you full blue
    * Color(0xC0FFEE) I don't know what it is but it has a nice name
    *
-   * @param color_mask hexadecimal value of a color
+   * @param color hexadecimal value of a color
    */
-  Color(uint32_t color_mask);
+  Color(uint32_t color);
 
-  /// Creates a RGBA color.
+  /**
+   * @brief Construct a color from its RGBA values
+   *
+   * @param r Red component
+   * @param g Green component
+   * @param b Blue component
+   * @param a Alpha component
+   */
   Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 
-  /// Creates a opaque color based on a color name.
-  ///
-  /// You know, "red", "black", "cyan"...
-  Color(std::string& colorName);
+  // TODO: Add operators
 
-  /// Adds the RGB values of two colors.
-  ///
-  /// @note If the alpha value is different, defaults to opaque.
-  /// @note If the value is out of range, it's padded.
-  ///
-  Color operator+(const Color& color) const;
-
-  /// Subtracts the RGB values of two colors.
-  ///
-  /// @note If the alpha value is different, defaults to opaque.
-  /// @note If the value is out of range, it's padded.
-  Color operator-(const Color& color) const;
-
-  /// Tests if two RGBA colors are completely equal.
-  bool operator==(const Color& color) const;
-
-  /// Tests if two RGBA colors are different.
-  bool operator!=(const Color& color) const;
-
-  const uint8_t red;    ///< Red component (0 is none, 255 is full).
-  const uint8_t green;  ///< Green component (0 is none, 255 is full).
-  const uint8_t blue;   ///< Blue component  (0 is none, 255 is full).
-  const uint8_t alpha;  ///< Alpha component (0 is transparent, 255 is opaque).
+  const uint8_t red;    ///< Red component (0 is none, 255 is full)
+  const uint8_t green;  ///< Green component (0 is none, 255 is full)
+  const uint8_t blue;   ///< Blue component  (0 is none, 255 is full)
+  const uint8_t alpha;  ///< Alpha component (0 is transparent, 255 is opaque)
 };
 
 }  // namespace sdlxx::core
