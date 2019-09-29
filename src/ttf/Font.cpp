@@ -6,7 +6,7 @@ sdlxx::ttf::Font::Font(TTF_Font *f) {
 
 sdlxx::ttf::Font::Font(const std::string &path, int ptsize, int index) {
     if((font = TTF_OpenFontIndex(path.c_str(), ptsize, index)) == nullptr) {
-        throw sdlxx::core::Exception("Failed to load font", TTF_GetError());
+        throw std::runtime_error("Failed to load font" + std::string(TTF_GetError()));
     }
 }
 
@@ -52,7 +52,7 @@ sdlxx::ttf::Font::render(const std::string &text, int mode, const sdlxx::core::C
             break;
     }
     if(sdlSurface == nullptr) {
-        throw sdlxx::core::Exception("Unable to render text", TTF_GetError());
+        throw std::runtime_error("Unable to render text" + std::string(TTF_GetError()));
     }
     return sdlxx::core::Surface(sdlSurface);
 }
@@ -72,7 +72,7 @@ sdlxx::core::Surface sdlxx::ttf::Font::render(Uint16 ch, int mode, const sdlxx::
             break;
     }
     if(sdlSurface == nullptr) {
-        throw sdlxx::core::Exception("Unable to render glyph", TTF_GetError());
+        throw std::runtime_error("Unable to render glyph" + std::string(TTF_GetError()));
     }
     return sdlxx::core::Surface(sdlSurface);
 }

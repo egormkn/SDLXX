@@ -1,4 +1,5 @@
 #include <sdlxx/core/Texture.h>
+#include <stdexcept>
 
 using namespace sdlxx::core;
 
@@ -10,7 +11,7 @@ Texture::Texture(SDL_Texture *t) {
 Texture::Texture(const std::string &path, const Renderer& renderer, int w, int h) {
     SDL_Surface *surface = IMG_Load(path.c_str());
     if(surface == nullptr) {
-        throw Exception("Unable to load image", IMG_GetError());
+        throw std::runtime_error("Unable to load image" + std::string(IMG_GetError()));
     }
     SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0xFF));
 
@@ -29,7 +30,7 @@ Texture::Texture(const std::string &path, const Renderer& renderer, int w, int h
 
     texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.renderer), surface);
     if(texture == nullptr) {
-        throw Exception("Unable to create texture", SDL_GetError());
+        throw std::runtime_error("Unable to create texture" + std::string(SDL_GetError()));
     }
     width = surface->w;
     height = surface->h;
@@ -41,7 +42,7 @@ Texture::Texture(const std::string &text, const Color &color, const sdlxx::ttf::
     Surface surface = font.render(text, sdlxx::ttf::TTF_MODE_BLENDED, color);
     texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.renderer), surface.getSDLSurface());
     if(texture == nullptr) {
-        throw Exception("Unable to create texture", SDL_GetError());
+        throw std::runtime_error("Unable to create texture" + std::string(SDL_GetError()));
     }
     width = surface.getWidth();
     height = surface.getHeight();

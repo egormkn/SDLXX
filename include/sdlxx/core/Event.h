@@ -2,7 +2,6 @@
 #define SDLXX_EVENT_H
 
 #include <SDL_events.h>
-#include "Exception.h"
 
 namespace sdlxx::core {
     class Event {

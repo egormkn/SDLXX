@@ -1,29 +1,21 @@
 #include <sdlxx/core/Event.h>
+#include <stdexcept>
 
-sdlxx::core::Event::Event() {
-    event = new SDL_Event;
-}
+sdlxx::core::Event::Event() { event = new SDL_Event; }
 
-sdlxx::core::Event::~Event() {
-    delete event;
-}
+sdlxx::core::Event::~Event() { delete event; }
 
-bool sdlxx::core::Event::hasNext() {
-    return SDL_PollEvent(event) == 1;
-}
+bool sdlxx::core::Event::hasNext() { return SDL_PollEvent(event) == 1; }
 
-SDL_Event &sdlxx::core::Event::getEvent() {
-    return *event;
-}
+SDL_Event& sdlxx::core::Event::getEvent() { return *event; }
 
-Uint32 sdlxx::core::Event::getType() {
-    return event->type;
-}
+Uint32 sdlxx::core::Event::getType() { return event->type; }
 
 bool sdlxx::core::Event::pushEvent() {
-    int result = SDL_PushEvent(event);
-    if (result < 0) {
-        throw Exception("Failed to add an event to queue", SDL_GetError());
-    }
-    return result == 1;
+  int result = SDL_PushEvent(event);
+  if (result < 0) {
+    throw std::runtime_error("Failed to add an event to queue: " +
+                             std::string(SDL_GetError()));
+  }
+  return result == 1;
 }

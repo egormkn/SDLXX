@@ -2,6 +2,8 @@
 
 #include <SDL_render.h>
 #include <sdlxx/core/Renderer.h>
+#include <stdexcept>
+
 
 using namespace sdlxx::core;
 
@@ -65,7 +67,7 @@ void Renderer::renderCopy(const Texture& texture, const Rectangle& src,
   int result = SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer), texture.getSDLTexture(),
                               src.getSDLRectangle(), dest.getSDLRectangle());
   if (result < 0) {
-    throw Exception("Failed to render a texture");
+    throw std::runtime_error("Failed to render a texture");
   }
 }
 
@@ -74,7 +76,7 @@ void Renderer::renderCopy(const Texture& texture,
   int result = SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer), texture.getSDLTexture(),
                               nullptr, dest.getSDLRectangle());
   if (result < 0) {
-    throw Exception("Failed to render a texture");
+    throw std::runtime_error("Failed to render a texture");
   }
 }
 

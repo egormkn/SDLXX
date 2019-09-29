@@ -1,6 +1,5 @@
 #include <sstream>
 #include <sdlxx/image/SDLXX_image.h>
-#include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
 std::mutex sdlxx::image::SDL_image::mutex;
@@ -14,11 +13,11 @@ sdlxx::image::SDL_image::SDL_image(Uint32 flags) {
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
-            throw sdlxx::core::Exception("SDL_image already initialized");
+            throw std::runtime_error("SDL_image already initialized");
         }
         int initted = IMG_Init(flags);
         if((initted & flags) != flags) {
-            throw sdlxx::core::Exception("Unable to initialize SDL_image", IMG_GetError());
+            throw std::runtime_error("Unable to initialize SDL_image" + std::string(IMG_GetError()));
         }
         initialized = true;
     }

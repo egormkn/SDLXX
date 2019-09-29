@@ -2,7 +2,6 @@
 #define SDLXX_FONT_H
 
 #include "SDLXX_ttf.h"
-#include "../core/Exception.h"
 #include "../core/Surface.h"
 #include "../core/Color.h"
 

@@ -1,6 +1,5 @@
 #include <sstream>
 #include <sdlxx/net/SDLXX_net.h>
-#include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
 std::mutex sdlxx::net::SDL_net::mutex;
@@ -14,10 +13,10 @@ sdlxx::net::SDL_net::SDL_net() {
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
-            throw sdlxx::core::Exception("SDL_net already initialized");
+            throw std::runtime_error("SDL_net already initialized");
         }
         if(SDLNet_Init() == -1) {
-            throw sdlxx::core::Exception("Unable to initialize SDL_net", SDLNet_GetError());
+            throw std::runtime_error("Unable to initialize SDL_net" + std::string(SDLNet_GetError()));
         }
         initialized = true;
     }

@@ -1,6 +1,5 @@
 #include <sstream>
 #include <sdlxx/mixer/SDLXX_mixer.h>
-#include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
 std::mutex sdlxx::mixer::SDL_mixer::mutex;
@@ -14,10 +13,10 @@ sdlxx::mixer::SDL_mixer::SDL_mixer(Uint32 flags) {
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
-            throw sdlxx::core::Exception("SDL_mixer already initialized");
+            throw std::runtime_error("SDL_mixer already initialized");
         }
         if((Mix_Init(flags) & flags) != flags) {
-            throw sdlxx::core::Exception("Unable to initialize SDL_mixer", Mix_GetError());
+            throw std::runtime_error("Unable to initialize SDL_mixer" + std::string(Mix_GetError()));
         }
         initialized = true;
     }
