@@ -95,13 +95,13 @@ std::unordered_set<SDLXX::Subsystem> SDLXX::wasInit(
                       [](Uint32 flags, const Subsystem& subsystem) {
                         return flags | static_cast<uint32_t>(subsystem);
                       });
-  Uint32 initialized = SDL_WasInit(flags);
+  Uint32 current = SDL_WasInit(flags);
   std::unordered_set<Subsystem> result;
   for (const Subsystem& s :
        {Subsystem::TIMER, Subsystem::AUDIO, Subsystem::VIDEO,
         Subsystem::JOYSTICK, Subsystem::HAPTIC, Subsystem::GAMECONTROLLER,
         Subsystem::EVENTS, Subsystem::SENSOR}) {
-    if (static_cast<uint32_t>(s) & initialized) {
+    if (static_cast<uint32_t>(s) & current) {
       result.insert(s);
     }
   }

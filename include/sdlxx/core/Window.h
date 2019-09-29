@@ -15,6 +15,7 @@
 #include <unordered_set>
 
 #include <sdlxx/core/Dimensions.h>
+#include <sdlxx/core/Point.h>
 #include <sdlxx/core/Renderer.h>
 
 namespace sdlxx::core {
@@ -27,7 +28,7 @@ public:
   /**
    * @brief An enumeration of window options
    */
-  enum class Option {
+  enum class Option : uint32_t {
     FULLSCREEN = 0x00000001,    /**< fullscreen window */
     OPENGL = 0x00000002,        /**< window usable with OpenGL context */
     SHOWN = 0x00000004,         /**< window is visible */
@@ -100,15 +101,15 @@ public:
   static const int WINDOW_UNDEFINED;
 
   /**
-   * @brief Construct a new window
+   * @brief Create a window with the specified position, dimensions, and flags
    *
-   * @param title the title of the window, in UTF-8 encoding
-   * @param width the width of the window, in screen coordinates
-   * @param height the height of the window, in screen coordinates
-   * @param options set of window options
-   * @param position_x the x position of the window, WINDOW_CENTERED, or
+   * @param title The title of the window, in UTF-8 encoding
+   * @param width The width of the window, in screen coordinates
+   * @param height The height of the window, in screen coordinates
+   * @param options The set of window options
+   * @param position_x The x position of the window, WINDOW_CENTERED, or
    * WINDOW_UNDEFINED
-   * @param position_y the y position of the window, WINDOW_CENTERED, or
+   * @param position_y The y position of the window, WINDOW_CENTERED, or
    * WINDOW_UNDEFINED
    */
   Window(const std::string& title, int width, int height,
@@ -116,7 +117,7 @@ public:
          int position_x = WINDOW_UNDEFINED, int position_y = WINDOW_UNDEFINED);
 
   /**
-   * @brief Construct a new window from an existing native window
+   * @brief Create a new window from an existing native window
    *
    * @param data a pointer to driver-dependent window creation data, typically
    * your native window cast to a void*
@@ -126,36 +127,132 @@ public:
   /**
    * @brief Get window id for logging purposes
    *
-   * @return uint32_t window id
+   * @return uint32_t Unique window identificator
    */
   uint32_t getId() const;
+
+  /**
+   * @brief Get window options
+   *
+   * @return std::unordered_set<Option> Set of window options
+   */
+  std::unordered_set<Option> getOptions() const;
 
   /**
    * @brief Destroy the window
    */
   ~Window();
 
+  // TODO: getDisplay, setDisplayMode, getDisplayMode, getPixelFormat, ...
+
   /**
-   * @brief Change window title
+   * @brief Set the title of a window
    *
-   * @param title new window title
+   * @param title The new window title
    */
   void setTitle(const std::string& title);
 
   /**
-   * @brief Minimize window
+   * @brief Get the title of a window
+   *
+   * @return std::string The window title
    */
-  void minimize();
+  std::string getTitle() const;
+
+  // TODO: setIcon, setData, getData
 
   /**
-   * @brief Maximize window
+   * @brief Set the position of a window
+   *
+   * @param position The X and Y coordinates of the window in screen
+   * coordinates, or WINDOW_CENTERED or ::WINDOW_UNDEFINED.
+   *
+   * @note The window coordinate origin is the upper left corner of the display.
+   */
+  void setPosition(const Point& position);
+
+  /**
+   * @brief Get the position of a window
+   *
+   * @return Point The X and Y coordinates of the window in screen coordinates
+   */
+  Point getPosition() const;
+
+  /**
+   * @brief Get the size of a window's client area
+   *
+   * @return Dimensions Window dimensions
+   */
+  Dimensions getSize() const;
+
+  // TODO: set*Size/get*Size
+
+  /**
+   * @brief Set the border state of a window
+   *
+   * This will add or remove the window's BORDERLESS flag and add or remove the
+   * border from the actual window. This is a no-op if the window's border
+   * already matches the requested state.
+   *
+   * @param bordered false to remove border, true to add border
+   *void setResizable(bool resizable)
+   * @note You can't change the border state of a fullscreen window
+   */
+  void setBordered(bool bordered);
+
+  /**
+   * @brief Set the user-resizable state of a window
+   *
+   * This will add or remove the window's RESIZABLE flag and allow/disallow user
+   * resizing of the window. This is a no-op if the window's resizable state
+   * already matches the requested state.
+   *
+   * @param resizable true to allow resizing, false to disallow.
+   *
+   * @note You can't change the resizable state of a fullscreen window.
+   */
+  void setResizable(bool resizable);
+
+  /**
+   * @brief Show a window
+   */
+  void show();
+
+  /**
+   * @brief Hide a window
+   */
+  void hide();
+
+  /**
+   * @brief Raise a window above other windows and set the input focus
+   */
+  void raise();
+
+  /**
+   * @brief Make window as large as possible
    */
   void maximize();
 
   /**
-   * @brief Restore window size
+   * @brief Minimize a window to an iconic representation
+   */
+  void minimize();
+
+  /**
+   * @brief Restore the size and position of a minimized or maximized window
    */
   void restore();
+
+  /**
+   * @brief Set a window's fullscreen state
+   *
+   * @param options Window options
+   */
+  void setFullscreen(const std::unordered_set<Option>& options = {});
+
+  // TODO: window surface methods, set/get grab and other methods
+
+  // TODO: Move createRenderer and getRenderer to Renderer class
 
   /**
    * @brief Create a new renderer and attach it to this window
@@ -173,12 +270,7 @@ public:
    */
   std::shared_ptr<Renderer> getRenderer() const;
 
-  /**
-   * @brief Get the size of a window's client area
-   *
-   * @return Dimensions Window dimensions
-   */
-  Dimensions getDimensions() const;
+  friend class Renderer;
 
 private:
   void* window = nullptr;

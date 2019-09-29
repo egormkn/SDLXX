@@ -14,6 +14,7 @@
 #include <sdlxx/core/Color.h>
 #include <sdlxx/core/Rectangle.h>
 #include <sdlxx/core/Texture.h>
+#include <sdlxx/core/Window.h>
 
 class Box2DDrawer;
 
@@ -36,6 +37,9 @@ public:
     TARGETTEXTURE =
         0x00000008 /**< The renderer supports rendering to texture */
   };
+
+  Renderer(Window& window, int driver,
+           const std::unordered_set<Option>& options);
 
   ~Renderer();
 
@@ -68,8 +72,8 @@ public:
 
   friend class Box2DDrawer;
 
-
   void* renderer = nullptr;
+
 private:
   Renderer(void* window, int driver, const std::unordered_set<Option>& options);
 };

@@ -7,6 +7,26 @@
 
 using namespace sdlxx::core;
 
+Renderer::Renderer(Window& window, int driver,
+                   const std::unordered_set<Option>& options) {
+  Uint32 flags = std::accumulate(options.begin(), options.end(), 0,
+                                 [](Uint32 flags, const Option& option) {
+                                   return flags | static_cast<uint32_t>(option);
+                                 });
+  renderer =
+      SDL_CreateRenderer(static_cast<SDL_Window*>(window.window), driver, flags);
+  if (renderer == nullptr) {
+    // std::cout << "Could not create hardware accelerated renderer, trying "
+    //              "software fallback";
+    renderer = SDL_CreateRenderer(static_cast<SDL_Window*>(window.window), -1,
+                                  SDL_RENDERER_SOFTWARE);
+    if (renderer == nullptr) {
+      throw std::runtime_error("Renderer could not be created" +
+                               std::string(SDL_GetError()));
+    }
+  }
+}
+
 Renderer::Renderer(void* window, int driver,
                    const std::unordered_set<Option>& options) {
   Uint32 flags = std::accumulate(options.begin(), options.end(), 0,

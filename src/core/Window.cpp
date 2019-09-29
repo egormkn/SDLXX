@@ -37,6 +37,27 @@ uint32_t Window::getId() const {
       SDL_GetWindowID(static_cast<SDL_Window*>(window)));
 }
 
+std::unordered_set<Window::Option> Window::getOptions() const {
+  Uint32 current = SDL_GetWindowFlags(static_cast<SDL_Window*>(window));
+  std::unordered_set<Option> result;
+  for (const Option& o : {Option::ALLOW_HIGHDPI, Option::ALWAYS_ON_TOP,
+                          Option::BORDERLESS,    Option::FOREIGN,
+                          Option::FULLSCREEN,    Option::FULLSCREEN_DESKTOP,
+                          Option::HIDDEN,        Option::INPUT_FOCUS,
+                          Option::INPUT_GRABBED, Option::MAXIMIZED,
+                          Option::MINIMIZED,     Option::MOUSE_CAPTURE,
+                          Option::MOUSE_FOCUS,   Option::OPENGL,
+                          Option::POPUP_MENU,    Option::RESIZABLE,
+                          Option::SHOWN,         Option::SKIP_TASKBAR,
+                          Option::TOOLTIP,       Option::UTILITY,
+                          Option::VULKAN}) {
+    if (static_cast<uint32_t>(o) & current) {
+      result.insert(o);
+    }
+  }
+  return result;
+}
+
 Window::~Window() {
   if (window) {
     SDL_DestroyWindow(static_cast<SDL_Window*>(window));
@@ -48,15 +69,67 @@ void Window::setTitle(const std::string& title) {
   SDL_SetWindowTitle(static_cast<SDL_Window*>(window), title.c_str());
 }
 
-void Window::minimize() {
-  SDL_MinimizeWindow(static_cast<SDL_Window*>(window));
+std::string Window::getTitle() const {
+  return {SDL_GetWindowTitle(static_cast<SDL_Window*>(window))};
 }
+
+void Window::setPosition(const Point& position) {
+  SDL_SetWindowPosition(static_cast<SDL_Window*>(window), position.x,
+                        position.y);
+}
+
+Point Window::getPosition() const {
+  int x, y;
+  SDL_GetWindowPosition(static_cast<SDL_Window*>(window), &x, &y);
+  return {x, y};
+}
+
+Dimensions Window::getSize() const {
+  int w, h;
+  SDL_GetWindowSize(static_cast<SDL_Window*>(window), &w, &h);
+  return {static_cast<unsigned>(w), static_cast<unsigned>(h)};
+}
+
+void Window::setBordered(bool bordered) {
+  SDL_SetWindowBordered(static_cast<SDL_Window*>(window),
+                        bordered ? SDL_TRUE : SDL_FALSE);
+}
+
+void Window::setResizable(bool resizable) {
+  SDL_SetWindowResizable(static_cast<SDL_Window*>(window),
+                         resizable ? SDL_TRUE : SDL_FALSE);
+}
+
+void Window::show() { SDL_ShowWindow(static_cast<SDL_Window*>(window)); }
+
+void Window::hide() { SDL_HideWindow(static_cast<SDL_Window*>(window)); }
+
+void Window::raise() { SDL_RaiseWindow(static_cast<SDL_Window*>(window)); }
 
 void Window::maximize() {
   SDL_MaximizeWindow(static_cast<SDL_Window*>(window));
 }
 
+void Window::minimize() {
+  SDL_MinimizeWindow(static_cast<SDL_Window*>(window));
+}
+
 void Window::restore() { SDL_RestoreWindow(static_cast<SDL_Window*>(window)); }
+
+void Window::setFullscreen(const std::unordered_set<Option>& options = {}) {
+  Uint32 flags =
+      std::accumulate(options.begin(), options.end(), 0,
+                      [](Uint32 flags, const Option& option) {
+                        return flags | static_cast<uint32_t>(option);
+                      });
+  int return_code =
+      SDL_SetWindowFullscreen(static_cast<SDL_Window*>(window), flags);
+  if (return_code != 0) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to set fullscreen mode: " + std::string(SDL_GetError()));
+  }
+}
 
 std::shared_ptr<Renderer> Window::createRenderer(
     int driver_index, const std::unordered_set<Renderer::Option>& options) {
@@ -73,12 +146,6 @@ std::shared_ptr<Renderer> Window::getRenderer() const {
     throw std::runtime_error("Window has no renderer");
   }
   return renderer;
-}
-
-Dimensions Window::getDimensions() const {
-  int w, h;
-  SDL_GetWindowSize(static_cast<SDL_Window*>(window), &w, &h);
-  return {static_cast<unsigned>(w), static_cast<unsigned>(h)};
 }
 
 /*

@@ -17,8 +17,8 @@ using namespace sdlxx::ttf;
 
 int main(int argc, char* args[]) {
   try {
-    SDLXX sdlxx({SDLXX::Subsystem::VIDEO, SDLXX::Subsystem::EVENTS});
     SDLXX::setHint("SDL_RENDER_SCALE_QUALITY", "1");
+    SDLXX sdlxx({SDLXX::Subsystem::VIDEO, SDLXX::Subsystem::EVENTS});
     SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
     SDL_mixer sdl_mixer(0 /*MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG*/);
     SDL_net sdl_net;
@@ -27,15 +27,12 @@ int main(int argc, char* args[]) {
     Window window("The Game", 800, 600,
                   {Window::Option::SHOWN, Window::Option::RESIZABLE,
                    Window::Option::ALLOW_HIGHDPI});
-    std::shared_ptr<Renderer> renderer = window.createRenderer(-1, {
-      Renderer::Option::ACCELERATED,
-      Renderer::Option::PRESENTVSYNC
-    });
-    if (!renderer.get()) {
-      Log::error("ERROR");
-    }
-    renderer->setLogicalSize(800, 600);
-    renderer->setColor(0xFFFFFFFF);
+
+    Renderer renderer(
+        window, -1,
+        {Renderer::Option::ACCELERATED, Renderer::Option::PRESENTVSYNC});
+    renderer.setLogicalSize(800, 600);
+    renderer.setColor(0xFFFFFF);
 
     SceneManager manager(window);
     manager.push(new Menu("MENU", window));
