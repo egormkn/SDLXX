@@ -24,10 +24,10 @@ void Button::setRelativeSize(int x, int y) {
 
 bool Button::handleEvent(sdlxx::core::Event &e) {
     SDL_Rect fillRect = {
-            (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX(),
-            (int) (relPos.getY() * windowDim.getY() / 100.0f) + absPos.getY(),
-            (int) (relDim.getX() * windowDim.getX() / 100.0f) + absDim.getX(),
-            (int) (relDim.getY() * windowDim.getY() / 100.0f) + absDim.getY()
+            (int) (relPos.x * windowDim.x / 100.0f) + absPos.x,
+            (int) (relPos.y * windowDim.y / 100.0f) + absPos.y,
+            (int) (relDim.x * windowDim.x / 100.0f) + absDim.x,
+            (int) (relDim.y * windowDim.y / 100.0f) + absDim.y
     };
 
 
@@ -61,25 +61,25 @@ bool Button::handleEvent(sdlxx::core::Event &e) {
 }
 
 void Button::update(Uint32 t, Uint32 dt, const sdlxx::core::Point &windowPoint) {
-    windowDim = {windowPoint.getX(), windowPoint.getY()};
+    windowDim = {windowPoint.x, windowPoint.y};
 }
 
 void Button::render(sdlxx::core::Renderer &renderer) {
-    int w = (int) (relDim.getX() * windowDim.getX() / 100.0f) + absDim.getX();
-    int h = (int) (relDim.getY() * windowDim.getY() / 100.0f) + absDim.getY();
+    int w = (int) (relDim.x * windowDim.x / 100.0f) + absDim.x;
+    int h = (int) (relDim.y * windowDim.y / 100.0f) + absDim.y;
     SDL_Rect fillRect = {
-            (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX(),
-            (int) (relPos.getY() * windowDim.getY() / 100.0f) + absPos.getY(),
-            (int) (relDim.getX() * windowDim.getX() / 100.0f) + absDim.getX(),
-            (int) (relDim.getY() * windowDim.getY() / 100.0f) + absDim.getY()
+            (int) (relPos.x * windowDim.x / 100.0f) + absPos.x,
+            (int) (relPos.y * windowDim.y / 100.0f) + absPos.y,
+            (int) (relDim.x * windowDim.x / 100.0f) + absDim.x,
+            (int) (relDim.y * windowDim.y / 100.0f) + absDim.y
     };
 
     renderer.setColor(mouseOver ? sdlxx::core::Color(0xFF8888FF) : sdlxx::core::Color(0xCCCCCCFF));
     renderer.fillRect({fillRect.x, fillRect.y, fillRect.w, fillRect.h});
 
     SDL_Rect fillRect2 = {
-            (int) (relPos.getX() * windowDim.getX() / 100.0f) + absPos.getX() + (w - textTexture->getWidth()) / 2,
-            (int) (relPos.getY() * windowDim.getY() / 100.0f) + absPos.getY() + (h - textTexture->getHeight()) / 2,
+            (int) (relPos.x * windowDim.x / 100.0f) + absPos.x + (w - textTexture->getWidth()) / 2,
+            (int) (relPos.y * windowDim.y / 100.0f) + absPos.y + (h - textTexture->getHeight()) / 2,
             textTexture->getWidth(),
             textTexture->getHeight()
 

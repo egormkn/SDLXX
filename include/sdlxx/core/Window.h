@@ -1,7 +1,7 @@
 /**
  * @file Window.h
  * @author Egor Makarenko
- * @brief Class that describes windows
+ * @brief Class that represents graphical windows
  */
 
 #pragma once
@@ -14,18 +14,18 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <sdlxx/core/Point.h>
+#include <sdlxx/core/Dimensions.h>
 #include <sdlxx/core/Renderer.h>
 
 namespace sdlxx::core {
 
 /**
- * @brief Class that describes windows
+ * @brief Class that represents graphical windows
  */
 class Window {
 public:
   /**
-   * @brief Windows options
+   * @brief An enumeration of window options
    */
   enum class Option {
     FULLSCREEN = 0x00000001,    /**< fullscreen window */
@@ -56,6 +56,9 @@ public:
     VULKAN = 0x10000000      /**< window usable for Vulkan surface */
   };
 
+  /**
+   * @brief An enumeration of window events
+   */
   enum class Event {
     NONE,         /**< Never used */
     SHOWN,        /**< Window has been shown */
@@ -125,7 +128,7 @@ public:
    *
    * @return uint32_t window id
    */
-  uint32_t getId();
+  uint32_t getId() const;
 
   /**
    * @brief Destroy the window
@@ -173,9 +176,9 @@ public:
   /**
    * @brief Get the size of a window's client area
    *
-   * @return Point
+   * @return Dimensions Window dimensions
    */
-  Point getDimensions() const;
+  Dimensions getDimensions() const;
 
 private:
   void* window = nullptr;

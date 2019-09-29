@@ -9,6 +9,7 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS
 set(SOURCE_LIST
     Animation.cpp
     Color.cpp
+    Dimensions.cpp
     Event.cpp
     Log.cpp
     Object.cpp

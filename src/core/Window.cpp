@@ -32,16 +32,12 @@ Window::Window(const void* data) {
   }
 }
 
-uint32_t Window::getId() {
+uint32_t Window::getId() const {
   return static_cast<uint32_t>(
       SDL_GetWindowID(static_cast<SDL_Window*>(window)));
 }
 
 Window::~Window() {
-  // if (renderer != nullptr) {
-  //   delete renderer;
-  //   renderer = nullptr;
-  // }
   if (window) {
     SDL_DestroyWindow(static_cast<SDL_Window*>(window));
     window = nullptr;
@@ -64,42 +60,26 @@ void Window::restore() { SDL_RestoreWindow(static_cast<SDL_Window*>(window)); }
 
 std::shared_ptr<Renderer> Window::createRenderer(
     int driver_index, const std::unordered_set<Renderer::Option>& options) {
+  if (renderer) {
+    throw std::runtime_error("Window already has a renderer");
+  }
   renderer =
       std::shared_ptr<Renderer>(new Renderer(window, driver_index, options));
   return renderer;
 }
 
 std::shared_ptr<Renderer> Window::getRenderer() const {
-  if (!renderer.get()) {
+  if (!renderer) {
     throw std::runtime_error("Window has no renderer");
   }
   return renderer;
 }
 
-Point Window::getDimensions() const {
+Dimensions Window::getDimensions() const {
   int w, h;
   SDL_GetWindowSize(static_cast<SDL_Window*>(window), &w, &h);
-  return {w, h};
+  return {static_cast<unsigned>(w), static_cast<unsigned>(h)};
 }
-
-// Renderer& Window::setRenderer(int driver, Uint32 flags) {
-//   if (renderer != nullptr) {
-//     throw Exception("Window already has a renderer");
-//   }
-//   renderer = new Renderer(window, driver, flags);
-//   if (renderer == nullptr) {
-//     throw Exception("Renderer could not be created", SDL_GetError());
-//   }
-//   return *renderer;
-// }
-
-// Renderer& Window::getRenderer() const { return *renderer; }
-
-// Point Window::getDimensions() {
-//   int w, h;
-//   SDL_GetWindowSize(window, &w, &h);
-//   return Point(w, h);
-// }
 
 /*
 class LWindow {

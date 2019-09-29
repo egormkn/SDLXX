@@ -1,7 +1,7 @@
 /**
  * @file Point.h
  * @author Egor Makarenko
- * @brief Describes a 2D point class
+ * @brief Class that represents a 2D point
  */
 
 #pragma once
@@ -12,18 +12,21 @@
 namespace sdlxx::core {
 
 /**
- * @brief Describes a 2D point class
+ * @brief Class that represents a 2D point
  */
 class Point {
 public:
+  /**
+   * @brief Construct a new point with given coordinates
+   *
+   * @param x, y Coordinates of a point
+   */
   Point(int x = 0, int y = 0);
 
-  int getX() const;
-
-  int getY() const;
-
-private:
+  /// X coordinate value
   int x;
+
+  /// Y coordinate value
   int y;
 };
 

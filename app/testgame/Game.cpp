@@ -222,9 +222,9 @@ void Game::update(Uint32 t, Uint32 dt) {
 void Game::render(Renderer &renderer) {
     renderer.setColor(Color(0xFFFFFFFF));
     renderer.clear();
-    Point dimensions = window->getDimensions();
-    SCREEN_WIDTH = dimensions.getX();
-    SCREEN_HEIGHT = dimensions.getY();
+    Dimensions dimensions = window->getDimensions();
+    SCREEN_WIDTH = dimensions.width;
+    SCREEN_HEIGHT = dimensions.height;
     window->setTitle(std::to_string(SCREEN_WIDTH) + " " + std::to_string(SCREEN_HEIGHT));
 
     for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {

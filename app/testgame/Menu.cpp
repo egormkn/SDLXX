@@ -36,7 +36,8 @@ void Menu::handleEvent(Event &e) {
 }
 
 void Menu::update(Uint32 t, Uint32 dt) {
-    Point d = window->getDimensions();
+    Dimensions dimensions = window->getDimensions();
+    Point d = {dimensions.width, dimensions.height};
     runButton->update(t, dt, d);
     exitButton->update(t, dt, d);
 }
@@ -47,8 +48,8 @@ void Menu::render(Renderer &renderer) {
     SDL_Rect clip;
     clip.x = 0;
     clip.y = 0;
-    clip.w = window->getDimensions().getX() - 1;
-    clip.h = window->getDimensions().getY() - 1;
+    clip.w = window->getDimensions().width - 1;
+    clip.h = window->getDimensions().height - 1;
     background->fill(static_cast<SDL_Renderer*>(renderer.renderer), nullptr, &clip);
     runButton->render(renderer);
     exitButton->render(renderer);
