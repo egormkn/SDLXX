@@ -1,7 +1,7 @@
 /**
  * @file SDLXX_core.h
  * @author Egor Makarenko
- * @brief Class that represents core SDLXX object
+ * @brief Class that represents SDLXX core object
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 namespace sdlxx::core {
 
 /**
- * @brief Main object that allows to work with SDLXX core library
+ * @brief Class that represents SDLXX core object
  */
 class SDLXX {
 public:
