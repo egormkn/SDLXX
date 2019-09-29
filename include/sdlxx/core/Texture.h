@@ -1,7 +1,7 @@
 /**
  * @file Texture.h
  * @author Egor Makarenko
- * @brief Class that represents a texture
+ * @brief Class that represents a texture in an efficient driver-specific way
  */
 
 #pragma once
@@ -21,10 +21,11 @@ namespace sdlxx::core {
 
 class Renderer;
 
+/**
+ * @brief Class that represents a texture in an efficient driver-specific way
+ */
 class Texture {
 public:
-  Texture(SDL_Texture* t);
-
   Texture(const std::string& path, const Renderer& renderer, int w, int h);
 
   Texture(const std::string& text, const Color& color,
@@ -54,12 +55,16 @@ public:
 
   SDL_Texture* getSDLTexture() const;
 
+  friend class Renderer;
+
 private:
-  SDL_Texture* texture = nullptr;
+  void* texture_ptr = nullptr;
   int width = 0;
   int height = 0;
   int access = SDL_TEXTUREACCESS_STATIC;
   Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
+
+  Texture(void* texture_ptr);
 };
 }  // namespace sdlxx::core
 

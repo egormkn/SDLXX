@@ -22,6 +22,9 @@ namespace sdlxx::core {
 // Forward declaration of Renderer class
 class Renderer;
 
+// Forward declaration of Surface class
+class Surface;
+
 /**
  * @brief Class that represents a graphical window
  */
@@ -251,6 +254,23 @@ public:
    * @param options Window options
    */
   void setFullscreen(const std::unordered_set<Option>& options = {});
+
+  /**
+   * @brief Get the surface associated with the window
+   *
+   * A new surface will be created with the optimal format for the window,
+   * if necessary. This surface will be freed when the window is destroyed.
+   *
+   * @note You may not combine this with 3D or the rendering API on this window
+   *
+   * @return Surface The window's framebuffer surface
+   */
+  Surface getSurface() const;
+
+  /**
+   * @brief Copy the window surface to the screen
+   */
+  void updateSurface();
 
   // TODO: window surface methods, set/get grab and other methods
 

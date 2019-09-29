@@ -3,6 +3,7 @@
 
 #include <SDL_render.h>
 #include <sdlxx/core/Renderer.h>
+#include <sdlxx/core/Rectangle.h>
 
 using namespace sdlxx::core;
 
@@ -96,8 +97,9 @@ void Renderer::clear() {
 void Renderer::renderCopy(const Texture& texture, const Rectangle& src,
                           const Rectangle& dest) {
   int result = SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer_ptr),
-                              texture.getSDLTexture(), src.getSDLRectangle(),
-                              dest.getSDLRectangle());
+                              static_cast<SDL_Texture*>(texture.texture_ptr),
+                              static_cast<SDL_Rect*>(src.rectangle_ptr),
+                              static_cast<SDL_Rect*>(dest.rectangle_ptr));
   if (result < 0) {
     throw std::runtime_error("Failed to render a texture");
   }
@@ -106,7 +108,7 @@ void Renderer::renderCopy(const Texture& texture, const Rectangle& src,
 void Renderer::renderCopy(const Texture& texture, const Rectangle& dest) {
   int result =
       SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer_ptr),
-                     texture.getSDLTexture(), nullptr, dest.getSDLRectangle());
+                     texture.getSDLTexture(), nullptr, static_cast<SDL_Rect*>(dest.rectangle_ptr));
   if (result < 0) {
     throw std::runtime_error("Failed to render a texture");
   }
@@ -114,5 +116,5 @@ void Renderer::renderCopy(const Texture& texture, const Rectangle& dest) {
 
 void Renderer::fillRect(const Rectangle& rectangle) {
   SDL_RenderFillRect(static_cast<SDL_Renderer*>(renderer_ptr),
-                     rectangle.getSDLRectangle());
+                     static_cast<SDL_Rect*>(rectangle.rectangle_ptr));
 }

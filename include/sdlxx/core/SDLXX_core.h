@@ -1,7 +1,7 @@
 /**
  * @file SDLXX_core.h
  * @author Egor Makarenko
- * @brief Class that represents SDLXX core object
+ * @brief Class that represents SDLXX core object that initializes the video API
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 namespace sdlxx::core {
 
 /**
- * @brief Class that represents SDLXX core object
+ * @brief Class that represents SDLXX core object that initializes the video API
  */
 class SDLXX {
 public:
@@ -100,7 +100,7 @@ public:
      * version at runtime. That version can be determined with
      * SDLXX::Version::getLinkedSdlVersion()
      *
-     * @return Version of SDL the library was compiled against
+     * @return Version Version of SDL the library was compiled against
      */
     static Version getCompiledSdlVersion();
 
@@ -110,7 +110,7 @@ public:
      * If you are linking to SDL dynamically, then it is possible that the
      * current version will be different than the version you compiled against.
      *
-     * @return Version of SDL the library was linked against
+     * @return Version Version of SDL the library was linked against
      */
     static Version getLinkedSdlVersion();
 

@@ -1,26 +1,23 @@
-//
-// Created by egorm on 09.02.2017.
-//
 
+#include <SDL_surface.h>
 #include <sdlxx/core/Surface.h>
 
-sdlxx::core::Surface::Surface(SDL_Surface *s) {
-    surface = s;
+using namespace sdlxx::core;
+
+Surface::Surface(void* surface_ptr) : surface_ptr(surface_ptr) {}
+
+Surface::~Surface() {
+  SDL_FreeSurface(static_cast<SDL_Surface*>(surface_ptr));
+  surface_ptr = nullptr;
 }
 
-sdlxx::core::Surface::~Surface() {
-    SDL_FreeSurface(surface);
-    surface = nullptr;
+Dimensions Surface::getSize() const {
+  int width = static_cast<SDL_Surface*>(surface_ptr)->w;
+  int height = static_cast<SDL_Surface*>(surface_ptr)->h;
+  return {static_cast<unsigned>(width), static_cast<unsigned>(height)};
 }
 
-SDL_Surface *sdlxx::core::Surface::getSDLSurface() const {
-    return surface;
-}
-
-int sdlxx::core::Surface::getWidth() const {
-    return surface->w;
-}
-
-int sdlxx::core::Surface::getHeight() const {
-    return surface->h;
+Surface Surface::fromBMP(const std::string& file) {
+  SDL_Surface* surface_ptr = SDL_LoadBMP(file.c_str());
+  return {surface_ptr};
 }

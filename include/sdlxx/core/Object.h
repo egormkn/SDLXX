@@ -26,7 +26,7 @@ public:
 
   virtual bool handleEvent(Event& e) = 0;
 
-  virtual ~Object() {}
+  virtual ~Object() = default;
 };
 
 }  // namespace sdlxx::core

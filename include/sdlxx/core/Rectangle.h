@@ -1,7 +1,7 @@
 /**
  * @file Rectangle.h
  * @author Egor Makarenko
- * @brief Class that represents a rectangle
+ * @brief Class that represents a rectangle with the origin at the upper left
  */
 
 #pragma once
@@ -14,15 +14,22 @@
 namespace sdlxx::core {
 
 /**
- * @brief A rectangle, with the origin at the upper left
+ * @brief Class that represents a rectangle with the origin at the upper left
  */
 class Rectangle {
 public:
+  /**
+   * @brief Construct a new rectangle
+   *
+   * @param x, y Coordinates of the upper left corner
+   * @param width, height Dimensions of the rectangle
+   */
   Rectangle(int x, int y, int width = 0, int height = 0);
 
+  /**
+   * @brief Destroy the rectangle
+   */
   ~Rectangle();
-
-  SDL_Rect* getSDLRectangle() const;
 
   int getX() const;
 
@@ -32,8 +39,10 @@ public:
 
   int getHeight() const;
 
+  friend class Renderer;
+
 private:
-  SDL_Rect* rectangle = nullptr;
+  void* rectangle_ptr = nullptr;
 };
 }  // namespace sdlxx::core
 

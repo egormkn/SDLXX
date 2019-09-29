@@ -135,11 +135,29 @@ void Window::setFullscreen(const std::unordered_set<Option>& options) {
   }
 }
 
+Surface Window::getSurface() const {
+  SDL_Surface* surface_ptr =
+      SDL_GetWindowSurface(static_cast<SDL_Window*>(window_ptr));
+  if (!surface_ptr) {
+    throw std::runtime_error("Unable to get the surface: " +
+                             std::string(SDL_GetError()));
+  }
+  return {surface_ptr};
+}
+
+void Window::updateSurface() {
+  int return_code =
+      SDL_UpdateWindowSurface(static_cast<SDL_Window*>(window_ptr));
+  if (return_code != 0) {
+    throw std::runtime_error("Failed to update the surface: " +
+                             std::string(SDL_GetError()));
+  }
+}
+
 Renderer Window::getRenderer() const {
   SDL_Renderer* renderer_ptr =
       SDL_GetRenderer(static_cast<SDL_Window*>(window_ptr));
   if (!renderer_ptr) {
-    std::string err = SDL_GetError();
     throw std::runtime_error("Unable to get the renderer: " +
                              std::string(SDL_GetError()));
   }

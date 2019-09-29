@@ -21,8 +21,8 @@ int main(int argc, char* args[]) {
     SDLXX sdlxx({SDLXX::Subsystem::VIDEO, SDLXX::Subsystem::EVENTS});
     SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
     SDL_mixer sdl_mixer(0 /*MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG*/);
-    SDL_net sdl_net;
-    SDL_ttf sdl_ttf;
+    SDLXX_net sdlxx_net;
+    SDLXX_ttf sdlxx_ttf;
 
     Window window("The Game", 800, 600,
                   {Window::Option::SHOWN, Window::Option::RESIZABLE,

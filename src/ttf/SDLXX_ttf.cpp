@@ -1,4 +1,5 @@
 #include <system_error>
+
 #include <SDL_ttf.h>
 #include <sdlxx/ttf/SDLXX_ttf.h>
 
@@ -21,7 +22,7 @@ SDLXX_ttf::Version SDLXX_ttf::Version::getLinkedSdlTtfVersion() {
 
 SDLXX_ttf::SDLXX_ttf() {
   if (SDLXX_ttf::wasInit()) {
-    throw std::runtime_error("SDLXX_ttf is already initialized");
+    throw std::runtime_error("SDLXX_ttf was already initialized");
   }
   int return_code = TTF_Init();
   if (return_code != 0) {
