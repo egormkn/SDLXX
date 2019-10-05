@@ -7,7 +7,7 @@ using namespace sdlxx::core;
 using namespace sdlxx::ttf;
 
 SDLXX_ttf::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
-    : SDLXX::Version::Version(major, minor, patch) {}
+    : SDLXX_core::Version::Version(major, minor, patch) {}
 
 SDLXX_ttf::Version SDLXX_ttf::Version::getCompiledSdlTtfVersion() {
   SDL_version compiled;

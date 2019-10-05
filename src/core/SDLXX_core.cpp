@@ -10,24 +10,24 @@
 
 using namespace sdlxx::core;
 
-bool SDLXX::initialized = false;
+bool SDLXX_core::initialized = false;
 
-SDLXX::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
+SDLXX_core::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
     : major_version(major), minor_version(minor), patch_version(patch) {}
 
-SDLXX::Version SDLXX::Version::getCompiledSdlVersion() {
+SDLXX_core::Version SDLXX_core::Version::getCompiledSdlVersion() {
   SDL_version compiled;
   SDL_VERSION(&compiled);
   return {compiled.major, compiled.minor, compiled.patch};
 }
 
-SDLXX::Version SDLXX::Version::getLinkedSdlVersion() {
+SDLXX_core::Version SDLXX_core::Version::getLinkedSdlVersion() {
   SDL_version linked;
   SDL_GetVersion(&linked);
   return {linked.major, linked.minor, linked.patch};
 }
 
-SDLXX::SDLXX(const std::unordered_set<Subsystem>& subsystems) {
+SDLXX_core::SDLXX_core(const std::unordered_set<Subsystem>& subsystems) {
   if (initialized) {
     throw std::runtime_error("SDLXX is already initialized");
   }
@@ -45,12 +45,12 @@ SDLXX::SDLXX(const std::unordered_set<Subsystem>& subsystems) {
   initialized = true;
 }
 
-SDLXX::~SDLXX() {
+SDLXX_core::~SDLXX_core() {
   SDL_Quit();
   initialized = false;
 }
 
-void SDLXX::initSubsystem(const Subsystem& subsystem) {
+void SDLXX_core::initSubsystem(const Subsystem& subsystem) {
   Uint32 flag = static_cast<uint32_t>(subsystem);
   int return_code = SDL_InitSubSystem(flag);
   if (return_code != 0) {
@@ -60,7 +60,7 @@ void SDLXX::initSubsystem(const Subsystem& subsystem) {
   }
 }
 
-void SDLXX::initSubsystem(const std::unordered_set<Subsystem>& subsystems) {
+void SDLXX_core::initSubsystem(const std::unordered_set<Subsystem>& subsystems) {
   Uint32 flags =
       std::accumulate(subsystems.begin(), subsystems.end(), 0,
                       [](Uint32 flags, const Subsystem& subsystem) {
@@ -74,12 +74,12 @@ void SDLXX::initSubsystem(const std::unordered_set<Subsystem>& subsystems) {
   }
 }
 
-void SDLXX::quitSubsystem(const Subsystem& subsystem) {
+void SDLXX_core::quitSubsystem(const Subsystem& subsystem) {
   Uint32 flag = static_cast<uint32_t>(subsystem);
   SDL_QuitSubSystem(flag);
 }
 
-void SDLXX::quitSubsystem(const std::unordered_set<Subsystem>& subsystems) {
+void SDLXX_core::quitSubsystem(const std::unordered_set<Subsystem>& subsystems) {
   Uint32 flags =
       std::accumulate(subsystems.begin(), subsystems.end(), 0,
                       [](Uint32 flags, const Subsystem& subsystem) {
@@ -88,7 +88,7 @@ void SDLXX::quitSubsystem(const std::unordered_set<Subsystem>& subsystems) {
   SDL_QuitSubSystem(flags);
 }
 
-std::unordered_set<SDLXX::Subsystem> SDLXX::wasInit(
+std::unordered_set<SDLXX_core::Subsystem> SDLXX_core::wasInit(
     const std::unordered_set<Subsystem>& subsystems) const {
   Uint32 flags =
       std::accumulate(subsystems.begin(), subsystems.end(), 0,
@@ -108,18 +108,18 @@ std::unordered_set<SDLXX::Subsystem> SDLXX::wasInit(
   return result;
 }
 
-bool SDLXX::wasInit(const Subsystem& subsystem) const {
+bool SDLXX_core::wasInit(const Subsystem& subsystem) const {
   Uint32 flag = static_cast<uint32_t>(subsystem);
   return SDL_WasInit(flag) != 0;
 }
 
-bool SDLXX::setHint(const std::string& name, const std::string& value,
+bool SDLXX_core::setHint(const std::string& name, const std::string& value,
                     const HintPriority& priority) {
   return SDL_SetHintWithPriority(name.c_str(), value.c_str(),
                                  static_cast<SDL_HintPriority>(priority));
 }
 
-std::optional<std::string> SDLXX::getHint(const std::string& name) {
+std::optional<std::string> SDLXX_core::getHint(const std::string& name) {
   const char* value = SDL_GetHint(name.c_str());
   if (!value) {
     return std::nullopt;
@@ -127,7 +127,7 @@ std::optional<std::string> SDLXX::getHint(const std::string& name) {
   return {std::string(value)};
 }
 
-std::optional<bool> SDLXX::getHintBoolean(const std::string& name) {
+std::optional<bool> SDLXX_core::getHintBoolean(const std::string& name) {
   const char* value = SDL_GetHint(name.c_str());
   if (!value || !*value) {
     return std::nullopt;
@@ -135,4 +135,4 @@ std::optional<bool> SDLXX::getHintBoolean(const std::string& name) {
   return {*value != '0' && SDL_strcasecmp(value, "false") != 0};
 }
 
-void SDLXX::clearHints() { SDL_ClearHints(); }
+void SDLXX_core::clearHints() { SDL_ClearHints(); }

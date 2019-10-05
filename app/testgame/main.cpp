@@ -17,8 +17,10 @@ using namespace sdlxx::ttf;
 
 int main(int argc, char* args[]) {
   try {
-    SDLXX::setHint("SDL_RENDER_SCALE_QUALITY", "1");
-    SDLXX sdlxx({SDLXX::Subsystem::VIDEO, SDLXX::Subsystem::EVENTS});
+    SDLXX_core::setHint("SDL_RENDER_SCALE_QUALITY", "1");
+
+    SDLXX_core sdlxx_core(
+        {SDLXX_core::Subsystem::VIDEO, SDLXX_core::Subsystem::EVENTS});
     SDL_image sdl_image(IMG_INIT_PNG | IMG_INIT_JPG);
     SDL_mixer sdl_mixer(0 /*MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG*/);
     SDLXX_net sdlxx_net;
@@ -39,7 +41,7 @@ int main(int argc, char* args[]) {
     manager.push(menu);
     manager.run(window);
   } catch (std::exception& e) {
-    // Log::error(e.what());
+    Log::error(e.what());
   }
 
   return 0;

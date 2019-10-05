@@ -18,10 +18,10 @@ namespace sdlxx::core {
 /**
  * @brief Class that represents SDLXX core object that initializes the video API
  */
-class SDLXX {
+class SDLXX_core {
 public:
   /**
-   * @brief An enumeration of SDLXX subsystems
+   * @brief An enumeration of library subsystems
    */
   enum class Subsystem : uint32_t {
     /// Timer subsystem
@@ -93,19 +93,19 @@ public:
     Version(uint8_t major, uint8_t minor, uint8_t patch);
 
     /**
-     * @brief Get the SDL version the SDLXX library was compiled against
+     * @brief Get the SDL version the library was compiled against
      *
      * This is determined by what header the compiler used. Note that if you
      * dynamically linked the library, you might have a slightly newer or older
      * version at runtime. That version can be determined with
-     * SDLXX::Version::getLinkedSdlVersion()
+     * SDLXX_core::Version::getLinkedSdlVersion()
      *
      * @return Version Version of SDL the library was compiled against
      */
     static Version getCompiledSdlVersion();
 
     /**
-     * @brief Get the version of SDL that is linked against the SDLXX library
+     * @brief Get the version of SDL that is linked against the library
      *
      * If you are linking to SDL dynamically, then it is possible that the
      * current version will be different than the version you compiled against.
@@ -118,32 +118,33 @@ public:
   };
 
   /**
-   * @brief Construct a new SDLXX object that initializes the specified
+   * @brief Construct a new SDLXX core object that initializes the specified
    *        Subsystems of the library
    *
-   * This object must be constructed before using most other SDLXX functions.
+   * This object must be constructed before using most other library functions.
    *
    * @param subsystems Subsystems that should be initialized
    *
    * @note Some subsystems may automatically initialize other
    */
-  explicit SDLXX(const std::unordered_set<Subsystem>& subsystems = {});
+  explicit SDLXX_core(const std::unordered_set<Subsystem>& subsystems = {});
 
   /**
-   * @brief Destroy the SDLXX object cleaning up all initialized subsystems.
+   * @brief Destroy the SDLXX core object cleaning up all initialized
+   * subsystems.
    *
    * @note You should call this function upon all exit conditions.
    */
-  ~SDLXX();
+  ~SDLXX_core();
 
   /**
    * @brief Initialize specific SDL subsystem
    *
    * Subsystem initialization is ref-counted, you must call
-   * SDLXX::quitSubsystem() for each SDLXX::initSubsystem() to correctly
-   * shutdown a subsystem manually (or destroy SDLXX object to force shutdown).
-   * If a subsystem is already loaded then this call will increase the ref-count
-   * and return.
+   * SDLXX_core::quitSubsystem() for each SDLXX_core::initSubsystem() to
+   * correctly shutdown a subsystem manually (or destroy SDLXX object to force
+   * shutdown). If a subsystem is already loaded then this call will increase
+   * the ref-count and return.
    */
   void initSubsystem(const Subsystem& subsystem);
 
@@ -151,10 +152,10 @@ public:
    * @brief Initialize specific SDL subsystems
    *
    * Subsystem initialization is ref-counted, you must call
-   * SDLXX::quitSubsystem() for each SDLXX::initSubsystem() to correctly
-   * shutdown a subsystem manually (or destroy SDLXX object to force shutdown).
-   * If a subsystem is already loaded then this call will
-   * increase the ref-count and return.
+   * SDLXX_core::quitSubsystem() for each SDLXX_core::initSubsystem() to
+   * correctly shutdown a subsystem manually (or destroy SDLXX object to force
+   * shutdown). If a subsystem is already loaded then this call will increase
+   * the ref-count and return.
    */
   void initSubsystem(const std::unordered_set<Subsystem>& subsystems);
 
@@ -162,15 +163,16 @@ public:
    * @brief Clean up specific SDL subsystem
    *
    * Subsystem initialization is ref-counted, you must call
-   * SDLXX::quitSubsystem() for each SDLXX::initSubsystem() to correctly
-   * shutdown a subsystem manually (or destroy SDLXX object to force shutdown).
-   * If a subsystem is loaded multiple times then this call will
+   * SDLXX_core::quitSubsystem() for each SDLXX_core::initSubsystem() to
+   * correctly shutdown a subsystem manually (or destroy SDLXX object to force
+   * shutdown). If a subsystem is loaded multiple times then this call will
    * decrease the ref-count and return.
    *
    * If you start a subsystem using a call to that subsystem's init function
-   * instead of constructing SDLXX object or calling SDLXX::initSubsystem(),
-   * SDLXX::quitSubsystem() and SDLXX::wasInit() will not work. You will need to
-   * use that subsystem's quit function directly instead.
+   * instead of constructing SDLXX core object or calling
+   * SDLXX_core::initSubsystem(), SDLXX_core::quitSubsystem() and
+   * SDLXX_core::wasInit() will not work. You will need to use that subsystem's
+   * quit function directly instead.
    */
   void quitSubsystem(const Subsystem& subsystem);
 
@@ -178,15 +180,16 @@ public:
    * @brief Clean up specific SDL subsystems
    *
    * Subsystem initialization is ref-counted, you must call
-   * SDLXX::quitSubsystem() for each SDLXX::initSubsystem() to correctly
-   * shutdown a subsystem manually (or destroy SDLXX object to force shutdown).
-   * If a subsystem is loaded multiple times then this call will
+   * SDLXX_core::quitSubsystem() for each SDLXX_core::initSubsystem() to
+   * correctly shutdown a subsystem manually (or destroy SDLXX object to force
+   * shutdown). If a subsystem is loaded multiple times then this call will
    * decrease the ref-count and return.
    *
    * If you start a subsystem using a call to that subsystem's init function
-   * instead of constructing SDLXX object or calling SDLXX::initSubsystem(),
-   * SDLXX::quitSubsystem() and SDLXX::wasInit() will not work. You will need to
-   * use that subsystem's quit function directly instead.
+   * instead of constructing SDLXX core object or calling
+   * SDLXX_core::initSubsystem(), SDLXX_core::quitSubsystem() and
+   * SDLXX_core::wasInit() will not work. You will need to use that subsystem's
+   * quit function directly instead.
    */
   void quitSubsystem(const std::unordered_set<Subsystem>& subsystems);
 
@@ -195,9 +198,10 @@ public:
    * initialized, or a set of subsystems, if no subsystems were specified.
    *
    * If you start a subsystem using a call to that subsystem's init function
-   * instead of constructing SDLXX object or calling SDLXX::initSubsystem(),
-   * SDLXX::quitSubsystem() and SDLXX::wasInit() will not work. You will need to
-   * use that subsystem's quit function directly instead.
+   * instead of constructing SDLXX core object or calling
+   * SDLXX_core::initSubsystem(), SDLXX_core::quitSubsystem() and
+   * SDLXX_core::wasInit() will not work. You will need to use that subsystem's
+   * quit function directly instead.
    *
    * @return Subset of specified subsystems which have previously been
    * initialized
@@ -209,9 +213,10 @@ public:
    * @brief Return true if a specified subsystem has previously been initialized
    *
    * If you start a subsystem using a call to that subsystem's init function
-   * instead of constructing SDLXX object or calling SDLXX::initSubsystem(),
-   * SDLXX::quitSubsystem() and SDLXX::wasInit() will not work. You will need to
-   * use that subsystem's quit function directly instead.
+   * instead of constructing SDLXX core object or calling
+   * SDLXX_core::initSubsystem(), SDLXX_core::quitSubsystem() and
+   * SDLXX_core::wasInit() will not work. You will need to use that subsystem's
+   * quit function directly instead.
    *
    * @return true if a specified subsystem has previously been initialized
    * @return false otherwise
@@ -228,7 +233,8 @@ public:
    *
    * @param name The name of the hint
    * @param value The value of the hint
-   * @param priority The priority of the hint or SDLXX::HintPriority::NORMAL
+   * @param priority The priority of the hint or
+   * SDLXX_core::HintPriority::NORMAL
    *
    * @return true if hint was set
    * @return false otherwise
@@ -256,7 +262,8 @@ public:
   /**
    * @brief Clear all hints
    *
-   * This function is called during destruction of SDLXX to free stored hints.
+   * This function is called during destruction of SDLXX core object to free
+   * stored hints.
    */
   static void clearHints();
 
@@ -268,19 +275,19 @@ private:
 
   // Deleted copy constructor
   // This class is not copyable
-  SDLXX(const SDLXX& other) = delete;
+  SDLXX_core(const SDLXX_core& other) = delete;
 
   // Deleted assignment operator
   // This class is not copyable
-  SDLXX& operator=(const SDLXX& other) = delete;
+  SDLXX_core& operator=(const SDLXX_core& other) = delete;
 
   // Deleted move constructor
   // This class is not movable
-  SDLXX(SDLXX&& other) = delete;
+  SDLXX_core(SDLXX_core&& other) = delete;
 
   // Deleted move assignment operator
   // This class is not movable
-  SDLXX& operator=(SDLXX&& other) = delete;
+  SDLXX_core& operator=(SDLXX_core&& other) = delete;
 };
 
 }  // namespace sdlxx::core
