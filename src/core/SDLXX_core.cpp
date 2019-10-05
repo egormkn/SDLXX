@@ -4,7 +4,8 @@
 #include <unordered_set>
 
 #include <SDL.h>
-#include <SDL_video.h>
+#include <SDL_hints.h>
+#include <SDL_version.h>
 #include <sdlxx/core/SDLXX_core.h>
 
 using namespace sdlxx::core;
@@ -88,26 +89,26 @@ void SDLXX::quitSubsystem(const std::unordered_set<Subsystem>& subsystems) {
 }
 
 std::unordered_set<SDLXX::Subsystem> SDLXX::wasInit(
-    const std::unordered_set<Subsystem>& subsystems) {
+    const std::unordered_set<Subsystem>& subsystems) const {
   Uint32 flags =
       std::accumulate(subsystems.begin(), subsystems.end(), 0,
                       [](Uint32 flags, const Subsystem& subsystem) {
                         return flags | static_cast<uint32_t>(subsystem);
                       });
-  Uint32 initialized = SDL_WasInit(flags);
+  Uint32 current = SDL_WasInit(flags);
   std::unordered_set<Subsystem> result;
   for (const Subsystem& s :
        {Subsystem::TIMER, Subsystem::AUDIO, Subsystem::VIDEO,
         Subsystem::JOYSTICK, Subsystem::HAPTIC, Subsystem::GAMECONTROLLER,
         Subsystem::EVENTS, Subsystem::SENSOR}) {
-    if (static_cast<uint32_t>(s) & initialized) {
+    if (static_cast<uint32_t>(s) & current) {
       result.insert(s);
     }
   }
   return result;
 }
 
-bool SDLXX::wasInit(const Subsystem& subsystem) {
+bool SDLXX::wasInit(const Subsystem& subsystem) const {
   Uint32 flag = static_cast<uint32_t>(subsystem);
   return SDL_WasInit(flag) != 0;
 }
@@ -120,11 +121,10 @@ bool SDLXX::setHint(const std::string& name, const std::string& value,
 
 std::optional<std::string> SDLXX::getHint(const std::string& name) {
   const char* value = SDL_GetHint(name.c_str());
-  if (value == nullptr) {
-    return {std::string(value)};
-  } else {
+  if (!value) {
     return std::nullopt;
   }
+  return {std::string(value)};
 }
 
 std::optional<bool> SDLXX::getHintBoolean(const std::string& name) {

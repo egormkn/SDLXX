@@ -3,13 +3,14 @@
 //
 
 #include "Game.h"
+#include "Box2DDrawer.h"
 
 Game::Game(const std::string &title) : Scene(title) {
-    Log::log("[" + getTitle() + "] Scene constructed");
+    Log::info("[" + getTitle() + "] Scene constructed");
 }
 
 Game::~Game() {
-    Log::log("[" + getTitle() + "] Scene destructed");
+    Log::info("[" + getTitle() + "] Scene destructed");
 }
 
 void Game::setStaticBox(int x, int y, float w, float h) {
@@ -24,12 +25,12 @@ void Game::setStaticBox(int x, int y, float w, float h) {
 }
 
 void Game::onCreate(Window &w) {
-    Log::log("[" + getTitle() + "] Scene created");
+    Log::info("[" + getTitle() + "] Scene created");
     window = &w;
 
     b2Vec2 gravity(0.0f, 9.8f);
     world = std::make_unique<b2World>(gravity);
-    drawer = new Box2DDrawer(window->getSDLRenderer(), 30.f);
+    drawer = new Box2DDrawer(window->getRenderer(), 30.f);
     drawer->SetFlags(0xFF);
     world->SetDebugDraw(drawer);
 
@@ -44,7 +45,7 @@ void Game::onCreate(Window &w) {
          tileset != map2->tmx_tilesets.end(); ++tileset) {
         if (!tileset->tmx_image.source.empty()) {
             int raw = tileset->tilecount / tileset->columns;
-            textures.push_back(new Texture(tileset->tmx_image.source, w.getSDLRenderer(), tileset->tilewidth,
+            textures.push_back(new Texture(tileset->tmx_image.source, w.getRenderer(), tileset->tilewidth,
                                            tileset->tileheight));
             std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
             for (int i = 0; i < raw; ++i) {
@@ -66,7 +67,7 @@ void Game::onCreate(Window &w) {
         } else {
             for (std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
                  tile != tileset->tmx_tiles.end(); ++tile) {
-                textures.push_back(new Texture(tile->tmx_image.source, w.getSDLRenderer(), tile->tmx_image.width,
+                textures.push_back(new Texture(tile->tmx_image.source, w.getRenderer(), tile->tmx_image.width,
                                                tile->tmx_image.height));
                 textureHolders.push_back(
                         TextureHolder(textures[textures.size() - 1], {0, 0, tile->width, tile->height},
@@ -133,12 +134,12 @@ void Game::onCreate(Window &w) {
     circleBody->CreateFixture(&circleShape, 2);*/
 
 
-    image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getSDLRenderer(), TILE_WIDTH,
+    image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getRenderer(), TILE_WIDTH,
                         TILE_HEIGHT);
 }
 
 void Game::onDestroy() {
-    Log::log("[" + getTitle() + "] Scene destroyed");
+    Log::info("[" + getTitle() + "] Scene destroyed");
     // Free resources
 
 
@@ -174,36 +175,36 @@ void Game::onResume() {
     // After: setPaused(false);
 }
 
-void Game::handleEvent(Event &e) {
-    if (e.getType() == SDL_KEYDOWN) {
-        if (e.getEvent().key.keysym.sym == SDLK_ESCAPE) {
+void Game::handleEvent(const Event &e) {
+    if (e.type == SDL_KEYDOWN) {
+        if (e.key.keysym.sym == SDLK_ESCAPE) {
             finish();
-        } else if (e.getEvent().key.keysym.sym == SDLK_UP) {
-            if (e.getEvent().key.repeat == 0) {
+        } else if (e.key.keysym.sym == SDLK_UP) {
+            if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
                     if(it->GetUserData() == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(0.f, -1000 / SCALE), body->GetWorldCenter(), true);
                     }
                 }
             }
-        } else if (e.getEvent().key.keysym.sym == SDLK_RIGHT) {
-            if (e.getEvent().key.repeat == 0) {
+        } else if (e.key.keysym.sym == SDLK_RIGHT) {
+            if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
                     if (it->GetUserData() == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(1000 / SCALE, 0.f), body->GetWorldCenter(), true);
                     }
                 }
             }
-        } else if (e.getEvent().key.keysym.sym == SDLK_LEFT) {
-            if (e.getEvent().key.repeat == 0) {
+        } else if (e.key.keysym.sym == SDLK_LEFT) {
+            if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
                     if (it->GetUserData() == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(-1000 / SCALE, 0.f), body->GetWorldCenter(), true);
                     }
                 }
             }
-        } else if (e.getEvent().key.keysym.sym == SDLK_DOWN) {
-            if (e.getEvent().key.repeat == 0) {
+        } else if (e.key.keysym.sym == SDLK_DOWN) {
+            if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
                     if (it->GetUserData() == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(0.f, 1000 / SCALE), body->GetWorldCenter(), true);
@@ -218,11 +219,12 @@ void Game::update(Uint32 t, Uint32 dt) {
     world->Step(((float32) dt) / 1000.0f, 6, 2);
 }
 
-void Game::render(Renderer &renderer) {
-    renderer.setColor(Color(0xFFFFFFFF));
-    renderer.clear();
-
-    SDL_GetWindowSize(window->getSDLWindow(), &SCREEN_WIDTH, &SCREEN_HEIGHT);
+void Game::render(const std::shared_ptr<sdlxx::core::Renderer> &renderer) {
+    renderer->setColor(Color(0xFFFFFFFF));
+    renderer->clear();
+    Dimensions dimensions = window->getSize();
+    SCREEN_WIDTH = dimensions.width;
+    SCREEN_HEIGHT = dimensions.height;
     window->setTitle(std::to_string(SCREEN_WIDTH) + " " + std::to_string(SCREEN_HEIGHT));
 
     for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
@@ -256,7 +258,7 @@ void Game::render(Renderer &renderer) {
                 if (vec[i][j] != 0) {
                     SDL_Rect rect = {j * TILE_WIDTH - camera.x, i * TILE_HEIGHT - camera.y, TILE_WIDTH,
                                      TILE_HEIGHT};
-                    textureHolders[vec[i][j] - 1].texture->render(renderer.getSDLRenderer(),
+                    textureHolders[vec[i][j] - 1].texture->render(static_cast<SDL_Renderer*>(renderer->renderer_ptr),
                                                                   &textureHolders[vec[i][j] - 1].rect, &rect);
                 }
             }
@@ -281,10 +283,10 @@ void Game::render(Renderer &renderer) {
 
     //world->DrawDebugData();
     /**/
-    renderer.render();
+    renderer->render();
 }
 
-void Game::renderBox(Renderer &renderer, b2Body *boxBody) {
+void Game::renderBox(const std::shared_ptr<sdlxx::core::Renderer> &renderer, b2Body *boxBody) {
     b2Vec2 pos = boxBody->GetPosition();
     float angle = boxBody->GetAngle();
     const b2PolygonShape *shape = (b2PolygonShape *) boxBody->GetFixtureList()->GetShape();
@@ -298,7 +300,7 @@ void Game::renderBox(Renderer &renderer, b2Body *boxBody) {
 
 
     //SDL_Point point = {(int) shape->m_vertices[2].x, (int) shape->m_vertices[2].y};
-    image->render(renderer.getSDLRenderer(), nullptr, &renderQuad, angle * DEG);
+    image->render(static_cast<SDL_Renderer*>(renderer->renderer_ptr), nullptr, &renderQuad, angle * DEG);
 }
 
 void Game::renderPlayer(Renderer &renderer, b2Body *boxBody) {

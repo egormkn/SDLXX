@@ -1,28 +1,47 @@
-#ifndef SDLXX_RECTANGLE_H
-#define SDLXX_RECTANGLE_H
+/**
+ * @file Rectangle.h
+ * @author Egor Makarenko
+ * @brief Class that represents a rectangle with the origin at the upper left
+ */
 
-#include <SDL_rect.h>
+#pragma once
+
+#ifndef SDLXX_CORE_RECTANGLE_H
+#define SDLXX_CORE_RECTANGLE_H
 
 namespace sdlxx::core {
-    class Rectangle {
-    public:
-        Rectangle(int x, int y, int width = 0, int height = 0);
 
-        ~Rectangle();
+/**
+ * @brief Class that represents a rectangle with the origin at the upper left
+ */
+class Rectangle {
+public:
+  /**
+   * @brief Construct a new rectangle
+   *
+   * @param x, y Coordinates of the upper left corner
+   * @param width, height Dimensions of the rectangle
+   */
+  Rectangle(int x, int y, int width = 0, int height = 0);
 
-        SDL_Rect *getSDLRectangle() const;
+  /**
+   * @brief Destroy the rectangle
+   */
+  ~Rectangle();
 
-        int getX() const;
+  int getX() const;
 
-        int getY() const;
+  int getY() const;
 
-        int getWidth() const;
+  int getWidth() const;
 
-        int getHeight() const;
+  int getHeight() const;
 
-    private:
-        SDL_Rect *rectangle = nullptr;
-    };
-}
+  friend class Renderer;
 
-#endif // SDLXX_RECTANGLE_H
+private:
+  void* rectangle_ptr = nullptr;
+};
+}  // namespace sdlxx::core
+
+#endif  // SDLXX_CORE_RECTANGLE_H

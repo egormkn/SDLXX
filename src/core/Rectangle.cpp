@@ -1,33 +1,22 @@
+#include <SDL_rect.h>
 #include <sdlxx/core/Rectangle.h>
 
-sdlxx::core::Rectangle::Rectangle(int x, int y, int width, int height) {
-    rectangle = new SDL_Rect;
-    rectangle->x = x;
-    rectangle->y = y;
-    rectangle->w = width;
-    rectangle->h = height;
+using namespace sdlxx::core;
+
+Rectangle::Rectangle(int x, int y, int width, int height) {
+  rectangle_ptr = new SDL_Rect{x, y, width, height};
 }
 
-sdlxx::core::Rectangle::~Rectangle() {
-    delete rectangle;
+Rectangle::~Rectangle() { delete static_cast<SDL_Rect*>(rectangle_ptr); }
+
+int Rectangle::getX() const { return static_cast<SDL_Rect*>(rectangle_ptr)->x; }
+
+int Rectangle::getY() const { return static_cast<SDL_Rect*>(rectangle_ptr)->y; }
+
+int Rectangle::getWidth() const {
+  return static_cast<SDL_Rect*>(rectangle_ptr)->w;
 }
 
-SDL_Rect *sdlxx::core::Rectangle::getSDLRectangle() const {
-    return rectangle;
-}
-
-int sdlxx::core::Rectangle::getX() const {
-    return rectangle->x;
-}
-
-int sdlxx::core::Rectangle::getY() const {
-    return rectangle->y;
-}
-
-int sdlxx::core::Rectangle::getWidth() const {
-    return rectangle->w;
-}
-
-int sdlxx::core::Rectangle::getHeight() const {
-    return rectangle->h;
+int Rectangle::getHeight() const {
+  return static_cast<SDL_Rect*>(rectangle_ptr)->h;
 }

@@ -45,7 +45,7 @@ void sdlxx::core::Log::warning(std::string msg) {
     std::cout.flush();
 }
 
-void sdlxx::core::Log::log(std::string msg) {
+void sdlxx::core::Log::info(std::string msg) {
     std::cout << msg << std::endl;
     std::cout.flush();
 }

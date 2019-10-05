@@ -6,7 +6,7 @@
 
 class Box2DDrawer : public b2Draw {
 public:
-    Box2DDrawer(SDL_Renderer *r, float s);
+    Box2DDrawer(const std::shared_ptr<sdlxx::core::Renderer>& renderer, float s);
 
     void SetScale(float s);
 

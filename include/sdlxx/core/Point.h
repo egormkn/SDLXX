@@ -1,32 +1,35 @@
-#ifndef SDLXX_POINT_H
-#define SDLXX_POINT_H
+/**
+ * @file Point.h
+ * @author Egor Makarenko
+ * @brief Class that represents a 2D point
+ */
 
-#include <SDL_rect.h>
+#pragma once
+
+#ifndef SDLXX_CORE_POINT_H
+#define SDLXX_CORE_POINT_H
 
 namespace sdlxx::core {
-    class Point {
-    public:
-        Point(int x = 0, int y = 0);
 
-        ~Point();
+/**
+ * @brief Class that represents a 2D point
+ */
+class Point {
+public:
+  /**
+   * @brief Construct a new point with given coordinates
+   *
+   * @param x, y Coordinates of a point
+   */
+  Point(int x = 0, int y = 0);
 
-        int getX() const;
+  /** X coordinate value */
+  int x;
 
-        int getY() const;
+  /** Y coordinate value */
+  int y;
+};
 
-        void setPoint(int x, int y);
+}  // namespace sdlxx::core
 
-        void setX(int x);
-
-        void setY(int y);
-
-        SDL_Point &getSDLPoint();
-
-    private:
-        SDL_Point *point = nullptr;
-    };
-
-    using Dimensions = Point;
-}
-
-#endif // SDLXX_POINT_H
+#endif  // SDLXX_CORE_POINT_H

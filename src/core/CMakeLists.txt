@@ -9,15 +9,13 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS
 set(SOURCE_LIST
     Animation.cpp
     Color.cpp
-    Event.cpp
-    Exception.cpp
+    Dimensions.cpp
+    Events.cpp
     Log.cpp
     Object.cpp
     Point.cpp
     Rectangle.cpp
     Renderer.cpp
-    Scene.cpp
-    SceneManager.cpp
     SDLXX_core.cpp
     Surface.cpp
     Texture.cpp

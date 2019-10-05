@@ -1,71 +1,60 @@
-#ifndef SDLXX_FONT_H
-#define SDLXX_FONT_H
+/**
+ * @file Font.h
+ * @author Egor Makarenko
+ * @brief Class that represents the TrueType font
+ */
 
-#include "SDLXX_ttf.h"
-#include "../core/Exception.h"
-#include "../core/Surface.h"
-#include "../core/Color.h"
+#pragma once
+
+#ifndef SDLXX_TTF_FONT_H
+#define SDLXX_TTF_FONT_H
+
+#include <string>
+
+#include <sdlxx/core/Color.h>
+#include <sdlxx/core/Surface.h>
 
 namespace sdlxx::ttf {
-    enum {
-        TTF_MODE_SOLID,
-        TTF_MODE_SHADED,
-        TTF_MODE_BLENDED
-    };
 
-    class Font {
-    public:
-        Font(TTF_Font *f);
+/**
+ * @brief Class that represents the TrueType font
+ */
+class Font {
+public:
+  enum { TTF_MODE_SOLID, TTF_MODE_SHADED, TTF_MODE_BLENDED };
 
-        Font(const std::string &path, int ptsize, int index = 0);
+  /**
+   * @brief Open a font file and create a Font of the specified point size.
+   *
+   * Some .fon fonts will have several sizes embedded in the file, so the
+   * point size becomes the index of choosing which size to load. If the value
+   * is too high, the last indexed size will be the default.
+   *
+   * @param file Path to the *.ttf or *.fon file
+   * @param point_size Point size (based on 72 DPI) to load
+   * @param index Index of font face from a file containing multiple font faces
+   */
+  Font(const std::string& file, int point_size, int index = 0);
 
-        Font(Font &&other) noexcept;
+  ~Font();
 
-        Font &operator=(Font &&other) noexcept;
+  sdlxx::core::Surface render(
+      const std::string& text, int mode, const sdlxx::core::Color& color,
+      const sdlxx::core::Color& bg = sdlxx::core::Color(0x00000000)) const;
 
-        Font(const Font &) = delete;
+  sdlxx::core::Surface render(
+      wchar_t ch, int mode, const sdlxx::core::Color& color,
+      const sdlxx::core::Color& bg = sdlxx::core::Color(0x00000000)) const;
 
-        Font &operator=(const Font &) = delete;
+  // TODO: Open font by file descriptor
 
-        TTF_Font *getSDLFont() const;
+  // TODO: Get font properties
 
-        ~Font();
+private:
+  void* font_ptr = nullptr;
 
-        sdlxx::core::Surface render(const std::string &text, int mode,
-                       const sdlxx::core::Color &color, const sdlxx::core::Color &bg = sdlxx::core::Color(0x00000000)) const;
+  Font(void* font_ptr);
+};
+}  // namespace sdlxx::ttf
 
-        sdlxx::core::Surface render(Uint16 ch, int mode, const sdlxx::core::Color &color, const sdlxx::core::Color &bg = sdlxx::core::Color(0x00000000)) const;
-
-        // TODO: Open font by file descriptor
-        // TODO: Get font properties
-        /**
-        3.3.1 TTF_ByteSwappedUNICODE
-        3.3.2 TTF_GetFontStyle
-        3.3.3 TTF_SetFontStyle
-        3.3.4 TTF_GetFontOutline
-        3.3.5 TTF_SetFontOutline
-        3.3.6 TTF_GetFontHinting
-        3.3.7 TTF_SetFontHinting
-        3.3.8 TTF_GetFontKerning
-        3.3.9 TTF_SetFontKerning
-        3.3.10 TTF_FontHeight
-        3.3.11 TTF_FontAscent
-        3.3.12 TTF_FontDescent
-        3.3.13 TTF_FontLineSkip
-        3.3.14 TTF_FontFaces
-        3.3.15 TTF_FontFaceIsFixedWidth
-        3.3.16 TTF_FontFaceFamilyName
-        3.3.17 TTF_FontFaceStyleName
-        3.3.18 TTF_GlyphIsProvided
-        3.3.19 TTF_GlyphMetrics
-        3.3.20 TTF_SizeText
-        3.3.21 TTF_SizeUTF8
-        3.3.22 TTF_SizeUNICODE
-        */
-
-    private:
-        TTF_Font *font = nullptr;
-    };
-}
-
-#endif // SDLXX_FONT_H
+#endif  // SDLXX_TTF_FONT_H

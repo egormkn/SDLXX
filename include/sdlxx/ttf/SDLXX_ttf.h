@@ -1,42 +1,93 @@
+/**
+ * @file SDLXX_ttf.h
+ * @author Egor Makarenko
+ * @brief Class that represents SDLXX ttf object that initializes the font API
+ */
+
+#pragma once
+
 #ifndef SDLXX_TTF_H
 #define SDLXX_TTF_H
 
-#include <mutex>
-
-#include <SDL_ttf.h>
+#include <sdlxx/core/SDLXX_core.h>
 
 namespace sdlxx::ttf {
-    class SDL_ttf {
-    public:
-        // Init SDL_ttf
-        SDL_ttf();
 
-        // Quit SDL_ttf
-        ~SDL_ttf();
+/**
+ * @brief Class that represents SDLXX ttf object that initializes the font API
+ */
+class SDLXX_ttf {
+public:
+  /**
+   * @copydoc sdlxx::core::SDLXX::Version
+   */
+  class Version : public sdlxx::core::SDLXX::Version {
+    /**
+     * @copydoc sdlxx::core::SDLXX::Version::Version
+     */
+    Version(uint8_t major, uint8_t minor, uint8_t patch);
 
-    private:
-        // Mutex that allows only one instance of class
-        static std::mutex mutex;
+    /**
+     * @brief Get the SDL_ttf version the SDLXX library was compiled against
+     *
+     * This is determined by what header the compiler used. Note that if you
+     * dynamically linked the library, you might have a slightly newer or older
+     * version at runtime. That version can be determined with
+     * SDLXX_ttf::Version::getLinkedSdlTtfVersion()
+     *
+     * @return Version Version of SDL_ttf the library was compiled against
+     */
+    static Version getCompiledSdlTtfVersion();
 
-        // Initialization status
-        static bool initialized;
+    /**
+     * @brief Get the SDL_ttf version the SDLXX library was linked against
+     *
+     * If you are linking to SDL_ttf dynamically, then it is possible that the
+     * current version will be different than the version you compiled against.
+     *
+     * @return Version Version of SDL_ttf the library was linked against
+     */
+    static Version getLinkedSdlTtfVersion();
+  };
 
-        // Deleted copy constructor
-        // This class is not copyable
-        SDL_ttf(const SDL_ttf &other) = delete;
+  /**
+   * @brief Construct an SDLXX_ttf object and initialize the truetype font API
+   *
+   * This must be called before using other TTF-related functions, except
+   * SDLXX_ttf::wasInit. SDLXX does not have to be initialized before this call
+   */
+  SDLXX_ttf();
 
-        // Deleted assignment operator
-        // This class is not copyable
-        SDL_ttf &operator=(const SDL_ttf &other) = delete;
+  /**
+   * @brief Query the initilization status of the truetype font API
+   *
+   * @return true if truetype font API was initialized
+   * @return false otherwise
+   */
+  static bool wasInit();
 
-        // Deleted move constructor
-        // This class is not movable
-        SDL_ttf(SDL_ttf &&other) = delete;
+  /**
+   * @brief Destroy the sdlxx ttf object and clean up the truetype font API
+   */
+  ~SDLXX_ttf();
 
-        // Deleted move assignment operator
-        // This class is not movable
-        SDL_ttf &operator=(SDL_ttf &&other) = delete;
-    };
-}
+private:
+  // Deleted copy constructor
+  // This class is not copyable
+  SDLXX_ttf(const SDLXX_ttf& other) = delete;
 
-#endif // SDLXX_TTF_H
+  // Deleted assignment operator
+  // This class is not copyable
+  SDLXX_ttf& operator=(const SDLXX_ttf& other) = delete;
+
+  // Deleted move constructor
+  // This class is not movable
+  SDLXX_ttf(SDLXX_ttf&& other) = delete;
+
+  // Deleted move assignment operator
+  // This class is not movable
+  SDLXX_ttf& operator=(SDLXX_ttf&& other) = delete;
+};
+}  // namespace sdlxx::ttf
+
+#endif  // SDLXX_TTF_H

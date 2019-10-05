@@ -7,7 +7,7 @@
 #include <sdlxx/core/Object.h>
 #include <sdlxx/gui/Button.h>
 #include <sdlxx/image/SDLXX_image.h>
-#include <sdlxx/core/Scene.h>
+#include <sdlxx/gui/Scene.h>
 #include <sdlxx/core/Texture.h>
 #include "Game.h"
 
@@ -28,11 +28,11 @@ public:
 
     void onResume() override {}
 
-    void handleEvent(Event &e) override;
+    void handleEvent(const Event &e) override;
 
     void update(Uint32 t, Uint32 dt) override;
 
-    void render(Renderer &renderer) override;
+    void render(const std::shared_ptr<sdlxx::core::Renderer>& renderer) override;
 
 private:
     Button *runButton = nullptr;

@@ -1,51 +1,71 @@
-#ifndef SDLXX_TEXTURE_H
-#define SDLXX_TEXTURE_H
+/**
+ * @file Texture.h
+ * @author Egor Makarenko
+ * @brief Class that represents a texture in an efficient driver-specific way
+ */
+
+#pragma once
+
+#ifndef SDLXX_CORE_TEXTURE_H
+#define SDLXX_CORE_TEXTURE_H
 
 #include <string>
-#include <SDL_render.h>
+
 #include <SDL_image.h>
-#include "../ttf/Font.h"
-#include "Log.h"
+#include <SDL_render.h>
+#include <sdlxx/core/Log.h>
+#include <sdlxx/core/Renderer.h>
+#include <sdlxx/ttf/Font.h>
 
 namespace sdlxx::core {
-    class Texture {
-    public:
-        Texture(SDL_Texture *t);
 
-        Texture(const std::string &path, SDL_Renderer *renderer, int w, int h);
+class Renderer;
 
-        Texture(const std::string &text, const Color &color, const sdlxx::ttf::Font &font, SDL_Renderer *renderer);
+/**
+ * @brief Class that represents a texture in an efficient driver-specific way
+ */
+class Texture {
+public:
+  Texture(const std::string& path, const std::shared_ptr<Renderer>& renderer, int w, int h);
 
-        ~Texture();
+  Texture(const std::string& text, const Color& color,
+          const sdlxx::ttf::Font& font, const std::shared_ptr<Renderer>& renderer);
 
-        void setColor(Uint8 red, Uint8 green, Uint8 blue);
+  ~Texture();
 
-        void setBlendMode(SDL_BlendMode blending);
+  void setColor(Uint8 red, Uint8 green, Uint8 blue);
 
-        void setAlpha(Uint8 alpha);
+  void setBlendMode(SDL_BlendMode blending);
 
-        //Renders texture at given point
-        void render(SDL_Renderer *renderer, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
-                    SDL_Point *center = nullptr,
-                    SDL_RendererFlip flip = SDL_FLIP_NONE);
+  void setAlpha(Uint8 alpha);
 
-        void fill(SDL_Renderer *renderer, SDL_Rect *clip = nullptr, SDL_Rect *dest = nullptr, double angle = 0.0,
-                    SDL_Point *center = nullptr,
-                    SDL_RendererFlip flip = SDL_FLIP_NONE);
+  // Renders texture at given point
+  void render(SDL_Renderer* renderer, SDL_Rect* clip = nullptr,
+              SDL_Rect* dest = nullptr, double angle = 0.0,
+              SDL_Point* center = nullptr,
+              SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-        int getWidth() const;
+  void fill(SDL_Renderer* renderer, SDL_Rect* clip = nullptr,
+            SDL_Rect* dest = nullptr, double angle = 0.0,
+            SDL_Point* center = nullptr, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-        int getHeight() const;
+  int getWidth() const;
 
-        SDL_Texture *getSDLTexture() const;
+  int getHeight() const;
 
-    private:
-        SDL_Texture *texture = nullptr;
-        int width = 0;
-        int height = 0;
-        int access = SDL_TEXTUREACCESS_STATIC;
-        Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
-    };
-}
+  SDL_Texture* getSDLTexture() const;
 
-#endif // SDLXX_TEXTURE_H
+  friend class Renderer;
+
+private:
+  void* texture_ptr = nullptr;
+  int width = 0;
+  int height = 0;
+  int access = SDL_TEXTUREACCESS_STATIC;
+  Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
+
+  Texture(void* texture_ptr);
+};
+}  // namespace sdlxx::core
+
+#endif  // SDLXX_TEXTURE_H

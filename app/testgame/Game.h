@@ -5,7 +5,7 @@
 #include <SDL_timer.h>
 #include <vector>
 #include <sdlxx/image/SDLXX_image.h>
-#include <sdlxx/core/Scene.h>
+#include <sdlxx/gui/Scene.h>
 #include <sdlxx/core/Texture.h>
 #include "Box2DDrawer.h"
 #include <tmx/TMX_map.h>
@@ -13,6 +13,7 @@
 #include <Box2D/Box2D.h>
 
 using namespace sdlxx::core;
+using namespace sdlxx::gui;
 using namespace sdlxx::image;
 using namespace sdlxx::ttf;
 
@@ -93,13 +94,13 @@ public:
             }
         }*/
 
-    void handleEvent(Event &e) override;
+    void handleEvent(const Event &e) override;
 
     void update(Uint32 t, Uint32 dt) override;
 
-    void render(Renderer &renderer) override;
+    void render(const std::shared_ptr<sdlxx::core::Renderer> &renderer) override;
 
-    void renderBox(Renderer &renderer, b2Body *boxBody);
+    void renderBox(const std::shared_ptr<sdlxx::core::Renderer> &renderer, b2Body *boxBody);
 
 
         /*for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();

@@ -1,78 +1,76 @@
+#include <SDL_ttf.h>
 #include <sdlxx/ttf/Font.h>
 
-sdlxx::ttf::Font::Font(TTF_Font *f) {
-    font = f;
+using namespace sdlxx::core;
+using namespace sdlxx::ttf;
+
+Font::Font(void* font_ptr) : font_ptr(font_ptr) {}
+
+Font::Font(const std::string& file, int point_size, int index) {
+  font_ptr = TTF_OpenFontIndex(file.c_str(), point_size, index);
+  if (!font_ptr) {
+    throw std::runtime_error("Failed to load font: " +
+                             std::string(TTF_GetError()));
+  }
 }
 
-sdlxx::ttf::Font::Font(const std::string &path, int ptsize, int index) {
-    if((font = TTF_OpenFontIndex(path.c_str(), ptsize, index)) == nullptr) {
-        throw sdlxx::core::Exception("Failed to load font", TTF_GetError());
-    }
+Font::~Font() {
+  if (font_ptr) {
+    TTF_CloseFont(static_cast<TTF_Font*>(font_ptr));
+    font_ptr = nullptr;
+  }
 }
 
-sdlxx::ttf::Font::Font(sdlxx::ttf::Font &&other) noexcept : font(other.font) {
-    other.font = nullptr;
+Surface Font::render(const std::string& text, int mode, const Color& color,
+                     const Color& bg) const {
+  SDL_Surface* sdlSurface = nullptr;
+  switch (mode) {
+    case TTF_MODE_BLENDED:
+      sdlSurface = TTF_RenderUTF8_Blended(
+          static_cast<TTF_Font*>(font_ptr), text.c_str(),
+          {color.red, color.green, color.blue, color.alpha});
+      break;
+    case TTF_MODE_SHADED:
+      sdlSurface = TTF_RenderUTF8_Shaded(
+          static_cast<TTF_Font*>(font_ptr), text.c_str(), {color.red, color.green, color.blue, color.alpha},
+          {bg.red, bg.green, bg.blue, bg.alpha});
+      break;
+    case TTF_MODE_SOLID:
+    default:
+      sdlSurface = TTF_RenderUTF8_Solid(
+          static_cast<TTF_Font*>(font_ptr), text.c_str(),
+          {color.red, color.green, color.blue, color.alpha});
+      break;
+  }
+  if (sdlSurface == nullptr) {
+    throw std::runtime_error("Unable to render text" +
+                             std::string(TTF_GetError()));
+  }
+  return Surface(sdlSurface);
 }
 
-sdlxx::ttf::Font &sdlxx::ttf::Font::operator=(sdlxx::ttf::Font &&other) noexcept {
-    if(&other != this) {
-        if(font != nullptr) {
-            TTF_CloseFont(font);
-        }
-        font = other.font;
-        other.font = nullptr;
-    }
-    return *this;
-}
-
-TTF_Font *sdlxx::ttf::Font::getSDLFont() const {
-    return font;
-}
-
-sdlxx::ttf::Font::~Font() {
-    if(font != nullptr) {
-        TTF_CloseFont(font);
-        font = nullptr;
-    }
-}
-
-sdlxx::core::Surface
-sdlxx::ttf::Font::render(const std::string &text, int mode, const sdlxx::core::Color &color, const sdlxx::core::Color &bg) const {
-    SDL_Surface *sdlSurface = nullptr;
-    switch (mode) {
-        case TTF_MODE_BLENDED:
-            sdlSurface = TTF_RenderUTF8_Blended(font, text.c_str(), color.getSDLColor());
-            break;
-        case TTF_MODE_SHADED:
-            sdlSurface = TTF_RenderUTF8_Shaded(font, text.c_str(), color.getSDLColor(), bg.getSDLColor());
-            break;
-        case TTF_MODE_SOLID:
-        default:
-            sdlSurface = TTF_RenderUTF8_Solid(font, text.c_str(), color.getSDLColor());
-            break;
-    }
-    if(sdlSurface == nullptr) {
-        throw sdlxx::core::Exception("Unable to render text", TTF_GetError());
-    }
-    return sdlxx::core::Surface(sdlSurface);
-}
-
-sdlxx::core::Surface sdlxx::ttf::Font::render(Uint16 ch, int mode, const sdlxx::core::Color &color, const sdlxx::core::Color &bg) const {
-    SDL_Surface *sdlSurface = nullptr;
-    switch (mode) {
-        case TTF_MODE_BLENDED:
-            sdlSurface = TTF_RenderGlyph_Blended(font, ch, color.getSDLColor());
-            break;
-        case TTF_MODE_SHADED:
-            sdlSurface = TTF_RenderGlyph_Shaded(font, ch, color.getSDLColor(), bg.getSDLColor());
-            break;
-        case TTF_MODE_SOLID:
-        default:
-            sdlSurface = TTF_RenderGlyph_Solid(font, ch, color.getSDLColor());
-            break;
-    }
-    if(sdlSurface == nullptr) {
-        throw sdlxx::core::Exception("Unable to render glyph", TTF_GetError());
-    }
-    return sdlxx::core::Surface(sdlSurface);
+Surface Font::render(wchar_t ch, int mode, const Color& color,
+                     const Color& bg) const {
+  SDL_Surface* sdlSurface = nullptr;
+  switch (mode) {
+    case TTF_MODE_BLENDED:
+      sdlSurface = TTF_RenderGlyph_Blended(
+          static_cast<TTF_Font*>(font_ptr), static_cast<Uint16>(ch), {color.red, color.green, color.blue, color.alpha});
+      break;
+    case TTF_MODE_SHADED:
+      sdlSurface = TTF_RenderGlyph_Shaded(
+          static_cast<TTF_Font*>(font_ptr), static_cast<Uint16>(ch), {color.red, color.green, color.blue, color.alpha},
+          {bg.red, bg.green, bg.blue, bg.alpha});
+      break;
+    case TTF_MODE_SOLID:
+    default:
+      sdlSurface = TTF_RenderGlyph_Solid(
+          static_cast<TTF_Font*>(font_ptr), static_cast<Uint16>(ch), {color.red, color.green, color.blue, color.alpha});
+      break;
+  }
+  if (sdlSurface == nullptr) {
+    throw std::runtime_error("Unable to render glyph: " +
+                             std::string(TTF_GetError()));
+  }
+  return Surface(sdlSurface);
 }

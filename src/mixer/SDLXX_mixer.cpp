@@ -1,6 +1,5 @@
 #include <sstream>
 #include <sdlxx/mixer/SDLXX_mixer.h>
-#include <sdlxx/core/Exception.h>
 #include <sdlxx/core/Log.h>
 
 std::mutex sdlxx::mixer::SDL_mixer::mutex;
@@ -9,15 +8,15 @@ bool sdlxx::mixer::SDL_mixer::initialized = false;
 
 sdlxx::mixer::SDL_mixer::SDL_mixer(Uint32 flags) {
 #ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Initializing SDL audio mix system...");
+    sdlxx::core::Log::info("Initializing SDL audio mix system...");
 #endif
     {
         std::lock_guard<std::mutex> lock(mutex);
         if(initialized) {
-            throw sdlxx::core::Exception("SDL_mixer already initialized");
+            throw std::runtime_error("SDL_mixer already initialized");
         }
         if((Mix_Init(flags) & flags) != flags) {
-            throw sdlxx::core::Exception("Unable to initialize SDL_mixer", Mix_GetError());
+            throw std::runtime_error("Unable to initialize SDL_mixer" + std::string(Mix_GetError()));
         }
         initialized = true;
     }
@@ -30,15 +29,15 @@ sdlxx::mixer::SDL_mixer::SDL_mixer(Uint32 flags) {
                    << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
     linkedString << "Linked against SDL_mixer v" << (int) linked->major
                  << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    sdlxx::core::Log::log(compiledString.str());
-    sdlxx::core::Log::log(linkedString.str());
+    sdlxx::core::Log::info(compiledString.str());
+    sdlxx::core::Log::info(linkedString.str());
     sdlxx::core::Log::newline();
 #endif
 }
 
 sdlxx::mixer::SDL_mixer::~SDL_mixer() {
 #ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Cleaning up SDL audio mix system...");
+    sdlxx::core::Log::info("Cleaning up SDL audio mix system...");
 #endif
     std::lock_guard<std::mutex> lock(mutex);
     Mix_Quit();

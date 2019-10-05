@@ -1,46 +1,44 @@
-#include <sstream>
+#include <system_error>
+#include <string>
+
+#include <SDL_net.h>
 #include <sdlxx/net/SDLXX_net.h>
-#include <sdlxx/core/Exception.h>
-#include <sdlxx/core/Log.h>
 
-std::mutex sdlxx::net::SDL_net::mutex;
+using namespace sdlxx::core;
+using namespace sdlxx::net;
 
-bool sdlxx::net::SDL_net::initialized = false;
+bool SDLXX_net::initialized = false;
 
-sdlxx::net::SDL_net::SDL_net() {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Initializing SDL network system...");
-#endif
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        if(initialized) {
-            throw sdlxx::core::Exception("SDL_net already initialized");
-        }
-        if(SDLNet_Init() == -1) {
-            throw sdlxx::core::Exception("Unable to initialize SDL_net", SDLNet_GetError());
-        }
-        initialized = true;
-    }
-#ifndef SDLXX_RELEASE
-    SDL_version compiled;
-    const SDL_version *linked = SDLNet_Linked_Version();
-    SDL_NET_VERSION(&compiled);
-    std::stringstream compiledString, linkedString;
-    compiledString << "Compiled against SDL_net v" << (int) compiled.major
-                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
-    linkedString << "Linked against SDL_net v" << (int) linked->major
-                 << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    sdlxx::core::Log::log(compiledString.str());
-    sdlxx::core::Log::log(linkedString.str());
-    sdlxx::core::Log::newline();
-#endif
+SDLXX_net::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
+    : SDLXX::Version::Version(major, minor, patch) {}
+
+SDLXX_net::Version SDLXX_net::Version::getCompiledSdlNetVersion() {
+  SDL_version compiled;
+  SDL_NET_VERSION(&compiled);
+  return {compiled.major, compiled.minor, compiled.patch};
 }
 
-sdlxx::net::SDL_net::~SDL_net() {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Cleaning up SDL network system...");
-#endif
-    std::lock_guard<std::mutex> lock(mutex);
-    SDLNet_Quit();
-    initialized = false;
+SDLXX_net::Version SDLXX_net::Version::getLinkedSdlNetVersion() {
+  const SDL_version* linked = SDLNet_Linked_Version();
+  return {linked->major, linked->minor, linked->patch};
+}
+
+SDLXX_net::SDLXX_net() {
+  if (initialized) {
+    throw std::runtime_error("SDLXX_net was already initialized");
+  }
+  int return_code = SDLNet_Init();
+  if (return_code != 0) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to initialize SDLXX_net: " + std::string(SDLNet_GetError()));
+  }
+  initialized = true;
+}
+
+bool SDLXX_net::wasInit() { return initialized; }
+
+SDLXX_net::~SDLXX_net() {
+  SDLNet_Quit();
+  initialized = false;
 }
