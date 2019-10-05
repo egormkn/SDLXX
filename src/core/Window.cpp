@@ -8,6 +8,14 @@
 
 using namespace sdlxx::core;
 
+// Convert options into bit mask
+Uint32 getFlagsMask(const std::unordered_set<Window::Option>& options) {
+  return std::accumulate(options.begin(), options.end(), 0,
+                         [](Uint32 flags, const Window::Option& option) {
+                           return flags | static_cast<uint32_t>(option);
+                         });
+}
+
 const int Window::WINDOW_CENTERED = SDL_WINDOWPOS_CENTERED;
 
 const int Window::WINDOW_UNDEFINED = SDL_WINDOWPOS_UNDEFINED;
@@ -15,10 +23,7 @@ const int Window::WINDOW_UNDEFINED = SDL_WINDOWPOS_UNDEFINED;
 Window::Window(const std::string& title, int width, int height,
                const std::unordered_set<Option>& options, int position_x,
                int position_y) {
-  Uint32 flags = std::accumulate(options.begin(), options.end(), 0,
-                                 [](Uint32 flags, const Option& option) {
-                                   return flags | static_cast<uint32_t>(option);
-                                 });
+  Uint32 flags = getFlagsMask(options);
   window_ptr = SDL_CreateWindow(title.c_str(), position_x, position_y, width,
                                 height, flags);
   if (!window_ptr) {
@@ -123,10 +128,7 @@ void Window::restore() {
 }
 
 void Window::setFullscreen(const std::unordered_set<Option>& options) {
-  Uint32 flags = std::accumulate(options.begin(), options.end(), 0,
-                                 [](Uint32 flags, const Option& option) {
-                                   return flags | static_cast<uint32_t>(option);
-                                 });
+  Uint32 flags = getFlagsMask(options);
   int return_code =
       SDL_SetWindowFullscreen(static_cast<SDL_Window*>(window_ptr), flags);
   if (return_code != 0) {
@@ -136,14 +138,17 @@ void Window::setFullscreen(const std::unordered_set<Option>& options) {
   }
 }
 
-Surface Window::getSurface() const {
+std::shared_ptr<Surface> Window::getSurface() {
   SDL_Surface* surface_ptr =
       SDL_GetWindowSurface(static_cast<SDL_Window*>(window_ptr));
   if (!surface_ptr) {
-    throw std::runtime_error("Unable to get the surface: " +
+    throw std::runtime_error("Unable to get the surface for the window: " +
                              std::string(SDL_GetError()));
   }
-  return {surface_ptr};
+  if (!surface || surface->surface_ptr != surface_ptr) {
+    surface.reset(new Surface(surface_ptr));
+  }
+  return surface;
 }
 
 void Window::updateSurface() {
@@ -159,14 +164,11 @@ std::shared_ptr<Renderer> Window::getRenderer() {
   SDL_Renderer* renderer_ptr =
       SDL_GetRenderer(static_cast<SDL_Window*>(window_ptr));
   if (!renderer_ptr) {
-    throw std::runtime_error("Unable to get the renderer: " +
+    throw std::runtime_error("Unable to get the renderer for the window: " +
                              std::string(SDL_GetError()));
   }
-
-  if (!renderer) {
+  if (!renderer || renderer->renderer_ptr != renderer_ptr) {
     renderer.reset(new Renderer(renderer_ptr));
-  } else if (renderer->renderer_ptr != renderer_ptr) {
-    throw std::runtime_error("Cached renderer is not the same as attached");
   }
   return renderer;
 }

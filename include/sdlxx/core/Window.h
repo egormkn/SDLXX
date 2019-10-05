@@ -263,9 +263,9 @@ public:
    *
    * @note You may not combine this with 3D or the rendering API on this window
    *
-   * @return Surface The window's framebuffer surface
+   * @return std::shared_ptr<Surface> The window's framebuffer surface
    */
-  Surface getSurface() const;
+  std::shared_ptr<Surface> getSurface();
 
   /**
    * @brief Copy the window surface to the screen
@@ -281,12 +281,24 @@ public:
    */
   std::shared_ptr<Renderer> getRenderer();
 
-  friend class Renderer;
-
 private:
   void* window_ptr = nullptr;
 
+  friend class Renderer;
+
   std::shared_ptr<Renderer> renderer;
+
+  friend class Surface;
+
+  std::shared_ptr<Surface> surface;
+
+  // Deleted copy constructor
+  // This class is not copyable
+  Window(const Window&) = delete;
+
+  // Deleted copy assignment operator
+  // This class is not copyable
+  void operator=(const Window&) = delete;
 };
 
 }  // namespace sdlxx::core
