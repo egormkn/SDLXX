@@ -76,6 +76,14 @@ private:
   Renderer(void* window_ptr, int driver, const std::unordered_set<Option>& options);
 
   Renderer(void* renderer_ptr);
+
+  // Deleted copy constructor
+  // This class is not copyable
+  Renderer(const Renderer&) = delete;
+
+  // Deleted copy assignment operator
+  // This class is not copyable
+  void operator=(const Renderer&) = delete;
 };
 
 }  // namespace sdlxx::core

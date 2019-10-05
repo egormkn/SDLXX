@@ -65,6 +65,14 @@ private:
   Uint32 format = SDL_PIXELFORMAT_UNKNOWN;
 
   Texture(void* texture_ptr);
+
+  // Deleted copy constructor
+  // This class is not copyable
+  Texture(const Texture&) = delete;
+
+  // Deleted copy assignment operator
+  // This class is not copyable
+  void operator=(const Texture&) = delete;
 };
 }  // namespace sdlxx::core
 

@@ -38,7 +38,7 @@ public:
 
   static Surface fromBMP(const std::string& file);
 
-  friend Surface Window::getSurface() const;
+  friend std::shared_ptr<Surface> Window::getSurface();
 
   friend class Texture;
 
@@ -48,6 +48,14 @@ private:
   void* surface_ptr = nullptr;
 
   Surface(void* surface_ptr);
+
+  // Deleted copy constructor
+  // This class is not copyable
+  Surface(const Surface&) = delete;
+
+  // Deleted copy assignment operator
+  // This class is not copyable
+  void operator=(const Surface&) = delete;
 };
 }  // namespace sdlxx::core
 
