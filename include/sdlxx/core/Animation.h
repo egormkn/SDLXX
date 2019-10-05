@@ -1,3 +1,5 @@
+// TODO: Animation class
+
 #ifndef SDLXX_ANIMATION_H
 #define SDLXX_ANIMATION_H
 

@@ -19,7 +19,7 @@ Scene::Scene(const std::string& t) {
 }
 
 void Scene::runIntent(Scene* newIntent) {
-  Log::log("[" + title + "] Running intent");
+  Log::info("[" + title + "] Running intent");
   if (intent != nullptr) {
     delete intent;
   }
@@ -39,12 +39,12 @@ bool Scene::isFinished() const { return finished; }
 bool Scene::isPaused() const { return paused; }
 
 void Scene::setInitialized(bool state) {
-  Log::log("[" + title + "] Initialized: " + std::to_string(state));
+  Log::info("[" + title + "] Initialized: " + std::to_string(state));
   initialized = state;
 }
 
 void Scene::setFinished(bool state) {
-  Log::log("[" + title + "] Finished: " + std::to_string(state));
+  Log::info("[" + title + "] Finished: " + std::to_string(state));
   finished = state;
 }
 

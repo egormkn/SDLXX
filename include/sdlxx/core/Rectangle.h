@@ -9,8 +9,6 @@
 #ifndef SDLXX_CORE_RECTANGLE_H
 #define SDLXX_CORE_RECTANGLE_H
 
-#include <SDL_rect.h>
-
 namespace sdlxx::core {
 
 /**

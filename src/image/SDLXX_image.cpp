@@ -8,7 +8,7 @@ bool sdlxx::image::SDL_image::initialized = false;
 
 sdlxx::image::SDL_image::SDL_image(Uint32 flags) {
 #ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Initializing SDL_image system...");
+    sdlxx::core::Log::info("Initializing SDL_image system...");
 #endif
     {
         std::lock_guard<std::mutex> lock(mutex);
@@ -30,15 +30,15 @@ sdlxx::image::SDL_image::SDL_image(Uint32 flags) {
                    << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
     linkedString << "Linked against SDL_image v" << (int) linked->major
                  << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    sdlxx::core::Log::log(compiledString.str());
-    sdlxx::core::Log::log(linkedString.str());
+    sdlxx::core::Log::info(compiledString.str());
+    sdlxx::core::Log::info(linkedString.str());
     sdlxx::core::Log::newline();
 #endif
 }
 
 sdlxx::image::SDL_image::~SDL_image() {
 #ifndef SDLXX_RELEASE
-    sdlxx::core::Log::log("Cleaning up SDL tmx_image system...");
+    sdlxx::core::Log::info("Cleaning up SDL tmx_image system...");
 #endif
     std::lock_guard<std::mutex> lock(mutex);
     IMG_Quit();

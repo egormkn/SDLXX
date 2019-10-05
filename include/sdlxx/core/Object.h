@@ -9,7 +9,7 @@
 #ifndef SDLXX_CORE_OBJECT_H
 #define SDLXX_CORE_OBJECT_H
 
-#include <sdlxx/core/Event.h>
+#include <sdlxx/core/Events.h>
 #include <sdlxx/core/Point.h>
 #include <sdlxx/core/Renderer.h>
 
@@ -22,9 +22,9 @@ protected:
 public:
   virtual void update(Uint32 t, Uint32 dt, const Point& windowPoint) = 0;
 
-  virtual void render(Renderer& renderer) = 0;
+  virtual void render(const std::shared_ptr<sdlxx::core::Renderer>& renderer) = 0;
 
-  virtual bool handleEvent(Event& e) = 0;
+  virtual bool handleEvent(const Event& e) = 0;
 
   virtual ~Object() = default;
 };

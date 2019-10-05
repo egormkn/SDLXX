@@ -6,25 +6,12 @@
 using namespace sdlxx::core;
 using namespace sdlxx::gui;
 
-SceneManager::SceneManager(Window& w) { window = std::shared_ptr<Window>(&w); }
-
-SceneManager::~SceneManager() {
-  clear();
-  window = nullptr;
-}
-
 void SceneManager::push(std::shared_ptr<Scene> s) { scenes.push(s); }
 
 void SceneManager::pop() { scenes.pop(); }
 
-void SceneManager::setWindow(Window& w) {
-  window = std::shared_ptr<Window>(&w);
-}
-
-Window& SceneManager::getWindow() { return *window; }
-
 void SceneManager::clear() {
-  while (scenes.size() > 0) {
+  while (!scenes.empty()) {
     std::shared_ptr<Scene> scene = scenes.top();
     if (scene->isInitialized()) {
       scene->setFinished(true);
@@ -35,7 +22,7 @@ void SceneManager::clear() {
   }
 }
 
-void SceneManager::run() {
+void SceneManager::run(sdlxx::core::Window& window) {
   Uint32 t = 0, dt = 10, accumulator = 0;
   Uint32 currentTime = SDL_GetTicks();
 
@@ -65,7 +52,7 @@ void SceneManager::run() {
     }
 
     if (currentScene->hasIntent()) {
-      Log::log("[MANAGER] Pushing new intent");
+      Log::info("[MANAGER] Pushing new intent");
       currentScene->setInitialized(false);
       currentScene->setFinished(false);
       currentScene->onDestroy();
@@ -74,13 +61,14 @@ void SceneManager::run() {
     }
 
     if (!currentScene->isInitialized()) {
-      currentScene->onCreate(*window);
+      currentScene->onCreate(window);
       currentScene->setInitialized(true);
       currentScene->setFinished(false);
     }
 
-    while (e.hasNext()) {
-      if (e.getType() == SDL_QUIT) {
+    while (Events::inQueue()) {
+      e = Events::poll().value();
+      if (e.type == SDL_QUIT) {
         clear();  // FIXME: Do we really need to quit?
       } else if (!currentScene->isFinished()) {
         currentScene->handleEvent(e);
@@ -112,7 +100,7 @@ void SceneManager::run() {
     // state.v = current.v * alpha + previous.v * (1 - alpha);
     // render( state );
     if (!currentScene->isFinished()) {
-      Renderer renderer = window->getRenderer();
+      const std::shared_ptr<sdlxx::core::Renderer> renderer = window.getRenderer();
       currentScene->render(renderer);
     }
   }

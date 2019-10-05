@@ -9,7 +9,7 @@ Texture::Texture(void* texture_ptr) : texture_ptr(texture_ptr) {
                    &width, &height);
 }
 
-Texture::Texture(const std::string& path, const Renderer& renderer, int w,
+Texture::Texture(const std::string& path, const std::shared_ptr<Renderer>& renderer, int w,
                  int h) {
   SDL_Surface* surface = IMG_Load(path.c_str());
   if (surface == nullptr) {
@@ -32,7 +32,7 @@ Texture::Texture(const std::string& path, const Renderer& renderer, int w,
   }*/
 
   texture_ptr = SDL_CreateTextureFromSurface(
-      static_cast<SDL_Renderer*>(renderer.renderer_ptr), surface);
+      static_cast<SDL_Renderer*>(renderer->renderer_ptr), surface);
   if (!texture_ptr) {
     throw std::runtime_error("Unable to create texture: " +
                              std::string(SDL_GetError()));
@@ -43,10 +43,10 @@ Texture::Texture(const std::string& path, const Renderer& renderer, int w,
 }
 
 Texture::Texture(const std::string& text, const Color& color,
-                 const sdlxx::ttf::Font& font, const Renderer& renderer) {
+                 const sdlxx::ttf::Font& font, const std::shared_ptr<Renderer>& renderer) {
   Surface surface = font.render(text, sdlxx::ttf::Font::TTF_MODE_BLENDED, color);
   texture_ptr = SDL_CreateTextureFromSurface(
-      static_cast<SDL_Renderer*>(renderer.renderer_ptr),
+      static_cast<SDL_Renderer*>(renderer->renderer_ptr),
       static_cast<SDL_Surface*>(surface.surface_ptr));
   if (texture_ptr == nullptr) {
     throw std::runtime_error("Unable to create texture" +

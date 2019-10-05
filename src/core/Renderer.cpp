@@ -1,5 +1,6 @@
 #include <numeric>
 #include <stdexcept>
+#include <sstream>
 
 #include <SDL_render.h>
 #include <sdlxx/core/Renderer.h>
@@ -25,6 +26,7 @@ Renderer::Renderer(Window& window, int driver,
                                std::string(SDL_GetError()));
     }
   }
+  window.renderer.reset(this);
 }
 
 Renderer::Renderer(void* window, int driver,
@@ -55,6 +57,9 @@ Renderer::Renderer(void* renderer_ptr) {
 }
 
 Renderer::~Renderer() {
+  std::stringstream ss;
+  ss << renderer_ptr;
+  Log::error("Renderer " + ss.str() + " destroyed");
   if (renderer_ptr) {
     SDL_DestroyRenderer(static_cast<SDL_Renderer*>(renderer_ptr));
     renderer_ptr = nullptr;

@@ -5,6 +5,7 @@
 #include "../core/Point.h"
 #include <sdlxx/core/Texture.h>
 #include <sdlxx/core/Window.h>
+#include <sdlxx/core/Events.h>
 
 namespace sdlxx::gui {
 class Button : public sdlxx::core::Object {
@@ -17,14 +18,14 @@ public:
 
   void setRelativeSize(int x, int y);
 
-  bool handleEvent(sdlxx::core::Event& e) override;
+  bool handleEvent(const sdlxx::core::Event& e) override;
 
   void update(Uint32 t, Uint32 dt,
               const sdlxx::core::Point& windowPoint) override;
 
-  void render(sdlxx::core::Renderer& renderer) override;
+  void render(const std::shared_ptr<sdlxx::core::Renderer>& renderer) override;
 
-  void setText(const std::string& text, const sdlxx::core::Renderer& renderer);
+  void setText(const std::string& text, const std::shared_ptr<sdlxx::core::Renderer>& renderer);
 
 private:
   std::string text;

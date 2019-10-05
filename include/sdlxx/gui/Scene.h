@@ -2,7 +2,7 @@
 #define SDLXX_SCENE_H
 
 #include <SDL_events.h>
-#include <sdlxx/core/Event.h>
+#include <sdlxx/core/Events.h>
 #include <sdlxx/core/Renderer.h>
 #include <sdlxx/core/Window.h>
 
@@ -20,11 +20,11 @@ public:
 
   virtual void onResume() = 0;
 
-  virtual void handleEvent(sdlxx::core::Event& e) = 0;
+  virtual void handleEvent(const sdlxx::core::Event& e) = 0;
 
   virtual void update(Uint32 t, Uint32 dt) = 0;
 
-  virtual void render(sdlxx::core::Renderer& renderer) = 0;
+  virtual void render(const std::shared_ptr<sdlxx::core::Renderer>& renderer) = 0;
 
   virtual ~Scene();
 

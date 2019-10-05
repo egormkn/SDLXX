@@ -26,10 +26,10 @@ class Renderer;
  */
 class Texture {
 public:
-  Texture(const std::string& path, const Renderer& renderer, int w, int h);
+  Texture(const std::string& path, const std::shared_ptr<Renderer>& renderer, int w, int h);
 
   Texture(const std::string& text, const Color& color,
-          const sdlxx::ttf::Font& font, const Renderer& renderer);
+          const sdlxx::ttf::Font& font, const std::shared_ptr<Renderer>& renderer);
 
   ~Texture();
 

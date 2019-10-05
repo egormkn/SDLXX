@@ -1,3 +1,4 @@
+#include <SDL_rect.h>
 #include <sdlxx/core/Rectangle.h>
 
 using namespace sdlxx::core;

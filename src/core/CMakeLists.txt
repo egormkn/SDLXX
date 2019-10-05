@@ -10,7 +10,7 @@ set(SOURCE_LIST
     Animation.cpp
     Color.cpp
     Dimensions.cpp
-    Event.cpp
+    Events.cpp
     Log.cpp
     Object.cpp
     Point.cpp

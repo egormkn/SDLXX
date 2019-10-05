@@ -28,11 +28,11 @@ public:
 
     void onResume() override {}
 
-    void handleEvent(Event &e) override;
+    void handleEvent(const Event &e) override;
 
     void update(Uint32 t, Uint32 dt) override;
 
-    void render(Renderer &renderer) override;
+    void render(const std::shared_ptr<sdlxx::core::Renderer>& renderer) override;
 
 private:
     Button *runButton = nullptr;

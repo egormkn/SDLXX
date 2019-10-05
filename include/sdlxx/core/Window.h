@@ -279,12 +279,14 @@ public:
    *
    * @return Renderer The renderer that is associated with the window
    */
-  Renderer getRenderer() const;
+  std::shared_ptr<Renderer> getRenderer();
 
   friend class Renderer;
 
 private:
   void* window_ptr = nullptr;
+
+  std::shared_ptr<Renderer> renderer;
 };
 
 }  // namespace sdlxx::core

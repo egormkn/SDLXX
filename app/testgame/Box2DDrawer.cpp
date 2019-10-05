@@ -2,8 +2,8 @@
 
 #include <cmath>
 
-Box2DDrawer::Box2DDrawer(const sdlxx::core::Renderer& r, float s = 1.f)
-    : renderer(static_cast<SDL_Renderer*>(r.renderer_ptr)), scale(s) {}
+Box2DDrawer::Box2DDrawer(const std::shared_ptr<sdlxx::core::Renderer>& r, float s = 1.f)
+    : renderer(static_cast<SDL_Renderer*>(r->renderer_ptr)), scale(s) {}
 
 void Box2DDrawer::SetScale(float s) { scale = s; }
 

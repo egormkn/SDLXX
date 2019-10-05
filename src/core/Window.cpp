@@ -63,6 +63,7 @@ std::unordered_set<Window::Option> Window::getOptions() const {
 
 Window::~Window() {
   if (window_ptr) {
+    Log::info("Destroying window");
     SDL_DestroyWindow(static_cast<SDL_Window*>(window_ptr));
     window_ptr = nullptr;
   }
@@ -154,12 +155,18 @@ void Window::updateSurface() {
   }
 }
 
-Renderer Window::getRenderer() const {
+std::shared_ptr<Renderer> Window::getRenderer() {
   SDL_Renderer* renderer_ptr =
       SDL_GetRenderer(static_cast<SDL_Window*>(window_ptr));
   if (!renderer_ptr) {
     throw std::runtime_error("Unable to get the renderer: " +
                              std::string(SDL_GetError()));
   }
-  return {renderer_ptr};
+
+  if (!renderer) {
+    renderer.reset(new Renderer(renderer_ptr));
+  } else if (renderer->renderer_ptr != renderer_ptr) {
+    throw std::runtime_error("Cached renderer is not the same as attached");
+  }
+  return renderer;
 }

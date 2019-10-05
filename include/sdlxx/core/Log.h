@@ -1,37 +1,50 @@
-#ifndef SDLXX_LOG_H
-#define SDLXX_LOG_H
+/**
+ * @file Log.h
+ * @author Egor Makarenko
+ * @brief Class that represents the logger
+ */
+
+#pragma once
+
+#ifndef SDLXX_CORE_LOG_H
+#define SDLXX_CORE_LOG_H
 
 #include <string>
 
 namespace sdlxx::core {
-    class Log {
-    public:
-        static void error(std::string msg);
 
-        static void warning(std::string msg);
+/**
+ * @brief Class that represents the logger
+ */
+class Log {
+public:
+  static void error(std::string msg);
 
-        static void log(std::string msg);
+  static void warning(std::string msg);
 
-        static void raw(std::string msg);
+  static void info(std::string msg);
 
-        static void debug(std::string msg);
+  static void debug(std::string msg);
 
-        static void verbose(std::string msg);
+  static void raw(std::string msg);
 
-        static void debugMode(bool option);
+  static void verbose(std::string msg);
 
-        static void verboseMode(bool option);
+  static void debugMode(bool option);
 
-        static void newline();
+  static void verboseMode(bool option);
 
-    private:
-        static bool isDebugMode;     ///< Tells if we're on debug mode.
-        static bool isVerboseMode;   ///< Tells if we're on verbose mode.
+  static void newline();
 
-        static bool haveEscapeCodes;
+private:
+  static bool isDebugMode;    ///< Tells if we're on debug mode.
+  static bool isVerboseMode;  ///< Tells if we're on verbose mode.
 
-        static void clearLine();
-    };
-}
+  static bool haveEscapeCodes;
 
-#endif //SDLXX_LOG_H
+  static void clearLine();
+};
+
+}  // namespace sdlxx::core
+
+#endif  // SDLXX_CORE_LOG_H

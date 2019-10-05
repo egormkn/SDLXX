@@ -17,26 +17,20 @@
 
 namespace sdlxx::gui {
 
+/**
+ * @brief Class that represents a manager of graphical scenes
+ */
 class SceneManager {
 public:
-  SceneManager(sdlxx::core::Window& w);
-
-  ~SceneManager();
-
-  void push(std::shared_ptr<Scene> s);
+  void push(std::shared_ptr<Scene> scene);
 
   void pop();
 
-  void setWindow(sdlxx::core::Window& w);
-
-  sdlxx::core::Window& getWindow();
-
   void clear();
 
-  void run();
+  void run(sdlxx::core::Window& window);
 
 private:
-  std::shared_ptr<sdlxx::core::Window> window;
   std::stack<std::shared_ptr<Scene>> scenes;
 };
 }  // namespace sdlxx::core

@@ -64,7 +64,7 @@ public:
 
   void fillRect(const Rectangle& rectangle);
 
-  friend Renderer Window::getRenderer() const;
+  friend std::shared_ptr<Renderer> Window::getRenderer();
 
   friend class Texture;
 

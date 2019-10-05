@@ -23,10 +23,10 @@ public:
    */
   Point(int x = 0, int y = 0);
 
-  /// X coordinate value
+  /** X coordinate value */
   int x;
 
-  /// Y coordinate value
+  /** Y coordinate value */
   int y;
 };
 
