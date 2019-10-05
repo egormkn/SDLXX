@@ -170,7 +170,7 @@ public:
    * @brief Set the position of a window
    *
    * @param position The X and Y coordinates of the window in screen
-   * coordinates, or WINDOW_CENTERED or ::WINDOW_UNDEFINED.
+   * coordinates, or Window::WINDOW_CENTERED or Window::WINDOW_UNDEFINED.
    *
    * @note The window coordinate origin is the upper left corner of the display.
    */

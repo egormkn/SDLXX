@@ -222,7 +222,7 @@ public:
     RENDER_DEVICE_RESET,
 
     /**
-     * Events ::USEREVENT through ::LASTEVENT are for your use,
+     * Events Type::USEREVENT through Type::LASTEVENT are for your use,
      * and should be allocated with RegisterEvents()
      */
     USEREVENT = 0x8000,
