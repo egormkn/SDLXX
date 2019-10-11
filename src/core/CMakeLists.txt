@@ -19,6 +19,7 @@ set(SOURCE_LIST
     SDLXX_core.cpp
     Surface.cpp
     Texture.cpp
+    Timer.cpp
     Utils.cpp
     Window.cpp)
 
