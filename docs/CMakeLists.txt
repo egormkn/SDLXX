@@ -10,6 +10,5 @@ set(DOXYGEN_EXCLUDE_SYMBOLS "SDLXX_*_H" "SDLXX_*_HPP")
 # Add target for building documentation
 doxygen_add_docs(docs
     "${PROJECT_SOURCE_DIR}/include"
-    # ALL
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/include"
 )

@@ -8,7 +8,8 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS
 # Add source files
 set(SOURCE_LIST
     Font.cpp
-    SDLXX_ttf.cpp)
+    SDLXX_ttf.cpp
+    Text.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(SDLXX_ttf ${HEADER_LIST} ${SOURCE_LIST})

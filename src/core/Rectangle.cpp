@@ -3,20 +3,9 @@
 
 using namespace sdlxx::core;
 
-Rectangle::Rectangle(int x, int y, int width, int height) {
-  rectangle_ptr = new SDL_Rect{x, y, width, height};
-}
+Rectangle::Rectangle(int x, int y, int width, int height)
+    : x(x), y(y), width(width), height(height) {}
 
-Rectangle::~Rectangle() { delete static_cast<SDL_Rect*>(rectangle_ptr); }
+Point Rectangle::getOrigin() const { return {x, y}; }
 
-int Rectangle::getX() const { return static_cast<SDL_Rect*>(rectangle_ptr)->x; }
-
-int Rectangle::getY() const { return static_cast<SDL_Rect*>(rectangle_ptr)->y; }
-
-int Rectangle::getWidth() const {
-  return static_cast<SDL_Rect*>(rectangle_ptr)->w;
-}
-
-int Rectangle::getHeight() const {
-  return static_cast<SDL_Rect*>(rectangle_ptr)->h;
-}
+Dimensions Rectangle::getDimensions() const { return {width, height}; }

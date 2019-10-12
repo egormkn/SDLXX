@@ -2,5 +2,5 @@
 
 using namespace sdlxx::core;
 
-Dimensions::Dimensions(unsigned width, unsigned height)
+Dimensions::Dimensions(int width, int height)
     : width(width), height(height) {}

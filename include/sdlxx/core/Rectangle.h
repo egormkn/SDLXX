@@ -9,6 +9,9 @@
 #ifndef SDLXX_CORE_RECTANGLE_H
 #define SDLXX_CORE_RECTANGLE_H
 
+#include <sdlxx/core/Point.h>
+#include <sdlxx/core/Dimensions.h>
+
 namespace sdlxx::core {
 
 /**
@@ -25,22 +28,24 @@ public:
   Rectangle(int x, int y, int width = 0, int height = 0);
 
   /**
-   * @brief Destroy the rectangle
+   * @brief Get the upper left corner
+   *
+   * @return Point The upper left corner of a rectangle
    */
-  ~Rectangle();
+  Point getOrigin() const;
 
-  int getX() const;
+  /**
+   * @brief Get the dimensions of a rectangle
+   *
+   * @return Dimensions The dimensions of a rectangle
+   */
+  Dimensions getDimensions() const;
 
-  int getY() const;
+  /// Coordinates of the upper left corner
+  int x, y;
 
-  int getWidth() const;
-
-  int getHeight() const;
-
-  friend class Renderer;
-
-private:
-  void* rectangle_ptr = nullptr;
+  /// Dimensions of the rectangle
+  int width, height;
 };
 }  // namespace sdlxx::core
 

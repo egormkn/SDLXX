@@ -19,11 +19,11 @@ namespace sdlxx::net {
 class SDLXX_net {
 public:
   /**
-   * @copydoc sdlxx::core::SDLXX::Version
+   * @copydoc sdlxx::core::SDLXX_core::Version
    */
-  class Version : public sdlxx::core::SDLXX::Version {
+  class Version : public sdlxx::core::SDLXX_core::Version {
     /**
-     * @copydoc sdlxx::core::SDLXX::Version::Version
+     * @copydoc sdlxx::core::SDLXX_core::Version::Version
      */
     Version(uint8_t major, uint8_t minor, uint8_t patch);
 

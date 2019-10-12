@@ -25,6 +25,9 @@ target_link_libraries(SDLXX_gui PRIVATE SDL2::SDL2_image)
 find_package(sdl2-ttf CONFIG REQUIRED)
 target_link_libraries(SDLXX_gui PRIVATE SDL2::SDL2_ttf)
 target_link_libraries(SDLXX_gui PRIVATE SDLXX_core)
+
+find_path(NUKLEAR_INCLUDE_DIR NAMES nuklear.h PATH_SUFFIXES nuklear)
+target_include_directories(SDLXX_gui PRIVATE ${NUKLEAR_INCLUDE_DIR})
 # /Add dependencies (TODO: Move to corresponding packages)
 
 # Set C++ standard to C++17

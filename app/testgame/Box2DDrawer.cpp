@@ -1,9 +1,10 @@
 #include "Box2DDrawer.h"
 
 #include <cmath>
+#include <SDL.h>
 
 Box2DDrawer::Box2DDrawer(const std::shared_ptr<sdlxx::core::Renderer>& r, float s = 1.f)
-    : renderer(static_cast<SDL_Renderer*>(r->renderer_ptr)), scale(s) {}
+    : renderer_ptr(r->renderer_ptr), scale(s) {}
 
 void Box2DDrawer::SetScale(float s) { scale = s; }
 
@@ -17,7 +18,7 @@ void Box2DDrawer::DrawPolygon(const b2Vec2* vertices, int32 vertexCount,
   }
   points[vertexCount].x = points[0].x;
   points[vertexCount].y = points[0].y;
-  SDL_RenderDrawLines(renderer, points, vertexCount + 1);
+  SDL_RenderDrawLines(static_cast<SDL_Renderer*>(renderer_ptr), points, vertexCount + 1);
 }
 
 void Box2DDrawer::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount,
@@ -41,7 +42,7 @@ void Box2DDrawer::DrawCircle(const b2Vec2& center, float32 radius,
     r2.x = cosInc * r1.x - sinInc * r1.y;
     r2.y = sinInc * r1.x + cosInc * r1.y;
     b2Vec2 v2 = center + radius * r2;
-    SDL_RenderDrawLine(renderer, (int)(v1.x * scale), (int)(v1.y * scale),
+    SDL_RenderDrawLine(static_cast<SDL_Renderer*>(renderer_ptr), (int)(v1.x * scale), (int)(v1.y * scale),
                        (int)(v2.x * scale), (int)(v2.y * scale));
     r1 = r2;
     v1 = v2;
@@ -55,7 +56,7 @@ void Box2DDrawer::DrawSolidCircle(const b2Vec2& center, float32 radius,
   int y = (int)(center.y * scale);
   int ax = (int)(axis.x * radius * scale);
   int ay = (int)(axis.y * radius * scale);
-  SDL_RenderDrawLine(renderer, x, y, x + ax, y + ay);
+  SDL_RenderDrawLine(static_cast<SDL_Renderer*>(renderer_ptr), x, y, x + ax, y + ay);
 }
 
 void Box2DDrawer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2,
@@ -65,7 +66,7 @@ void Box2DDrawer::DrawSegment(const b2Vec2& p1, const b2Vec2& p2,
   const int y1 = (int)(p1.y * scale);
   const int x2 = (int)(p2.x * scale);
   const int y2 = (int)(p2.y * scale);
-  SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  SDL_RenderDrawLine(static_cast<SDL_Renderer*>(renderer_ptr), x1, y1, x2, y2);
 }
 
 void Box2DDrawer::DrawTransform(const b2Transform& xf) {
@@ -79,11 +80,11 @@ void Box2DDrawer::DrawPoint(const b2Vec2& p, float32 size,
   const SDL_Rect point = {(int)(p.x * scale - halfSize),
                           (int)(p.y * scale - halfSize), halfSize * 2,
                           halfSize * 2};
-  SDL_RenderDrawRect(renderer, &point);
+  SDL_RenderDrawRect(static_cast<SDL_Renderer*>(renderer_ptr), &point);
 }
 
 void Box2DDrawer::SetColor(const b2Color& color) {
-  SDL_SetRenderDrawColor(renderer, (Uint8)(255 * color.r),
+  SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer_ptr), (Uint8)(255 * color.r),
                          (Uint8)(255 * color.g), (Uint8)(255 * color.b),
                          (Uint8)(255 * color.a));
 }

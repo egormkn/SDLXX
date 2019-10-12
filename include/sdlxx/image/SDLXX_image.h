@@ -1,41 +1,90 @@
+/**
+ * @file SDLXX_image.h
+ * @author Egor Makarenko
+ * @brief Class that represents SDLXX object that initializes the image API
+ */
+
+#pragma once
+
 #ifndef SDLXX_IMAGE_H
 #define SDLXX_IMAGE_H
 
-#include <mutex>
-#include <SDL_image.h>
+#include <sdlxx/core/SDLXX_core.h>
 
 namespace sdlxx::image {
-    class SDL_image {
-    public:
-        // Init SDL_image
-        SDL_image(Uint32 flags);
 
-        // Quit SDL_image
-        ~SDL_image();
+/**
+ * @brief Class that represents SDLXX object that initializes the image API
+ */
+class SDLXX_image {
+public:
+  /**
+   * @copydoc sdlxx::core::SDLXX_core::Version
+   */
+  class Version : public sdlxx::core::SDLXX_core::Version {
+    /**
+     * @copydoc sdlxx::core::SDLXX_core::Version::Version
+     */
+    Version(uint8_t major, uint8_t minor, uint8_t patch);
 
-    private:
-        // Mutex that allows only one instance of class
-        static std::mutex mutex;
+    /**
+     * @brief Get the SDL_image version the SDLXX library was compiled against
+     *
+     * This is determined by what header the compiler used. Note that if you
+     * dynamically linked the library, you might have a slightly newer or older
+     * version at runtime. That version can be determined with
+     * SDLXX_image::Version::getLinkedSdlImageVersion()
+     *
+     * @return Version Version of SDL_image the library was compiled against
+     */
+    static Version getCompiledSdlImageVersion();
 
-        // Initialization status
-        static bool initialized;
+    /**
+     * @brief Get the SDL_image version the SDLXX library was linked against
+     *
+     * If you are linking to SDL_image dynamically, then it is possible that the
+     * current version will be different than the version you compiled against.
+     *
+     * @return Version Version of SDL_image the library was linked against
+     */
+    static Version getLinkedSdlImageVersion();
+  };
 
-        // Deleted copy constructor
-        // This class is not copyable
-        SDL_image(const SDL_image &other) = delete;
+  /**
+   * @brief An enumeration of library subsystems
+   */
+  enum class Subsystem : int32_t {
+    JPG = 0x00000001,
+    PNG = 0x00000002,
+    TIF = 0x00000004,
+    WEBP = 0x00000008
+  };
 
-        // Deleted assignment operator
-        // This class is not copyable
-        SDL_image &operator=(const SDL_image &other) = delete;
+  // Init SDL_image
+  explicit SDLXX_image(const std::unordered_set<Subsystem>& subsystems = {});
 
-        // Deleted move constructor
-        // This class is not movable
-        SDL_image(SDL_image &&other) = delete;
+  // Quit SDL_image
+  ~SDLXX_image();
 
-        // Deleted move assignment operator
-        // This class is not movable
-        SDL_image &operator=(SDL_image &&other) = delete;
-    };
-}
+  // TODO: wasInit and other functions
 
-#endif // SDLXX_IMAGE_H
+private:
+  // Initialization status
+  static bool initialized;
+
+  // Deleted copy constructor
+  SDLXX_image(const SDLXX_image& other) = delete;
+
+  // Deleted copy assignment operator
+  SDLXX_image& operator=(const SDLXX_image& other) = delete;
+
+  // Deleted move constructor
+  SDLXX_image(SDLXX_image&& other) = delete;
+
+  // Deleted move assignment operator
+  SDLXX_image& operator=(SDLXX_image&& other) = delete;
+};
+
+}  // namespace sdlxx::image
+
+#endif  // SDLXX_IMAGE_H

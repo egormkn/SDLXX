@@ -1,63 +1,78 @@
-#ifndef SDLXX_SCENE_H
-#define SDLXX_SCENE_H
+/**
+ * @file Scene.h
+ * @author Egor Makarenko
+ * @brief Class that represents a 2D scene
+ */
 
-#include <SDL_events.h>
+#pragma once
+
+#ifndef SDLXX_GUI_SCENE_H
+#define SDLXX_GUI_SCENE_H
+
+#include <cstdint>
+
 #include <sdlxx/core/Events.h>
 #include <sdlxx/core/Renderer.h>
 #include <sdlxx/core/Window.h>
+#include <sdlxx/gui/Object.h>
 
 namespace sdlxx::gui {
 
-class Scene {
-  friend class SceneManager;
-
+class Scene : public Object {
 public:
-  virtual void onCreate(sdlxx::core::Window& window) = 0;
+  enum class State { CREATED, STARTED, RESUMED, PAUSED, STOPPED, DESTROYED };
 
-  virtual void onDestroy() = 0;
+  virtual void update(uint32_t t, uint32_t dt) override;
 
-  virtual void onPause() = 0;
+  virtual void render(sdlxx::core::Renderer& renderer) override;
 
-  virtual void onResume() = 0;
+  virtual bool handleEvent(const sdlxx::core::Event& e) override;
 
-  virtual void handleEvent(const sdlxx::core::Event& e) = 0;
-
-  virtual void update(Uint32 t, Uint32 dt) = 0;
-
-  virtual void render(const std::shared_ptr<sdlxx::core::Renderer>& renderer) = 0;
-
-  virtual ~Scene();
+  virtual State getState() const final;
 
 protected:
-  Scene(const std::string& t);
+  Scene() = default;
 
-  virtual void runIntent(Scene* newIntent) final;
+  virtual void onCreate();
+
+  virtual void onStart();
+
+  virtual void onResume();
+
+  virtual void onPause();
+
+  virtual void onStop();
+
+  virtual void onDestroy();
+
+  virtual void launch(std::shared_ptr<Scene> intent) final;
 
   virtual void finish() final;
 
   virtual bool hasIntent() const final;
 
-  virtual const std::string& getTitle() const final;
+  virtual bool isFinished() const final;
+
+  virtual std::shared_ptr<sdlxx::core::Window> getWindow() const final;
 
 private:
-  bool initialized, paused, finished;
-  Scene* intent;
-  std::string title;
+  bool finished = false;
 
-  bool isInitialized() const;
+  State state = State::DESTROYED;
 
-  bool isFinished() const;
+  std::shared_ptr<Scene> intent;
 
-  bool isPaused() const;
+  std::shared_ptr<sdlxx::core::Window> window;
 
-  void setInitialized(bool state);
+  virtual void setWindow(std::shared_ptr<sdlxx::core::Window> window) final;
 
-  void setFinished(bool state);
+  Scene(const Scene&) = delete;
 
-  void setPaused(bool state);
+  Scene& operator=(const Scene&) = delete;
 
-  Scene* getIntent();
+  friend class SceneManager;
 };
+
 }  // namespace sdlxx::gui
 
-#endif  // SDLXX_SCENE_H
+#endif  // SDLXX_GUI_SCENE_H

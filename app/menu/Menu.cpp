@@ -1,5 +1,4 @@
 #include "Menu.h"
-#include "Game.h"
 
 #include <sdlxx/core/Log.h>
 #include <sdlxx/image/Image.h>
@@ -51,7 +50,6 @@ void Menu::onDestroy() {
 bool Menu::handleEvent(const Event& e) {
   if (runButton->handleEvent(e) && e.type == SDL_MOUSEBUTTONDOWN) {
     Log::info("LAUNCH");
-    launch(make_shared<Game>("Game"));
   }
   bool handle = exitButton->handleEvent(e);
   if (handle && e.type == SDL_MOUSEBUTTONDOWN) {

@@ -10,7 +10,7 @@ using namespace sdlxx::net;
 bool SDLXX_net::initialized = false;
 
 SDLXX_net::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
-    : SDLXX::Version::Version(major, minor, patch) {}
+    : SDLXX_core::Version::Version(major, minor, patch) {}
 
 SDLXX_net::Version SDLXX_net::Version::getCompiledSdlNetVersion() {
   SDL_version compiled;

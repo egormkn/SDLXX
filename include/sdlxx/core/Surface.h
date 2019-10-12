@@ -12,12 +12,10 @@
 #include <sdlxx/core/Dimensions.h>
 #include <sdlxx/core/Window.h>
 
-// Forward declaration of Font class
-namespace sdlxx::ttf {
-class Font;
-}  // namespace sdlxx::ttf
-
 namespace sdlxx::core {
+
+// Forward declaration of Renderer class
+class Renderer;
 
 /**
  * @brief Class that represents a collection of pixels used in software blitting
@@ -27,27 +25,40 @@ public:
   /**
    * @brief Destroy the surface
    */
-  ~Surface();
+  virtual ~Surface();
 
   /**
    * @brief Get the size of the surface
    *
    * @return Dimensions The width and height of the surface
    */
-  Dimensions getSize() const;
+  virtual Dimensions getSize() const final;
 
+  /**
+   * @brief Load a surface from a BMP file
+   *
+   * @param file Path to the BMP file
+   * @return Surface
+   */
   static Surface fromBMP(const std::string& file);
 
-  friend Surface Window::getSurface() const;
+  friend std::shared_ptr<Surface> Window::getSurface();
 
   friend class Texture;
 
-  friend class sdlxx::ttf::Font;
+  friend class Renderer;
 
-private:
+protected:
+  Surface(void* surface_ptr);
+
   void* surface_ptr = nullptr;
 
-  Surface(void* surface_ptr);
+private:
+  // Deleted copy constructor
+  Surface(const Surface&) = delete;
+
+  // Deleted copy assignment operator
+  void operator=(const Surface&) = delete;
 };
 }  // namespace sdlxx::core
 

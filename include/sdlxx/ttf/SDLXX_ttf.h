@@ -1,7 +1,7 @@
 /**
  * @file SDLXX_ttf.h
  * @author Egor Makarenko
- * @brief Class that represents SDLXX ttf object that initializes the font API
+ * @brief Class that represents SDLXX object that initializes the font API
  */
 
 #pragma once
@@ -14,16 +14,16 @@
 namespace sdlxx::ttf {
 
 /**
- * @brief Class that represents SDLXX ttf object that initializes the font API
+ * @brief Class that represents SDLXX object that initializes the font API
  */
 class SDLXX_ttf {
 public:
   /**
-   * @copydoc sdlxx::core::SDLXX::Version
+   * @copydoc sdlxx::core::SDLXX_core::Version
    */
-  class Version : public sdlxx::core::SDLXX::Version {
+  class Version : public sdlxx::core::SDLXX_core::Version {
     /**
-     * @copydoc sdlxx::core::SDLXX::Version::Version
+     * @copydoc sdlxx::core::SDLXX_core::Version::Version
      */
     Version(uint8_t major, uint8_t minor, uint8_t patch);
 

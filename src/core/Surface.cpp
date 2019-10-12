@@ -7,14 +7,15 @@ using namespace sdlxx::core;
 Surface::Surface(void* surface_ptr) : surface_ptr(surface_ptr) {}
 
 Surface::~Surface() {
-  SDL_FreeSurface(static_cast<SDL_Surface*>(surface_ptr));
-  surface_ptr = nullptr;
+  if (surface_ptr) {
+    SDL_FreeSurface(static_cast<SDL_Surface*>(surface_ptr));
+    surface_ptr = nullptr;
+  }
 }
 
 Dimensions Surface::getSize() const {
-  int width = static_cast<SDL_Surface*>(surface_ptr)->w;
-  int height = static_cast<SDL_Surface*>(surface_ptr)->h;
-  return {static_cast<unsigned>(width), static_cast<unsigned>(height)};
+  SDL_Surface* surface = static_cast<SDL_Surface*>(surface_ptr);
+  return {surface->w, surface->h};
 }
 
 Surface Surface::fromBMP(const std::string& file) {
