@@ -1,19 +1,22 @@
 #include <numeric>
 #include <system_error>
+#include <type_traits>
 
 #include <SDL_render.h>
 #include <SDL_video.h>
 #include <sdlxx/core/Renderer.h>
 #include <sdlxx/core/Window.h>
+#include <sdlxx/core/Surface.h>
 
 using namespace sdlxx::core;
 
 // Convert options into bit mask
-Uint32 getFlagsMask(const std::unordered_set<Window::Option>& options) {
-  return std::accumulate(options.begin(), options.end(), 0,
-                         [](Uint32 flags, const Window::Option& option) {
-                           return flags | static_cast<uint32_t>(option);
-                         });
+template <typename Flag>
+Uint32 getFlagsMask(const std::unordered_set<Flag>& flags) {
+  return std::accumulate(
+      flags.begin(), flags.end(), 0, [](Uint32 flags, const Flag& flag) {
+        return flags | static_cast<std::underlying_type_t<Flag>>(flag);
+      });
 }
 
 const int Window::WINDOW_CENTERED = SDL_WINDOWPOS_CENTERED;
@@ -67,8 +70,10 @@ std::unordered_set<Window::Option> Window::getOptions() const {
 }
 
 Window::~Window() {
+  if (renderer) {
+    renderer.reset();
+  }
   if (window_ptr) {
-    Log::info("Destroying window");
     SDL_DestroyWindow(static_cast<SDL_Window*>(window_ptr));
     window_ptr = nullptr;
   }
@@ -96,7 +101,7 @@ Point Window::getPosition() const {
 Dimensions Window::getSize() const {
   int w, h;
   SDL_GetWindowSize(static_cast<SDL_Window*>(window_ptr), &w, &h);
-  return {static_cast<unsigned>(w), static_cast<unsigned>(h)};
+  return {w, h};
 }
 
 void Window::setBordered(bool bordered) {
@@ -160,15 +165,27 @@ void Window::updateSurface() {
   }
 }
 
-std::shared_ptr<Renderer> Window::getRenderer() {
+std::shared_ptr<Renderer> Window::getRenderer(int driver,
+           const std::unordered_set<Renderer::Option>& options) {
   SDL_Renderer* renderer_ptr =
       SDL_GetRenderer(static_cast<SDL_Window*>(window_ptr));
-  if (!renderer_ptr) {
-    throw std::runtime_error("Unable to get the renderer for the window: " +
-                             std::string(SDL_GetError()));
-  }
   if (!renderer || renderer->renderer_ptr != renderer_ptr) {
-    renderer.reset(new Renderer(renderer_ptr));
+    if (!renderer_ptr) {
+      renderer.reset(new Renderer(window_ptr, driver, options));
+    } else {
+      renderer.reset(new Renderer(renderer_ptr));
+    }
   }
   return renderer;
+}
+
+Window::OptionSet sdlxx::core::operator|(const Window::Option& lhs,
+                            const Window::Option& rhs) {
+  return {lhs, rhs};
+}
+
+Window::OptionSet sdlxx::core::operator|(Window::OptionSet&& lhs,
+                            const Window::Option& rhs) {
+  lhs.insert(rhs);
+  return lhs;
 }

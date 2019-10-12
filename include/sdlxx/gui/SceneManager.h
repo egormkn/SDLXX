@@ -28,11 +28,11 @@ public:
 
   void clear();
 
-  void run(sdlxx::core::Window& window);
+  void run(std::shared_ptr<sdlxx::core::Window> window);
 
 private:
   std::stack<std::shared_ptr<Scene>> scenes;
 };
-}  // namespace sdlxx::core
+}  // namespace sdlxx::gui
 
 #endif  // SDLXX_GUI_SCENEMANAGER_H

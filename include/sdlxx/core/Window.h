@@ -16,11 +16,9 @@
 
 #include <sdlxx/core/Dimensions.h>
 #include <sdlxx/core/Point.h>
+#include <sdlxx/core/Renderer.h>
 
 namespace sdlxx::core {
-
-// Forward declaration of Renderer class
-class Renderer;
 
 // Forward declaration of Surface class
 class Surface;
@@ -61,6 +59,8 @@ public:
     POPUP_MENU = 0x00080000, /**< window should be treated as a popup menu */
     VULKAN = 0x10000000      /**< window usable for Vulkan surface */
   };
+
+  using OptionSet = std::unordered_set<Option>;
 
   /**
    * @brief An enumeration of window events
@@ -118,8 +118,8 @@ public:
    * WINDOW_UNDEFINED
    */
   Window(const std::string& title, int width, int height,
-         const std::unordered_set<Option>& options = {},
-         int position_x = WINDOW_UNDEFINED, int position_y = WINDOW_UNDEFINED);
+         const OptionSet& options = {}, int position_x = WINDOW_CENTERED,
+         int position_y = WINDOW_CENTERED);
 
   /**
    * @brief Create a new window from an existing native window
@@ -139,9 +139,9 @@ public:
   /**
    * @brief Get window options
    *
-   * @return std::unordered_set<Option> Set of window options
+   * @return OptionSet Set of window options
    */
-  std::unordered_set<Option> getOptions() const;
+  OptionSet getOptions() const;
 
   /**
    * @brief Destroy the window
@@ -253,7 +253,7 @@ public:
    *
    * @param options Window options
    */
-  void setFullscreen(const std::unordered_set<Option>& options = {});
+  void setFullscreen(const OptionSet& options = {});
 
   /**
    * @brief Get the surface associated with the window
@@ -275,11 +275,19 @@ public:
   // TODO: window surface methods, set/get grab and other methods
 
   /**
-   * @brief Get the renderer associated with the window
+   * @brief Get the renderer associated with the window.
+   *
+   * If no renderer is associated with the window, a new one will be created.
+   *
+   * @param driver The index of the rendering driver to initialize, or -1 to
+   * initialize the first one supporting the requested options.
+   * @param options The set of requested options
    *
    * @return Renderer The renderer that is associated with the window
    */
-  std::shared_ptr<Renderer> getRenderer();
+  std::shared_ptr<Renderer> getRenderer(
+      int driver = -1,
+      const std::unordered_set<Renderer::Option>& options = {});
 
 private:
   void* window_ptr = nullptr;
@@ -298,8 +306,17 @@ private:
 
   // Deleted copy assignment operator
   // This class is not copyable
-  void operator=(const Window&) = delete;
+  Window& operator=(const Window&) = delete;
+
+  Window(Window&& other) = delete;
+
+  Window& operator=(Window&&) = delete;
 };
+
+Window::OptionSet operator|(const Window::Option& lhs,
+                            const Window::Option& rhs);
+
+Window::OptionSet operator|(Window::OptionSet&& lhs, const Window::Option& rhs);
 
 }  // namespace sdlxx::core
 

@@ -72,16 +72,16 @@ public:
      * @brief Major revision (increments with massive changes, additions, and
      * enhancements)
      */
-    const uint8_t major_version;
+    uint8_t major_version;
     /**
      * @brief Minor revision (increments with backwards-compatible changes to
      * the major revision)
      */
-    const uint8_t minor_version;
+    uint8_t minor_version;
     /**
      * @brief Patchlevel (increments with fixes to the minor revision)
      */
-    const uint8_t patch_version;
+    uint8_t patch_version;
 
     /**
      * @brief Construct a new Version object
@@ -114,7 +114,7 @@ public:
      */
     static Version getLinkedSdlVersion();
 
-    // TODO: operator< and others
+    // TODO: operator< and other meaningful operators
   };
 
   /**
@@ -274,19 +274,15 @@ private:
   static bool initialized;
 
   // Deleted copy constructor
-  // This class is not copyable
   SDLXX_core(const SDLXX_core& other) = delete;
 
-  // Deleted assignment operator
-  // This class is not copyable
+  // Deleted copy assignment operator
   SDLXX_core& operator=(const SDLXX_core& other) = delete;
 
   // Deleted move constructor
-  // This class is not movable
   SDLXX_core(SDLXX_core&& other) = delete;
 
   // Deleted move assignment operator
-  // This class is not movable
   SDLXX_core& operator=(SDLXX_core&& other) = delete;
 };
 

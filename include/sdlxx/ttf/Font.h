@@ -12,7 +12,7 @@
 #include <string>
 
 #include <sdlxx/core/Color.h>
-#include <sdlxx/core/Surface.h>
+#include <sdlxx/ttf/Text.h>
 
 namespace sdlxx::ttf {
 
@@ -21,7 +21,7 @@ namespace sdlxx::ttf {
  */
 class Font {
 public:
-  enum { TTF_MODE_SOLID, TTF_MODE_SHADED, TTF_MODE_BLENDED };
+  enum class Mode { SOLID, SHADED, BLENDED };
 
   /**
    * @brief Open a font file and create a Font of the specified point size.
@@ -38,12 +38,12 @@ public:
 
   ~Font();
 
-  sdlxx::core::Surface render(
-      const std::string& text, int mode, const sdlxx::core::Color& color,
+  Text render(
+      const std::string& text, Mode mode, const sdlxx::core::Color& color,
       const sdlxx::core::Color& bg = sdlxx::core::Color(0x00000000)) const;
 
-  sdlxx::core::Surface render(
-      wchar_t ch, int mode, const sdlxx::core::Color& color,
+  Text render(
+      wchar_t ch, Mode mode, const sdlxx::core::Color& color,
       const sdlxx::core::Color& bg = sdlxx::core::Color(0x00000000)) const;
 
   // TODO: Open font by file descriptor

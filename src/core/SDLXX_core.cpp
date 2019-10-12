@@ -2,6 +2,7 @@
 #include <sstream>
 #include <system_error>
 #include <unordered_set>
+#include <type_traits>
 
 #include <SDL.h>
 #include <SDL_hints.h>
@@ -27,15 +28,20 @@ SDLXX_core::Version SDLXX_core::Version::getLinkedSdlVersion() {
   return {linked.major, linked.minor, linked.patch};
 }
 
+// Convert options into bit mask
+template <typename Flag>
+Uint32 getFlagsMask(const std::unordered_set<Flag>& flags) {
+  return std::accumulate(
+      flags.begin(), flags.end(), 0, [](Uint32 flags, const Flag& flag) {
+        return flags | static_cast<std::underlying_type_t<Flag>>(flag);
+      });
+}
+
 SDLXX_core::SDLXX_core(const std::unordered_set<Subsystem>& subsystems) {
   if (initialized) {
     throw std::runtime_error("SDLXX is already initialized");
   }
-  Uint32 flags =
-      std::accumulate(subsystems.begin(), subsystems.end(), 0,
-                      [](Uint32 flags, const Subsystem& subsystem) {
-                        return flags | static_cast<uint32_t>(subsystem);
-                      });
+  Uint32 flags = getFlagsMask(subsystems);
   int return_code = SDL_Init(flags);
   if (return_code != 0) {
     throw std::system_error(

@@ -4,54 +4,55 @@
 using namespace sdlxx::core;
 using namespace sdlxx::gui;
 
-Scene::~Scene() {
-  if (intent != nullptr) {
-    delete intent;
+void Scene::update(uint32_t t, uint32_t dt) {}
+
+void Scene::render(Renderer& renderer) {}
+
+bool Scene::handleEvent(const Event& e) { return false; }
+
+Scene::State Scene::getState() const { return state; }
+
+void Scene::onCreate() {}
+
+void Scene::onStart() {}
+
+void Scene::onResume() {}
+
+void Scene::onPause() {}
+
+void Scene::onStop() {}
+
+void Scene::onDestroy() {}
+
+void Scene::launch(std::shared_ptr<Scene> intent) {
+  this->intent = move(intent);
+}
+
+void Scene::finish() {
+  switch (state) {
+    case State::RESUMED:
+      onPause();
+      this->state = State::PAUSED;
+    case State::STARTED:
+    case State::PAUSED:
+      onStop();
+      this->state = State::STOPPED;
+    case State::CREATED:
+    case State::STOPPED:
+      onDestroy();
+      this->state = State::DESTROYED;
+    case State::DESTROYED:
+      break;
   }
+  finished = true;
 }
 
-Scene::Scene(const std::string& t) {
-  initialized = false;
-  paused = false;
-  finished = false;  ///< If the scene was cleaned up and needs to be destroyed
-  intent = nullptr;
-  title = t;
-}
-
-void Scene::runIntent(Scene* newIntent) {
-  Log::info("[" + title + "] Running intent");
-  if (intent != nullptr) {
-    delete intent;
-  }
-  intent = newIntent;
-}
-
-void Scene::finish() { setFinished(true); }
-
-bool Scene::hasIntent() const { return intent != nullptr; }
-
-const std::string& Scene::getTitle() const { return title; }
-
-bool Scene::isInitialized() const { return initialized; }
+bool Scene::hasIntent() const { return bool(intent); }
 
 bool Scene::isFinished() const { return finished; }
 
-bool Scene::isPaused() const { return paused; }
+std::shared_ptr<sdlxx::core::Window> Scene::getWindow() const { return window; }
 
-void Scene::setInitialized(bool state) {
-  Log::info("[" + title + "] Initialized: " + std::to_string(state));
-  initialized = state;
-}
-
-void Scene::setFinished(bool state) {
-  Log::info("[" + title + "] Finished: " + std::to_string(state));
-  finished = state;
-}
-
-void Scene::setPaused(bool state) { paused = state; }
-
-Scene* Scene::getIntent() {
-  Scene* runner = intent;
-  intent = nullptr;
-  return runner;
+void Scene::setWindow(std::shared_ptr<Window> window) {
+  this->window = move(window);
 }

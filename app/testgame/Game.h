@@ -15,7 +15,6 @@
 using namespace sdlxx::core;
 using namespace sdlxx::gui;
 using namespace sdlxx::image;
-using namespace sdlxx::ttf;
 
 const float SCALE = 30.f;
 const float DEG = 57.29577f;
@@ -45,7 +44,7 @@ public:
         //groundBody->SetUserData(&staticBoxName);
     }*/
 
-    void onCreate(Window &w) override;
+    void onCreate() override;
 
     void onDestroy() override;
 
@@ -94,13 +93,13 @@ public:
             }
         }*/
 
-    void handleEvent(const Event &e) override;
+    bool handleEvent(const sdlxx::core::Event &e) override;
 
-    void update(Uint32 t, Uint32 dt) override;
+    void update(uint32_t t, uint32_t dt) override;
 
-    void render(const std::shared_ptr<sdlxx::core::Renderer> &renderer) override;
+    void render(sdlxx::core::Renderer& renderer) override;
 
-    void renderBox(const std::shared_ptr<sdlxx::core::Renderer> &renderer, b2Body *boxBody);
+    void renderBox(sdlxx::core::Renderer& renderer, b2Body *boxBody);
 
 
         /*for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();

@@ -1,8 +1,11 @@
 #include <sdlxx/gui/Button.h>
 #include <sdlxx/core/Log.h>
+#include <sdlxx/ttf/Font.h>
+#include <sdlxx/core/Texture.h>
 
 using namespace sdlxx::core;
 using namespace sdlxx::gui;
+using namespace sdlxx::ttf;
 
 Button::Button(int x, int y, int width, int height) {
   Point t = {x, y};
@@ -59,11 +62,11 @@ bool Button::handleEvent(const Event &e) {
     }
 }
 
-void Button::update(Uint32 t, Uint32 dt, const Point &windowPoint) {
-    windowDim = {windowPoint.x, windowPoint.y};
+void Button::update(Uint32 t, Uint32 dt) {
+    windowDim = {640, 480};
 }
 
-void Button::render(const std::shared_ptr<Renderer>& renderer) {
+void Button::render(Renderer& renderer) {
     int w = (int) (relDim.x * windowDim.x / 100.0f) + absDim.x;
     int h = (int) (relDim.y * windowDim.y / 100.0f) + absDim.y;
     SDL_Rect fillRect = {
@@ -73,18 +76,19 @@ void Button::render(const std::shared_ptr<Renderer>& renderer) {
             (int) (relDim.y * windowDim.y / 100.0f) + absDim.y
     };
 
-    renderer->setColor(mouseOver ? Color(0xFF8888FF) : Color(0xCCCCCCFF));
-    renderer->fillRect({fillRect.x, fillRect.y, fillRect.w, fillRect.h});
+    renderer.setColor(mouseOver ? Color(0xFF8888FF) : Color(0xCCCCCCFF));
+    renderer.fillRectangle({fillRect.x, fillRect.y, fillRect.w, fillRect.h});
+
+    Dimensions textSize = textTexture->getDimensions();
 
     SDL_Rect fillRect2 = {
-            (int) (relPos.x * windowDim.x / 100.0f) + absPos.x + (w - textTexture->getWidth()) / 2,
-            (int) (relPos.y * windowDim.y / 100.0f) + absPos.y + (h - textTexture->getHeight()) / 2,
-            textTexture->getWidth(),
-            textTexture->getHeight()
-
+            (int) (relPos.x * windowDim.x / 100.0f) + absPos.x + (w - textSize.width) / 2,
+            (int) (relPos.y * windowDim.y / 100.0f) + absPos.y + (h - textSize.height) / 2,
+            textSize.width,
+            textSize.height
     };
 
-    renderer->renderCopy(*textTexture, {fillRect2.x, fillRect2.y, fillRect2.w, fillRect2.h});
+    renderer.copy(*textTexture, std::nullopt, std::make_optional<Rectangle>(fillRect2.x, fillRect2.y, fillRect2.w, fillRect2.h));
 }
 
 void Button::setText(const std::string &text, const std::shared_ptr<Renderer>& renderer) {
@@ -92,5 +96,7 @@ void Button::setText(const std::string &text, const std::shared_ptr<Renderer>& r
     if (textTexture != nullptr) {
         delete textTexture;
     }
-    textTexture = new Texture(text, Color(), sdlxx::ttf::Font("resources/OpenSans.ttf", 16), renderer);
+    Font font("resources/OpenSans.ttf", 16);
+    Text surface = font.render(text, Font::Mode::BLENDED, Color::black);
+    textTexture = new Texture(renderer, surface);
 }

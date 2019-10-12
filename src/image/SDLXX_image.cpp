@@ -1,46 +1,53 @@
-#include <sstream>
+#include <system_error>
+#include <type_traits>
+#include <numeric>
+
+#include <SDL_image.h>
 #include <sdlxx/image/SDLXX_image.h>
-#include <sdlxx/core/Log.h>
 
-std::mutex sdlxx::image::SDL_image::mutex;
+using namespace sdlxx::core;
+using namespace sdlxx::image;
 
-bool sdlxx::image::SDL_image::initialized = false;
+SDLXX_image::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
+    : SDLXX_core::Version::Version(major, minor, patch) {}
 
-sdlxx::image::SDL_image::SDL_image(Uint32 flags) {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::info("Initializing SDL_image system...");
-#endif
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        if(initialized) {
-            throw std::runtime_error("SDL_image already initialized");
-        }
-        int initted = IMG_Init(flags);
-        if((initted & flags) != flags) {
-            throw std::runtime_error("Unable to initialize SDL_image" + std::string(IMG_GetError()));
-        }
-        initialized = true;
-    }
-#ifndef SDLXX_RELEASE
-    SDL_version compiled;
-    const SDL_version *linked = IMG_Linked_Version();
-    SDL_IMAGE_VERSION(&compiled);
-    std::stringstream compiledString, linkedString;
-    compiledString << "Compiled against SDL_image v" << (int) compiled.major
-                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
-    linkedString << "Linked against SDL_image v" << (int) linked->major
-                 << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    sdlxx::core::Log::info(compiledString.str());
-    sdlxx::core::Log::info(linkedString.str());
-    sdlxx::core::Log::newline();
-#endif
+SDLXX_image::Version SDLXX_image::Version::getCompiledSdlImageVersion() {
+  SDL_version compiled;
+  SDL_IMAGE_VERSION(&compiled);
+  return {compiled.major, compiled.minor, compiled.patch};
 }
 
-sdlxx::image::SDL_image::~SDL_image() {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::info("Cleaning up SDL tmx_image system...");
-#endif
-    std::lock_guard<std::mutex> lock(mutex);
-    IMG_Quit();
-    initialized = false;
+SDLXX_image::Version SDLXX_image::Version::getLinkedSdlImageVersion() {
+  const SDL_version* linked = IMG_Linked_Version();
+  return {linked->major, linked->minor, linked->patch};
+}
+
+// Convert options into bit mask
+template <typename Mask = Uint32, typename Flag>
+Mask getFlagsMask(const std::unordered_set<Flag>& flags) {
+  return std::accumulate(
+      flags.begin(), flags.end(), 0, [](Mask flags, const Flag& flag) {
+        return flags | static_cast<std::underlying_type_t<Flag>>(flag);
+      });
+}
+
+bool SDLXX_image::initialized = false;
+
+SDLXX_image::SDLXX_image(const std::unordered_set<Subsystem>& subsystems) {
+  if (initialized) {
+    throw std::runtime_error("SDLXX_image is already initialized");
+  }
+  int flags = getFlagsMask<int>(subsystems);
+  int return_code = IMG_Init(flags);
+  if (return_code != flags) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to initialize SDL_image: " + std::string(IMG_GetError()));
+  }
+  initialized = true;
+}
+
+SDLXX_image::~SDLXX_image() {
+  IMG_Quit();
+  initialized = false;
 }

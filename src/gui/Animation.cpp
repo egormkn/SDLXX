@@ -1,4 +1,4 @@
-#include <sdlxx/core/Animation.h>
+#include <sdlxx/gui/Animation.h>
 
 /*sdlxx::core::Animation::Animation(sdlxx::core::Texture *texture, std::vector<Fragments> &fragments) {
     ourTexture = texture;

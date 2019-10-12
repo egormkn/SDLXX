@@ -1,51 +1,42 @@
-#include <SDL_timer.h>
-#include <sdlxx/core/Log.h>
-#include <sdlxx/gui/SceneManager.h>
 #include <memory>
+
+#include <sdlxx/core/Log.h>
+#include <sdlxx/core/Timer.h>
+#include <sdlxx/gui/SceneManager.h>
 
 using namespace sdlxx::core;
 using namespace sdlxx::gui;
 
-void SceneManager::push(std::shared_ptr<Scene> s) { scenes.push(s); }
+void SceneManager::push(std::shared_ptr<Scene> s) { scenes.push(move(s)); }
 
 void SceneManager::pop() { scenes.pop(); }
 
 void SceneManager::clear() {
   while (!scenes.empty()) {
     std::shared_ptr<Scene> scene = scenes.top();
-    if (scene->isInitialized()) {
-      scene->setFinished(true);
-      scene->setInitialized(false);
-      scene->onDestroy();
-    }
+    scene->finish(); // Is it needed? If yes, we should update the window
     scenes.pop();
   }
 }
 
-void SceneManager::run(sdlxx::core::Window& window) {
-  Uint32 t = 0, dt = 10, accumulator = 0;
-  Uint32 currentTime = SDL_GetTicks();
+void SceneManager::run(std::shared_ptr<Window> window) {
+  uint32_t t = 0, dt = 10, accumulator = 0;
+  uint32_t currentTime = Timer::getTicks();
 
-  Event e;
   // State previous, current;
 
   while (scenes.size() > 0) {
-    Uint32 newTime = SDL_GetTicks();
-    Uint32 frameTime = std::min(newTime - currentTime, (Uint32)250);
+    uint32_t newTime = Timer::getTicks();
+    uint32_t frameTime = std::min<uint32_t>(newTime - currentTime, 250);
     currentTime = newTime;
 
     std::shared_ptr<Scene> currentScene = scenes.top();
+    currentScene->window = window;
 
     if (currentScene->isFinished()) {
-      std::shared_ptr<Scene> intent = nullptr;
-      if (currentScene->hasIntent()) {
-        intent = std::shared_ptr<Scene>(currentScene->getIntent());
-      }
-      currentScene->setInitialized(false);
-      currentScene->onDestroy();
-      // delete currentScene;
+      std::shared_ptr<Scene> intent = currentScene->intent;
       scenes.pop();
-      if (intent != nullptr) {
+      if (intent) {
         scenes.push(intent);
       }
       continue;
@@ -53,24 +44,34 @@ void SceneManager::run(sdlxx::core::Window& window) {
 
     if (currentScene->hasIntent()) {
       Log::info("[MANAGER] Pushing new intent");
-      currentScene->setInitialized(false);
-      currentScene->setFinished(false);
-      currentScene->onDestroy();
-      scenes.push(std::shared_ptr<Scene>(currentScene->getIntent()));
+      currentScene->finish();
+      scenes.push(currentScene->intent);
+      currentScene->intent.reset();
       continue;
     }
 
-    if (!currentScene->isInitialized()) {
-      currentScene->onCreate(window);
-      currentScene->setInitialized(true);
-      currentScene->setFinished(false);
+    switch (currentScene->state) {
+      case Scene::State::DESTROYED:
+        currentScene->onCreate();
+        currentScene->state = Scene::State::CREATED;
+      case Scene::State::CREATED:
+      case Scene::State::STOPPED:
+        currentScene->onStart();
+        currentScene->state = Scene::State::STARTED;
+      case Scene::State::STARTED:
+      case Scene::State::PAUSED:
+        currentScene->onResume();
+        currentScene->state = Scene::State::RESUMED;
+      case Scene::State::RESUMED:
+        break;
     }
 
-    while (Events::inQueue()) {
-      e = Events::poll().value();
+    std::optional<Event> event;
+    while (event = Events::poll()) {
+      Event e = event.value();
       if (e.type == SDL_QUIT) {
         clear();  // FIXME: Do we really need to quit?
-      } else if (!currentScene->isFinished()) {
+      } else if (currentScene->getState() == Scene::State::RESUMED) {
         currentScene->handleEvent(e);
       }
     }
@@ -84,7 +85,7 @@ void SceneManager::run(sdlxx::core::Window& window) {
     while (accumulator >= dt) {
       // previous = current;
       // integrate( current, t, dt );
-      if (!currentScene->isFinished()) {
+      if (currentScene->getState() == Scene::State::RESUMED) {
         currentScene->update(t, dt);
       }
       t += dt;
@@ -99,9 +100,10 @@ void SceneManager::run(sdlxx::core::Window& window) {
     // state.x = current.x * alpha + previous.x * (1 - alpha);
     // state.v = current.v * alpha + previous.v * (1 - alpha);
     // render( state );
-    if (!currentScene->isFinished()) {
-      const std::shared_ptr<sdlxx::core::Renderer> renderer = window.getRenderer();
-      currentScene->render(renderer);
+    if (currentScene->getState() == Scene::State::RESUMED) {
+      const std::shared_ptr<sdlxx::core::Renderer> renderer =
+          window->getRenderer();
+      currentScene->render(*renderer);
     }
   }
 }

@@ -1,7 +1,7 @@
 /**
  * @file SDLXX_ttf.h
  * @author Egor Makarenko
- * @brief Class that represents SDLXX ttf object that initializes the font API
+ * @brief Class that represents SDLXX object that initializes the font API
  */
 
 #pragma once
@@ -14,7 +14,7 @@
 namespace sdlxx::ttf {
 
 /**
- * @brief Class that represents SDLXX ttf object that initializes the font API
+ * @brief Class that represents SDLXX object that initializes the font API
  */
 class SDLXX_ttf {
 public:

@@ -4,13 +4,15 @@
 
 #include "Game.h"
 #include "Box2DDrawer.h"
+#include <sdlxx/core/Log.h>
+#include <sdlxx/image/Image.h>
 
-Game::Game(const std::string &title) : Scene(title) {
-    Log::info("[" + getTitle() + "] Scene constructed");
+Game::Game(const std::string &title) {
+    Log::info("[GAME] Scene constructed");
 }
 
 Game::~Game() {
-    Log::info("[" + getTitle() + "] Scene destructed");
+    Log::info("[GAME] Scene destructed");
 }
 
 void Game::setStaticBox(int x, int y, float w, float h) {
@@ -24,15 +26,14 @@ void Game::setStaticBox(int x, int y, float w, float h) {
     //groundBody->SetUserData(&staticBoxName);
 }
 
-void Game::onCreate(Window &w) {
-    Log::info("[" + getTitle() + "] Scene created");
-    window = &w;
+void Game::onCreate() {
+    Log::info("[GAME] Scene created");
 
     b2Vec2 gravity(0.0f, 9.8f);
     world = std::make_unique<b2World>(gravity);
-    drawer = new Box2DDrawer(window->getRenderer(), 30.f);
+    /*drawer = new Box2DDrawer(window->getRenderer(), 30.f);
     drawer->SetFlags(0xFF);
-    world->SetDebugDraw(drawer);
+    world->SetDebugDraw(drawer);*/
 
     map2 = new TMX_map();
     map2->init("resources/map2.tmx");
@@ -45,8 +46,10 @@ void Game::onCreate(Window &w) {
          tileset != map2->tmx_tilesets.end(); ++tileset) {
         if (!tileset->tmx_image.source.empty()) {
             int raw = tileset->tilecount / tileset->columns;
-            textures.push_back(new Texture(tileset->tmx_image.source, w.getRenderer(), tileset->tilewidth,
-                                           tileset->tileheight));
+            Image img(tileset->tmx_image.source);
+            textures.push_back(new Texture(getWindow()->getRenderer(),
+                                           img /*tileset->tilewidth,
+                                           tileset->tileheight*/));
             std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
             for (int i = 0; i < raw; ++i) {
                 for (int j = 0; j < tileset->columns; ++j) {
@@ -67,11 +70,14 @@ void Game::onCreate(Window &w) {
         } else {
             for (std::vector<TMX_tile>::const_iterator tile = tileset->tmx_tiles.begin();
                  tile != tileset->tmx_tiles.end(); ++tile) {
-                textures.push_back(new Texture(tile->tmx_image.source, w.getRenderer(), tile->tmx_image.width,
-                                               tile->tmx_image.height));
-                textureHolders.push_back(
-                        TextureHolder(textures[textures.size() - 1], {0, 0, tile->width, tile->height},
-                                      tile->tmx_objectgroup.tmx_objects));
+              Image img(tile->tmx_image.source);
+              textures.push_back(new Texture(getWindow()->getRenderer(), img
+                                             /*tile->tmx_image.width,
+                                             tile->tmx_image.height*/));
+              textureHolders.push_back(
+                  TextureHolder(textures[textures.size() - 1],
+                                {0, 0, tile->width, tile->height},
+                                tile->tmx_objectgroup.tmx_objects));
             }
         }
     }
@@ -133,13 +139,13 @@ void Game::onCreate(Window &w) {
 
     circleBody->CreateFixture(&circleShape, 2);*/
 
-
-    image = new Texture("resources/Downloads/Level/Objects/Box.png", w.getRenderer(), TILE_WIDTH,
-                        TILE_HEIGHT);
+    Image img("resources/Downloads/Level/Objects/Box.png");
+    image = new Texture(getWindow()->getRenderer(), img);
+    // TILE_WIDTH, TILE_HEIGHT);
 }
 
 void Game::onDestroy() {
-    Log::info("[" + getTitle() + "] Scene destroyed");
+    Log::info("[GAME] Scene destroyed");
     // Free resources
 
 
@@ -166,16 +172,18 @@ void Game::onDestroy() {
 }
 
 void Game::onPause() {
-    // Save state
-    // After: setPaused(true);
+  Log::info("Game paused");
+  // Save state
+  // After: setPaused(true);
 }
 
 void Game::onResume() {
+  Log::info("Game resumed");
     // Restore state
     // After: setPaused(false);
 }
 
-void Game::handleEvent(const Event &e) {
+bool Game::handleEvent(const Event &e) {
     if (e.type == SDL_KEYDOWN) {
         if (e.key.keysym.sym == SDLK_ESCAPE) {
             finish();
@@ -213,15 +221,16 @@ void Game::handleEvent(const Event &e) {
             }
         }
     }
+    return true;
 }
 
-void Game::update(Uint32 t, Uint32 dt) {
+void Game::update(uint32_t t, uint32_t dt) {
     world->Step(((float32) dt) / 1000.0f, 6, 2);
 }
 
-void Game::render(const std::shared_ptr<sdlxx::core::Renderer> &renderer) {
-    renderer->setColor(Color(0xFFFFFFFF));
-    renderer->clear();
+void Game::render(sdlxx::core::Renderer& renderer) {
+    renderer.setColor(Color(0xFFFFFFFF));
+    renderer.clear();
     Dimensions dimensions = window->getSize();
     SCREEN_WIDTH = dimensions.width;
     SCREEN_HEIGHT = dimensions.height;
@@ -258,8 +267,19 @@ void Game::render(const std::shared_ptr<sdlxx::core::Renderer> &renderer) {
                 if (vec[i][j] != 0) {
                     SDL_Rect rect = {j * TILE_WIDTH - camera.x, i * TILE_HEIGHT - camera.y, TILE_WIDTH,
                                      TILE_HEIGHT};
-                    textureHolders[vec[i][j] - 1].texture->render(static_cast<SDL_Renderer*>(renderer->renderer_ptr),
-                                                                  &textureHolders[vec[i][j] - 1].rect, &rect);
+                    renderer.copy(*textureHolders[vec[i][j] - 1].texture,
+                                  std::make_optional<Rectangle>(
+                                    textureHolders[vec[i][j] - 1].rect.x,
+                                    textureHolders[vec[i][j] - 1].rect.y,
+                                    textureHolders[vec[i][j] - 1].rect.w,
+                                    textureHolders[vec[i][j] - 1].rect.h
+                                  ),
+                                  std::make_optional<Rectangle>(
+                                    rect.x,
+                                    rect.y,
+                                    rect.w,
+                                    rect.h
+                                  ));
                 }
             }
         }
@@ -283,10 +303,10 @@ void Game::render(const std::shared_ptr<sdlxx::core::Renderer> &renderer) {
 
     //world->DrawDebugData();
     /**/
-    renderer->render();
+    renderer.render();
 }
 
-void Game::renderBox(const std::shared_ptr<sdlxx::core::Renderer> &renderer, b2Body *boxBody) {
+void Game::renderBox(sdlxx::core::Renderer& renderer, b2Body *boxBody) {
     b2Vec2 pos = boxBody->GetPosition();
     float angle = boxBody->GetAngle();
     const b2PolygonShape *shape = (b2PolygonShape *) boxBody->GetFixtureList()->GetShape();
@@ -300,7 +320,10 @@ void Game::renderBox(const std::shared_ptr<sdlxx::core::Renderer> &renderer, b2B
 
 
     //SDL_Point point = {(int) shape->m_vertices[2].x, (int) shape->m_vertices[2].y};
-    image->render(static_cast<SDL_Renderer*>(renderer->renderer_ptr), nullptr, &renderQuad, angle * DEG);
+    renderer.copy(*image, std::nullopt,
+                  std::make_optional<Rectangle>(
+                      renderQuad.x, renderQuad.y, renderQuad.w, renderQuad.h),
+                  angle * DEG);
 }
 
 void Game::renderPlayer(Renderer &renderer, b2Body *boxBody) {

@@ -7,6 +7,7 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS
 
 # Add source files
 set(SOURCE_LIST
+    Image.cpp
     SDLXX_image.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
