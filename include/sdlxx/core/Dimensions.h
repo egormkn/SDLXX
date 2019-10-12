@@ -22,13 +22,13 @@ public:
    * @param width Width of a 2D object
    * @param height Height of a 2D object
    */
-  Dimensions(unsigned width, unsigned height);
+  Dimensions(int width, int height);
 
   /// Width of a 2D object
-  unsigned width;
+  int width;
 
   /// Height of a 2D object
-  unsigned height;
+  int height;
 };
 
 }  // namespace sdlxx::core
