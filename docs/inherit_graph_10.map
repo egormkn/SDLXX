@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classsdlxx_1_1core_1_1Surface.html" title="Class that represents a collection of pixels used in software blitting. " alt="" coords="5,31,144,57"/>
+<area shape="rect" id="node2" href="$classsdlxx_1_1image_1_1Image.html" title="Class that represents a surface loaded from an image. " alt="" coords="192,5,332,32"/>
+<area shape="rect" id="node3" href="$classsdlxx_1_1ttf_1_1Text.html" title="Class that represents a surface with rendered text. " alt="" coords="209,56,315,83"/>
+</map>

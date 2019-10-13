@@ -55,7 +55,7 @@ public:
    * @param width The width of the texture in pixels.
    * @param height The height of the texture in pixels.
    * @param format The format of the texture.
-   * @param access One of the enumerated values in ::Access.
+   * @param access One of the enumerated values in Texture::Access.
    *
    * @throw if no rendering context is active, the format is unsupported, or
    * the width or height are out of range.

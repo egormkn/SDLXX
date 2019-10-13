@@ -1,0 +1,9 @@
+<map id="sdlxx/gui/Object.h" name="sdlxx/gui/Object.h">
+<area shape="rect" id="node3" href="$Events_8h.html" title="Class that allows to work with events. " alt="" coords="132,80,271,107"/>
+<area shape="rect" id="node7" href="$Point_8h.html" title="Class that represents the dimensions of a 2D object. " alt="" coords="411,229,538,256"/>
+<area shape="rect" id="node8" href="$Renderer_8h.html" title="Class that describes a 2D rendering context. " alt="" coords="634,80,785,107"/>
+<area shape="rect" id="node11" href="$Color_8h.html" title="Class that represents a color. " alt="" coords="428,155,556,181"/>
+<area shape="rect" id="node13" href="$Rectangle_8h.html" title="Class that represents a rectangle with the origin at the upper left. " alt="" coords="631,155,787,181"/>
+<area shape="rect" id="node15" href="$Texture_8h.html" title="Class that represents a texture in an efficient driver&#45;specific way. " alt="" coords="812,155,953,181"/>
+<area shape="rect" id="node14" href="$Dimensions_8h.html" title="sdlxx/core/Dimensions.h" alt="" coords="641,229,807,256"/>
+</map>
