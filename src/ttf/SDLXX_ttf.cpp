@@ -1,24 +1,25 @@
+#include <memory>
 #include <system_error>
 
 #include <SDL_ttf.h>
+#include <sdlxx/core/Version.h>
 #include <sdlxx/ttf/SDLXX_ttf.h>
 
 using namespace sdlxx::core;
 using namespace sdlxx::ttf;
 
-SDLXX_ttf::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
-    : SDLXX_core::Version::Version(major, minor, patch) {}
-
-SDLXX_ttf::Version SDLXX_ttf::Version::getCompiledSdlTtfVersion() {
+Version SDLXX_ttf::getCompiledSdlVersion() {
   SDL_version compiled;
   SDL_TTF_VERSION(&compiled);
   return {compiled.major, compiled.minor, compiled.patch};
 }
 
-SDLXX_ttf::Version SDLXX_ttf::Version::getLinkedSdlTtfVersion() {
-  const SDL_version* linked = TTF_Linked_Version();
+Version SDLXX_ttf::getLinkedSdlVersion() {
+  std::unique_ptr<const SDL_version> linked(TTF_Linked_Version());
   return {linked->major, linked->minor, linked->patch};
 }
+
+bool SDLXX_ttf::initialized = false;
 
 SDLXX_ttf::SDLXX_ttf() {
   if (SDLXX_ttf::wasInit()) {
@@ -30,8 +31,12 @@ SDLXX_ttf::SDLXX_ttf() {
         return_code, std::generic_category(),
         "Unable to initialize SDLXX_ttf: " + std::string(TTF_GetError()));
   }
+  initialized = true;
+}
+
+SDLXX_ttf::~SDLXX_ttf() {
+  TTF_Quit();
+  initialized = false;
 }
 
 bool SDLXX_ttf::wasInit() { return TTF_WasInit(); }
-
-SDLXX_ttf::~SDLXX_ttf() { TTF_Quit(); }

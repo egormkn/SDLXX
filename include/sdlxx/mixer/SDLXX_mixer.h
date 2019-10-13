@@ -1,42 +1,100 @@
+/**
+ * @file SDLXX_mixer.h
+ * @author Egor Makarenko
+ * @brief Class that represents SDLXX object that initializes the audio API
+ */
+
+#pragma once
+
 #ifndef SDLXX_MIXER_H
 #define SDLXX_MIXER_H
 
-#include <mutex>
+#include <cstdint>
+#include <unordered_set>
 
-#include <SDL_mixer.h>
+namespace sdlxx::core {
+
+// Forward declaration of Version class
+class Version;
+
+}  // namespace sdlxx::core
 
 namespace sdlxx::mixer {
-    class SDL_mixer {
-    public:
-        // Init SDL_mixer
-        SDL_mixer(Uint32 flags);
 
-        // Quit SDL_mixer
-        ~SDL_mixer();
+/**
+ * @brief Class that represents SDLXX object that initializes the audio API
+ */
+class SDLXX_mixer {
+public:
+  /**
+   * @brief Get the SDL_mixer version the library was compiled against
+   *
+   * This is determined by what header the compiler used. Note that if you
+   * dynamically linked the library, you might have a slightly newer or older
+   * version at runtime. That version can be determined with
+   * SDLXX_mixer::getLinkedSdlVersion()
+   *
+   * @return Version Version of SDL_mixer the library was compiled against
+   */
+  static sdlxx::core::Version getCompiledSdlVersion();
 
-    private:
-        // Mutex that allows only one instance of class
-        static std::mutex mutex;
+  /**
+   * @brief Get the SDL_mixer version the library was linked against
+   *
+   * If you are linking to SDL_mixer dynamically, then it is possible that the
+   * current version will be different than the version you compiled against.
+   *
+   * @return Version Version of SDL_mixer the library was linked against
+   */
+  static sdlxx::core::Version getLinkedSdlVersion();
 
-        // Initialization status
-        static bool initialized;
+  /**
+   * @brief An enumeration of library subsystems
+   */
+  enum class Subsystem : int32_t {
+    FLAC = 0x00000001,
+    MOD = 0x00000002,
+    MP3 = 0x00000008,
+    OGG = 0x00000010,
+    MID = 0x00000020,
+    OPUS = 0x00000040
+  };
 
-        // Deleted copy constructor
-        // This class is not copyable
-        SDL_mixer(const SDL_mixer &other) = delete;
+  /**
+   * @brief Construct a new SDLXX_mixer object that initializes the specified
+   *        Subsystems of the library
+   *
+   * @param subsystems Subsystems that should be initialized
+   */
+  explicit SDLXX_mixer(const std::unordered_set<Subsystem>& subsystems = {});
 
-        // Deleted assignment operator
-        // This class is not copyable
-        SDL_mixer &operator=(const SDL_mixer &other) = delete;
+  /**
+   * @brief Destroy the SDLXX_mixer object cleaning up all initialized
+   * subsystems.
+   *
+   * @note You should call this function upon all exit conditions.
+   */
+  ~SDLXX_mixer();
 
-        // Deleted move constructor
-        // This class is not movable
-        SDL_mixer(SDL_mixer &&other) = delete;
+  // TODO: initSubsystem/quitSubsystem/wasInit methods
 
-        // Deleted move assignment operator
-        // This class is not movable
-        SDL_mixer &operator=(SDL_mixer &&other) = delete;
-    };
-}
+private:
+  // Initialization status
+  static bool initialized;
 
-#endif // SDLXX_MIXER_H
+  // Deleted copy constructor
+  SDLXX_mixer(const SDLXX_mixer& other) = delete;
+
+  // Deleted copy assignment operator
+  SDLXX_mixer& operator=(const SDLXX_mixer& other) = delete;
+
+  // Deleted move constructor
+  SDLXX_mixer(SDLXX_mixer&& other) = delete;
+
+  // Deleted move assignment operator
+  SDLXX_mixer& operator=(SDLXX_mixer&& other) = delete;
+};
+
+}  // namespace sdlxx::mixer
+
+#endif  // SDLXX_MIXER_H

@@ -1,66 +1,52 @@
-#include <sstream>
+#include <memory>
+#include <numeric>
+#include <system_error>
+#include <type_traits>
+
+#include <SDL_mixer.h>
+#include <sdlxx/core/Version.h>
 #include <sdlxx/mixer/SDLXX_mixer.h>
-#include <sdlxx/core/Log.h>
 
-std::mutex sdlxx::mixer::SDL_mixer::mutex;
+using namespace sdlxx::core;
+using namespace sdlxx::mixer;
 
-bool sdlxx::mixer::SDL_mixer::initialized = false;
-
-sdlxx::mixer::SDL_mixer::SDL_mixer(Uint32 flags) {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::info("Initializing SDL audio mix system...");
-#endif
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        if(initialized) {
-            throw std::runtime_error("SDL_mixer already initialized");
-        }
-        if((Mix_Init(flags) & flags) != flags) {
-            throw std::runtime_error("Unable to initialize SDL_mixer" + std::string(Mix_GetError()));
-        }
-        initialized = true;
-    }
-#ifndef SDLXX_RELEASE
-    SDL_version compiled;
-    const SDL_version *linked = Mix_Linked_Version();
-    SDL_MIXER_VERSION(&compiled);
-    std::stringstream compiledString, linkedString;
-    compiledString << "Compiled against SDL_mixer v" << (int) compiled.major
-                   << '.' << (int) compiled.minor << '.' << (int) compiled.patch;
-    linkedString << "Linked against SDL_mixer v" << (int) linked->major
-                 << '.' << (int) linked->minor << '.' << (int) linked->patch;
-    sdlxx::core::Log::info(compiledString.str());
-    sdlxx::core::Log::info(linkedString.str());
-    sdlxx::core::Log::newline();
-#endif
+// Convert options into bit mask
+template <typename Mask = uint32_t, typename Flag>
+Mask getFlagsMask(const std::unordered_set<Flag>& flags) {
+  return std::accumulate(
+      flags.begin(), flags.end(), 0, [](Mask flags, const Flag& flag) {
+        return flags | static_cast<std::underlying_type_t<Flag>>(flag);
+      });
 }
 
-sdlxx::mixer::SDL_mixer::~SDL_mixer() {
-#ifndef SDLXX_RELEASE
-    sdlxx::core::Log::info("Cleaning up SDL audio mix system...");
-#endif
-    std::lock_guard<std::mutex> lock(mutex);
-    Mix_Quit();
-    initialized = false;
+Version SDLXX_mixer::getCompiledSdlVersion() {
+  SDL_version compiled;
+  SDL_MIXER_VERSION(&compiled);
+  return {compiled.major, compiled.minor, compiled.patch};
 }
 
-/*
-    if (-1 == Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, // audio rate
-							MIX_DEFAULT_FORMAT,    // format
-							2,                     // channels
-							4096))                 // buffers
-	{
-		Log::warning("Mix_OpenAudio: Couldn't start Audio");
-		Log::warning(Mix_GetError());
-	}
+Version SDLXX_mixer::getLinkedSdlVersion() {
+  std::unique_ptr<const SDL_version> linked(Mix_Linked_Version());
+  return {linked->major, linked->minor, linked->patch};
+}
 
-	// Reserving 16 channels (meaning 16 simultaneous SFXs playing)
-	Mix_AllocateChannels(16);
+bool SDLXX_mixer::initialized = false;
 
+SDLXX_mixer::SDLXX_mixer(const std::unordered_set<Subsystem>& subsystems) {
+  if (initialized) {
+    throw std::runtime_error("SDLXX_mixer was already initialized");
+  }
+  int flags = getFlagsMask<int>(subsystems);
+  int return_code = Mix_Init(flags);
+  if (return_code != flags) {
+    throw std::system_error(
+        return_code, std::generic_category(),
+        "Unable to initialize SDL_mixer: " + std::string(Mix_GetError()));
+  }
+  initialized = true;
+}
 
-
-    // Destructor:
-    Mix_AllocateChannels(0); // Frees all allocated channels
-    //Mix_Quit(); segmentation fault! why?
-	Mix_CloseAudio();
- */
+SDLXX_mixer::~SDLXX_mixer() {
+  Mix_Quit();
+  initialized = false;
+}

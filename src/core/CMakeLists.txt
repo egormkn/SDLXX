@@ -18,6 +18,7 @@ set(SOURCE_LIST
     Surface.cpp
     Texture.cpp
     Timer.cpp
+    Version.cpp
     Window.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting

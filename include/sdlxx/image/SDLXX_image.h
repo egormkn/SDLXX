@@ -9,7 +9,15 @@
 #ifndef SDLXX_IMAGE_H
 #define SDLXX_IMAGE_H
 
-#include <sdlxx/core/SDLXX_core.h>
+#include <cstdint>
+#include <unordered_set>
+
+namespace sdlxx::core {
+
+// Forward declaration of Version class
+class Version;
+
+}  // namespace sdlxx::core
 
 namespace sdlxx::image {
 
@@ -19,36 +27,26 @@ namespace sdlxx::image {
 class SDLXX_image {
 public:
   /**
-   * @copydoc sdlxx::core::SDLXX_core::Version
+   * @brief Get the SDL_image version the library was compiled against
+   *
+   * This is determined by what header the compiler used. Note that if you
+   * dynamically linked the library, you might have a slightly newer or older
+   * version at runtime. That version can be determined with
+   * SDLXX_image::getLinkedSdlVersion()
+   *
+   * @return Version Version of SDL_image the library was compiled against
    */
-  class Version : public sdlxx::core::SDLXX_core::Version {
-    /**
-     * @copydoc sdlxx::core::SDLXX_core::Version::Version
-     */
-    Version(uint8_t major, uint8_t minor, uint8_t patch);
+  static sdlxx::core::Version getCompiledSdlVersion();
 
-    /**
-     * @brief Get the SDL_image version the SDLXX library was compiled against
-     *
-     * This is determined by what header the compiler used. Note that if you
-     * dynamically linked the library, you might have a slightly newer or older
-     * version at runtime. That version can be determined with
-     * SDLXX_image::Version::getLinkedSdlImageVersion()
-     *
-     * @return Version Version of SDL_image the library was compiled against
-     */
-    static Version getCompiledSdlImageVersion();
-
-    /**
-     * @brief Get the SDL_image version the SDLXX library was linked against
-     *
-     * If you are linking to SDL_image dynamically, then it is possible that the
-     * current version will be different than the version you compiled against.
-     *
-     * @return Version Version of SDL_image the library was linked against
-     */
-    static Version getLinkedSdlImageVersion();
-  };
+  /**
+   * @brief Get the SDL_image version the library was linked against
+   *
+   * If you are linking to SDL_image dynamically, then it is possible that the
+   * current version will be different than the version you compiled against.
+   *
+   * @return Version Version of SDL_image the library was linked against
+   */
+  static sdlxx::core::Version getLinkedSdlVersion();
 
   /**
    * @brief An enumeration of library subsystems
@@ -60,13 +58,23 @@ public:
     WEBP = 0x00000008
   };
 
-  // Init SDL_image
+  /**
+   * @brief Construct the SDLXX_image object that initializes the specified
+   *        Subsystems of the library
+   *
+   * @param subsystems Subsystems that should be initialized
+   */
   explicit SDLXX_image(const std::unordered_set<Subsystem>& subsystems = {});
 
-  // Quit SDL_image
+  /**
+   * @brief Destroy the SDLXX_image object cleaning up all initialized
+   * subsystems.
+   *
+   * @note You should call this function upon all exit conditions.
+   */
   ~SDLXX_image();
 
-  // TODO: wasInit and other functions
+  // TODO: initSubsystem/quitSubsystem/wasInit methods
 
 private:
   // Initialization status
