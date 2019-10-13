@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12...3.15)
 
 # Project name and a few useful settings
 project(SDLXX VERSION 1.0.0
-              DESCRIPTION "Modern C++ binding for SDL"
+              DESCRIPTION "Modern C++17 wrapper for SDL"
               HOMEPAGE_URL "https://github.com/egormkn/SDLXX"
               LANGUAGES CXX)
 
@@ -46,7 +46,7 @@ if(MAIN_PROJECT)
     # Enable documentation if this is the main project
     find_package(Doxygen)
     if(Doxygen_FOUND)
-	    add_subdirectory(docs)
+        include(cmake/Doxygen.cmake)
     else()
 	    message(STATUS "Doxygen not found, not building docs")
     endif()

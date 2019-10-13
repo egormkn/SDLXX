@@ -1,0 +1,10 @@
+<map id="sdlxx/ttf/Text.h" name="sdlxx/ttf/Text.h">
+<area shape="rect" id="node3" href="$Surface_8h.html" title="Class that represents a collection of pixels used in software blitting. " alt="" coords="665,80,807,107"/>
+<area shape="rect" id="node4" href="$Dimensions_8h.html" title="sdlxx/core/Dimensions.h" alt="" coords="937,379,1103,405"/>
+<area shape="rect" id="node5" href="$Window_8h.html" title="Class that represents a graphical window. " alt="" coords="664,155,808,181"/>
+<area shape="rect" id="node9" href="$Point_8h.html" title="Class that represents the dimensions of a 2D object. " alt="" coords="786,379,913,405"/>
+<area shape="rect" id="node10" href="$Renderer_8h.html" title="Class that describes a 2D rendering context. " alt="" coords="419,229,570,256"/>
+<area shape="rect" id="node13" href="$Color_8h.html" title="Class that represents a color. " alt="" coords="221,304,349,331"/>
+<area shape="rect" id="node15" href="$Rectangle_8h.html" title="Class that represents a rectangle with the origin at the upper left. " alt="" coords="774,304,930,331"/>
+<area shape="rect" id="node16" href="$Texture_8h.html" title="Class that represents a texture in an efficient driver&#45;specific way. " alt="" coords="424,304,565,331"/>
+</map>
