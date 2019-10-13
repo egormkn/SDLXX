@@ -51,6 +51,8 @@ if(MAIN_PROJECT)
 	    message(STATUS "Doxygen not found, not building docs")
     endif()
 
+    option(ENABLE_LINTING "Enable code analysis tools" OFF)
+
     if(ENABLE_LINTING)
         # Enable clang-tidy linter if this is the main project
         find_program(CLANG_TIDY
