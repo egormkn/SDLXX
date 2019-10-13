@@ -1,47 +1,45 @@
 #include <numeric>
 #include <sstream>
 #include <system_error>
-#include <unordered_set>
 #include <type_traits>
+#include <unordered_set>
 
 #include <SDL.h>
 #include <SDL_hints.h>
 #include <SDL_version.h>
 #include <sdlxx/core/SDLXX_core.h>
+#include <sdlxx/core/Version.h>
 
 using namespace sdlxx::core;
 
+// Convert options into bit mask
+template <typename Mask = uint32_t, typename Flag>
+Mask getFlagsMask(const std::unordered_set<Flag>& flags) {
+  return std::accumulate(
+      flags.begin(), flags.end(), 0, [](Mask flags, const Flag& flag) {
+        return flags | static_cast<std::underlying_type_t<Flag>>(flag);
+      });
+}
+
 bool SDLXX_core::initialized = false;
 
-SDLXX_core::Version::Version(uint8_t major, uint8_t minor, uint8_t patch)
-    : major_version(major), minor_version(minor), patch_version(patch) {}
-
-SDLXX_core::Version SDLXX_core::Version::getCompiledSdlVersion() {
+Version SDLXX_core::getCompiledSdlVersion() {
   SDL_version compiled;
   SDL_VERSION(&compiled);
   return {compiled.major, compiled.minor, compiled.patch};
 }
 
-SDLXX_core::Version SDLXX_core::Version::getLinkedSdlVersion() {
+Version SDLXX_core::getLinkedSdlVersion() {
   SDL_version linked;
   SDL_GetVersion(&linked);
   return {linked.major, linked.minor, linked.patch};
-}
-
-// Convert options into bit mask
-template <typename Flag>
-Uint32 getFlagsMask(const std::unordered_set<Flag>& flags) {
-  return std::accumulate(
-      flags.begin(), flags.end(), 0, [](Uint32 flags, const Flag& flag) {
-        return flags | static_cast<std::underlying_type_t<Flag>>(flag);
-      });
 }
 
 SDLXX_core::SDLXX_core(const std::unordered_set<Subsystem>& subsystems) {
   if (initialized) {
     throw std::runtime_error("SDLXX is already initialized");
   }
-  Uint32 flags = getFlagsMask(subsystems);
+  Uint32 flags = getFlagsMask<Uint32>(subsystems);
   int return_code = SDL_Init(flags);
   if (return_code != 0) {
     throw std::system_error(
@@ -66,12 +64,9 @@ void SDLXX_core::initSubsystem(const Subsystem& subsystem) {
   }
 }
 
-void SDLXX_core::initSubsystem(const std::unordered_set<Subsystem>& subsystems) {
-  Uint32 flags =
-      std::accumulate(subsystems.begin(), subsystems.end(), 0,
-                      [](Uint32 flags, const Subsystem& subsystem) {
-                        return flags | static_cast<uint32_t>(subsystem);
-                      });
+void SDLXX_core::initSubsystem(
+    const std::unordered_set<Subsystem>& subsystems) {
+  Uint32 flags = getFlagsMask<Uint32>(subsystems);
   int return_code = SDL_InitSubSystem(flags);
   if (return_code != 0) {
     throw std::system_error(
@@ -85,22 +80,15 @@ void SDLXX_core::quitSubsystem(const Subsystem& subsystem) {
   SDL_QuitSubSystem(flag);
 }
 
-void SDLXX_core::quitSubsystem(const std::unordered_set<Subsystem>& subsystems) {
-  Uint32 flags =
-      std::accumulate(subsystems.begin(), subsystems.end(), 0,
-                      [](Uint32 flags, const Subsystem& subsystem) {
-                        return flags | static_cast<uint32_t>(subsystem);
-                      });
+void SDLXX_core::quitSubsystem(
+    const std::unordered_set<Subsystem>& subsystems) {
+  Uint32 flags = getFlagsMask<Uint32>(subsystems);
   SDL_QuitSubSystem(flags);
 }
 
 std::unordered_set<SDLXX_core::Subsystem> SDLXX_core::wasInit(
     const std::unordered_set<Subsystem>& subsystems) const {
-  Uint32 flags =
-      std::accumulate(subsystems.begin(), subsystems.end(), 0,
-                      [](Uint32 flags, const Subsystem& subsystem) {
-                        return flags | static_cast<uint32_t>(subsystem);
-                      });
+  Uint32 flags = getFlagsMask<Uint32>(subsystems);
   Uint32 current = SDL_WasInit(flags);
   std::unordered_set<Subsystem> result;
   for (const Subsystem& s :
@@ -120,7 +108,7 @@ bool SDLXX_core::wasInit(const Subsystem& subsystem) const {
 }
 
 bool SDLXX_core::setHint(const std::string& name, const std::string& value,
-                    const HintPriority& priority) {
+                         const HintPriority& priority) {
   return SDL_SetHintWithPriority(name.c_str(), value.c_str(),
                                  static_cast<SDL_HintPriority>(priority));
 }

@@ -26,7 +26,7 @@ int main(int argc, char* args[]) {
         {SDLXX_core::Subsystem::VIDEO, SDLXX_core::Subsystem::EVENTS});
     SDLXX_image sdlxx_image(
         {SDLXX_image::Subsystem::PNG, SDLXX_image::Subsystem::JPG});
-    SDL_mixer sdl_mixer(0 /*MIX_INIT_FLAC | MIX_INIT_MP3 | MIX_INIT_OGG*/);
+    SDLXX_mixer sdlxx_mixer();
     SDLXX_net sdlxx_net;
     SDLXX_ttf sdlxx_ttf;
 

@@ -1,7 +1,7 @@
 /**
  * @file SDLXX_core.h
  * @author Egor Makarenko
- * @brief Class that represents SDLXX core object that initializes the video API
+ * @brief Class that represents SDLXX object that initializes the video API
  */
 
 #pragma once
@@ -15,11 +15,36 @@
 
 namespace sdlxx::core {
 
+// Forward declaration of Version class
+class Version;
+
 /**
- * @brief Class that represents SDLXX core object that initializes the video API
+ * @brief Class that represents SDLXX object that initializes the video API
  */
 class SDLXX_core {
 public:
+  /**
+   * @brief Get the SDL version the library was compiled against
+   *
+   * This is determined by what header the compiler used. Note that if you
+   * dynamically linked the library, you might have a slightly newer or older
+   * version at runtime. That version can be determined with
+   * SDLXX_core::getLinkedSdlVersion()
+   *
+   * @return Version Version of SDL the library was compiled against
+   */
+  static Version getCompiledSdlVersion();
+
+  /**
+   * @brief Get the version of SDL that is linked against the library
+   *
+   * If you are linking to SDL dynamically, then it is possible that the
+   * current version will be different than the version you compiled against.
+   *
+   * @return Version Version of SDL the library was linked against
+   */
+  static Version getLinkedSdlVersion();
+
   /**
    * @brief An enumeration of library subsystems
    */
@@ -59,66 +84,7 @@ public:
   };
 
   /**
-   * @brief Class that contains information about the version of the library
-   *
-   * Represents the library version as three levels: major revision
-   * (increments with massive changes, additions, and enhancements), minor
-   * revision (increments with backwards-compatible changes to the major
-   * revision), and patchlevel (increments with fixes to the minor revision).
-   */
-  class Version {
-  public:
-    /**
-     * @brief Major revision (increments with massive changes, additions, and
-     * enhancements)
-     */
-    uint8_t major_version;
-    /**
-     * @brief Minor revision (increments with backwards-compatible changes to
-     * the major revision)
-     */
-    uint8_t minor_version;
-    /**
-     * @brief Patchlevel (increments with fixes to the minor revision)
-     */
-    uint8_t patch_version;
-
-    /**
-     * @brief Construct a new Version object
-     *
-     * @param major Major revision
-     * @param minor Minor revision
-     * @param patch Patchlevel
-     */
-    Version(uint8_t major, uint8_t minor, uint8_t patch);
-
-    /**
-     * @brief Get the SDL version the library was compiled against
-     *
-     * This is determined by what header the compiler used. Note that if you
-     * dynamically linked the library, you might have a slightly newer or older
-     * version at runtime. That version can be determined with
-     * SDLXX_core::Version::getLinkedSdlVersion()
-     *
-     * @return Version Version of SDL the library was compiled against
-     */
-    static Version getCompiledSdlVersion();
-
-    /**
-     * @brief Get the version of SDL that is linked against the library
-     *
-     * If you are linking to SDL dynamically, then it is possible that the
-     * current version will be different than the version you compiled against.
-     *
-     * @return Version Version of SDL the library was linked against
-     */
-    static Version getLinkedSdlVersion();
-
-    // TODO: operator< and other meaningful operators
-  };
-
-  /**
-   * @brief Construct a new SDLXX core object that initializes the specified
+   * @brief Construct the SDLXX_core object that initializes the specified
    *        Subsystems of the library
    *
    * This object must be constructed before using most other library functions.
@@ -130,7 +96,7 @@ public:
   explicit SDLXX_core(const std::unordered_set<Subsystem>& subsystems = {});
 
   /**
-   * @brief Destroy the SDLXX core object cleaning up all initialized
+   * @brief Destroy the SDLXX_core object cleaning up all initialized
    * subsystems.
    *
    * @note You should call this function upon all exit conditions.
