@@ -1,5 +1,4 @@
 language: cpp
 script:
-  - mkdir build
-  - cmake -S . -B build
-  - cmake --build build
+  - cmake CMakeLists.txt
+  - mkdir build && cmake --build build
