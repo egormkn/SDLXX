@@ -22,6 +22,7 @@ addons:
     - libsdl2-ttf-dev
 
 script:
+  - PATH=/usr/local/bin:$PATH
   - gcc --version
   - cmake --version
   - git clone https://github.com/Microsoft/vcpkg.git vcpkg
