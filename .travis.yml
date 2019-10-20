@@ -15,6 +15,7 @@ addons:
     - gcc-7
     - g++-7
     - cmake
+    - ninja-build
     - libsdl2-dev
     - libsdl2-image-dev
     - libsdl2-mixer-dev
@@ -22,11 +23,13 @@ addons:
     - libsdl2-ttf-dev
 
 script:
+  - export PATH=/usr/local/bin:/usr/bin:$PATH
+  - echo $PATH
   - gcc --version
-  - PATH=/usr/local/bin:$PATH cmake --version
+  - cmake --version
   - git clone https://github.com/Microsoft/vcpkg.git vcpkg
   - cd vcpkg
-  - PATH=/usr/local/bin:$PATH CC=gcc-7 && CXX=g++-7 ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
+  - CC=gcc-7 && CXX=g++-7 ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
   - ./vcpkg integrate install
   - ./vcpkg install sdl2 sdl2-image[libjpeg-turbo] sdl2-mixer sdl2-net sdl2-ttf
   - cd ..
