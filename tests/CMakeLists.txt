@@ -1,3 +1,5 @@
+# FIXME: Write tests configuration
+
 # # Testing library
 # FetchContent_Declare(
 # catch2
