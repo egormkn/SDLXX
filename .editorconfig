@@ -17,6 +17,19 @@ trim_trailing_whitespace = true
 # Use UTF-8 charset
 charset = utf-8
 
-# Tab indentation for Makefile
+# Configuration for C/C++ files
+[*.{c,cc,cpp,cxx,h,hh,hpp,hxx}]
+# Use two spaces for indentation
+indent_size = 2
+
+# Configuration for CMake files
+[{CMakeLists.txt,*.cmake}]
+# Use four spaces for indentation
+indent_size = 4
+
+# Configuration for Makefiles
 [Makefile]
+# Use tab character for indentation
 indent_style = tab
+# Use four spaces for indentation
+indent_size = 4
