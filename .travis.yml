@@ -2,8 +2,24 @@
 
 language: cpp
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    update: true
+    packages:
+    - gcc-7
+    - g++-7
+    - cmake
+    - libsdl2-dev
+    - libsdl2-image-dev
+    - libsdl2-mixer-dev
+    - libsdl2-net-dev
+    - libsdl2-ttf-dev
+
 script:
   - mkdir build && cd build
   - cmake .. -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
 #  - ctest --output-on-failure
+# https://habr.com/ru/post/329264/
