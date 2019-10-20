@@ -1,0 +1,4 @@
+language: cpp
+script:
+  - cmake -S . -B build
+  - cmake --build build
