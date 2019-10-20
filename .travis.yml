@@ -18,8 +18,14 @@ addons:
     - libsdl2-ttf-dev
 
 script:
+  - git clone https://github.com/Microsoft/vcpkg.git vcpkg
+  - cd vcpkg
+  - CC=gcc-7 && CXX=g++-7 ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
+  - ./vcpkg integrate install
+  - ./vcpkg install sdl2 sdl2-image[libjpeg-turbo] sdl2-mixer sdl2-net sdl2-ttf
+  - cd ..
   - mkdir build && cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
   - cmake --build .
 #  - ctest --output-on-failure
 # https://habr.com/ru/post/329264/
