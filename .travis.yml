@@ -1,4 +1,9 @@
+# Configuration file for Travis CI
+
 language: cpp
+
 script:
-  - mkdir build && cd build && cmake ..
-  - cmake --build build
+  - mkdir build && cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake --build .
+#  - ctest --output-on-failure
