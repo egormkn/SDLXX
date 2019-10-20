@@ -22,12 +22,11 @@ addons:
     - libsdl2-ttf-dev
 
 script:
-  - PATH=/usr/local/bin:$PATH
   - gcc --version
-  - cmake --version
+  - PATH=/usr/local/bin:$PATH cmake --version
   - git clone https://github.com/Microsoft/vcpkg.git vcpkg
   - cd vcpkg
-  - CC=gcc-7 && CXX=g++-7 ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
+  - PATH=/usr/local/bin:$PATH CC=gcc-7 && CXX=g++-7 ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
   - ./vcpkg integrate install
   - ./vcpkg install sdl2 sdl2-image[libjpeg-turbo] sdl2-mixer sdl2-net sdl2-ttf
   - cd ..
