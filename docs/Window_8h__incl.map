@@ -1,8 +1,0 @@
-<map id="sdlxx/core/Window.h" name="sdlxx/core/Window.h">
-<area shape="rect" id="node6" href="$Dimensions_8h.html" title="sdlxx/core/Dimensions.h" alt="" coords="825,229,992,256"/>
-<area shape="rect" id="node7" href="$Point_8h.html" title="Class that represents the dimensions of a 2D object. " alt="" coords="675,229,801,256"/>
-<area shape="rect" id="node8" href="$Renderer_8h.html" title="Class that describes a 2D rendering context. " alt="" coords="316,80,467,107"/>
-<area shape="rect" id="node11" href="$Color_8h.html" title="Class that represents a color. " alt="" coords="378,155,506,181"/>
-<area shape="rect" id="node13" href="$Rectangle_8h.html" title="Class that represents a rectangle with the origin at the upper left. " alt="" coords="664,155,820,181"/>
-<area shape="rect" id="node14" href="$Texture_8h.html" title="Class that represents a texture in an efficient driver&#45;specific way. " alt="" coords="162,155,303,181"/>
-</map>

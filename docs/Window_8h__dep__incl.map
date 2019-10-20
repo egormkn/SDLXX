@@ -1,9 +1,0 @@
-<map id="sdlxx/core/Window.h" name="sdlxx/core/Window.h">
-<area shape="rect" id="node2" href="$Surface_8h.html" title="Class that represents a collection of pixels used in software blitting. " alt="" coords="9,80,152,107"/>
-<area shape="rect" id="node6" href="$Button_8h.html" title="sdlxx/gui/Button.h" alt="" coords="176,80,303,107"/>
-<area shape="rect" id="node7" href="$Scene_8h.html" title="Class that represents a 2D scene. " alt="" coords="327,80,453,107"/>
-<area shape="rect" id="node8" href="$SceneManager_8h.html" title="Class that represents a manager of graphical scenes. " alt="" coords="355,155,531,181"/>
-<area shape="rect" id="node3" href="$Image_8h.html" title="Class that represents a surface loaded from an image. " alt="" coords="5,155,148,181"/>
-<area shape="rect" id="node4" href="$Text_8h.html" title="Class that represents a surface with rendered text. " alt="" coords="172,155,283,181"/>
-<area shape="rect" id="node5" href="$Font_8h.html" title="Class that represents the TrueType font. " alt="" coords="172,229,283,256"/>
-</map>
