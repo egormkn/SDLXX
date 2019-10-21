@@ -2,38 +2,36 @@
 
 language: cpp
 
-dist: bionic
-
-addons:
-  apt:
-    sources:
-    - sourceline: "deb https://apt.kitware.com/ubuntu/ bionic main"
-      key_url: "https://apt.kitware.com/keys/kitware-archive-latest.asc"
-    update: true
-    packages:
-    - gcc-7
-    - g++-7
-    - cmake
-    - ninja-build
-#    - libsdl2-dev
-#    - libsdl2-image-dev
-#    - libsdl2-mixer-dev
-#    - libsdl2-net-dev
-#    - libsdl2-ttf-dev
-
-script:
-  - export PATH=/usr/local/bin:/usr/bin:$PATH
-  - echo $PATH
-  - gcc --version
-  - cmake --version
-  - git clone https://github.com/Microsoft/vcpkg.git vcpkg
-  - cd vcpkg
-  - CC=gcc-7 && CXX=g++-7 ./bootstrap-vcpkg.sh -useSystemBinaries -disableMetrics
-  - ./vcpkg integrate install
-  - ./vcpkg install sdl2 sdl2-image[libjpeg-turbo] sdl2-mixer sdl2-net sdl2-ttf tinyxml2 box2d nuklear
-  - cd ..
-  - mkdir build && cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
-  - cmake --build .
-#  - ctest --output-on-failure
-# https://habr.com/ru/post/329264/
+jobs:
+  include:
+    - os: linux
+      dist: bionic
+      addons:
+        apt:
+          sources:
+          - sourceline: "deb https://apt.kitware.com/ubuntu/ bionic main"
+            key_url: "https://apt.kitware.com/keys/kitware-archive-latest.asc"
+          update: true
+          packages:
+          - gcc-7
+          - g++-7
+          - cmake
+          - ninja-build
+          - libsdl2-dev
+          - libsdl2-image-dev
+          - libsdl2-mixer-dev
+          - libsdl2-net-dev
+          - libsdl2-ttf-dev
+      script: tools/scripts/build-linux.sh
+    - os: osx
+      addons:
+        homebrew:
+          packages:
+          - cmake
+          - ninja
+          update: true
+      script: tools/scripts/build-osx.sh
+    - os: windows
+      before_install:
+        - choco install cmake.install ninja
+      script: tools/scripts/build-windows.bat
