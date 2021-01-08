@@ -101,9 +101,7 @@ void SceneManager::run(std::shared_ptr<Window> window) {
     // state.v = current.v * alpha + previous.v * (1 - alpha);
     // render( state );
     if (currentScene->getState() == Scene::State::RESUMED) {
-      const std::shared_ptr<sdlxx::core::Renderer> renderer =
-          window->getRenderer();
-      currentScene->render(*renderer);
+      currentScene->render(*window->getRenderer());
     }
   }
 }
