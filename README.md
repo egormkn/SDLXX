@@ -53,4 +53,4 @@ Install IDE (VSCode or CLion preferred), Git, CMake 3.15+, vcpkg
 
 Copyright (C) 2019 Egor Makarenko
 
-This software is provided 'as-is', without any express or implied warranty. See our [LICENSE](LICENCE.md) file for more information.
+This software is provided 'as-is', without any express or implied warranty. See our [LICENSE](LICENSE) file for more information.
