@@ -18,7 +18,7 @@ set(SOURCE_LIST
 add_executable(SDLXX_game ${HEADER_LIST} ${SOURCE_LIST})
 
 # Add dependencies
-find_package(unofficial-box2d CONFIG REQUIRED)
+find_package(box2d CONFIG REQUIRED)
 target_link_libraries(SDLXX_game PRIVATE
     SDLXX_core
     SDLXX_gui
@@ -27,7 +27,7 @@ target_link_libraries(SDLXX_game PRIVATE
     SDLXX_image
     SDLXX_mixer
     TMX
-    unofficial::box2d::Box2D)
+    box2d::box2d)
 
 # Set C++ standard to C++17
 target_compile_features(SDLXX_game PRIVATE cxx_std_17)

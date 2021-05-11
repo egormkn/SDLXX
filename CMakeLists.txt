@@ -1,73 +1,83 @@
 # Range of supported CMake versions to pick up the best policies
-cmake_minimum_required(VERSION 3.12...3.15)
+cmake_minimum_required(VERSION 3.12...3.20)
+
+# Require out-of-source builds
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+  message(FATAL_ERROR
+          "You cannot build in a source directory.\n"
+          "Please use `cmake -H . -B build`.\n"
+          "NOTE: cmake will now create CMakeCache.txt and CMakeFiles/*.\n"
+          "      You must delete them, or cmake will refuse to work.")
+endif ()
 
 # Project name and some basic information
 project(SDLXX
-    VERSION 1.0.0
-    DESCRIPTION "Modern C++ wrapper for SDL"
-    HOMEPAGE_URL "https://github.com/egormkn/SDLXX"
-    LANGUAGES CXX)
+        VERSION 1.0.0
+        DESCRIPTION "Modern C++ wrapper for SDL"
+        HOMEPAGE_URL "https://github.com/egormkn/SDLXX"
+        LANGUAGES CXX)
 
 # Set directory for helper modules
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/tools/cmake")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-# Require out-of-source builds
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-    message(FATAL_ERROR "You cannot build in a source directory")
-endif()
+# Determine if project is built as the top level project or as a subproject
+if ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+  set(MAIN_PROJECT ON)
+else ()
+  set(MAIN_PROJECT OFF)
+endif ()
 
-# Determine if project is built as the main project or as a subproject
-set(MAIN_PROJECT OFF)
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    set(MAIN_PROJECT ON)
-endif()
+# If this is the top level project and not included through add_subdirectory
+if (MAIN_PROJECT)
+  message(STATUS "Building ${PROJECT_NAME} with CMake v${CMAKE_VERSION}")
 
-# If this is the main project and not included through add_subdirectory
-if(MAIN_PROJECT)
-    message(STATUS "Building ${PROJECT_NAME} with CMake v${CMAKE_VERSION}")
+  # Set C++ standard
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-    # Optionally set things like CMAKE_CXX_STANDARD or
-    # CMAKE_POSITION_INDEPENDENT_CODE here
+  # Disable compiler extensions (-std=c++xx instead of -std=g++xx)
+  set(CMAKE_CXX_EXTENSIONS OFF)
 
-    # Disable compiler extensions for better portability
-    set(CMAKE_CXX_EXTENSIONS OFF)
+  # Improve support of folders in some IDE's
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-    # Improve support of folders in IDE's
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+  # Declare options that enable examples, docs, tests and static checks
+  option(BUILD_EXAMPLES "Build examples" OFF)
+  option(BUILD_DOCS "Build documentation" OFF)
+  option(BUILD_TESTING "Build tests" OFF)
 
-    # Declare options that enable examples, docs, tests and static checks
-    option(SDLXX_BUILD_EXAMPLES "Build examples" OFF)
-    option(SDLXX_BUILD_DOCS "Build documentation" OFF)
-    option(SDLXX_BUILD_TESTS "Build tests" OFF)
-    option(SDLXX_ENABLE_CHECKS "Enable static analysis tools" OFF)
+  # Enable static and dynamic checks
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(ENABLE_WARNINGS ON)
+    set(ENABLE_CLANG_TIDY ON)
+    set(ENABLE_CPPCHECK ON)
+    set(ENABLE_CPPLINT ON)
+    set(ENABLE_IWYU ON)
+    set(ENABLE_LWYU ON)
+    set(ENABLE_STL_DEBUG_MODE ON)
+    # set(ENABLE_ADDRESS_SANITIZER ON)
+    set(ENABLE_UB_SANITIZER ON)
+  endif ()
 
-    # Enable static analysis tools
-    if(SDLXX_ENABLE_CHECKS)
-        include(StaticChecks)
-    endif()
-endif()
+  include(StaticChecks)
+  include(DynamicChecks)
+endif ()
 
-# Build library
+# Build sources
 add_subdirectory(src)
 
 # Build documentation if this is the main project
-if(MAIN_PROJECT AND SDLXX_BUILD_DOCS)
-    find_package(Doxygen)
-    if(DOXYGEN_FOUND)
-        add_subdirectory(docs)
-    else()
-        message(STATUS "Doxygen not found, not building docs")
-    endif()
-endif()
+if (MAIN_PROJECT AND BUILD_DOCS)
+  add_subdirectory(docs)
+endif ()
 
 # Build examples if this is the main project
-if(MAIN_PROJECT AND SDLXX_BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif()
+if (MAIN_PROJECT AND BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif ()
 
 # Build tests if this is the main project
-if(MAIN_PROJECT AND SDLXX_BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
-
+if (MAIN_PROJECT AND BUILD_TESTING)
+  enable_testing()
+  add_subdirectory(tests)
+endif ()

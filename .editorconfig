@@ -25,7 +25,7 @@ indent_size = 2
 # Configuration for CMake files
 [{CMakeLists.txt,*.cmake}]
 # Use four spaces for indentation
-indent_size = 4
+indent_size = 2
 
 # Configuration for Makefiles
 [Makefile]
