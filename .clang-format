@@ -22,8 +22,10 @@ IncludeCategories:
     Priority: 3
   - Regex:    '.*'
     Priority: 4
-SortIncludes: true
+SortIncludes: CaseSensitive
 
 # Disable tabs
 TabWidth: 2
 UseTab: Never
+
+ColumnLimit: 100

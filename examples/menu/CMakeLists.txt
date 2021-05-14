@@ -15,26 +15,29 @@ add_executable(menu ${HEADER_LIST} ${SOURCE_LIST})
 
 # Add dependencies
 find_package(box2d CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
 target_link_libraries(menu PRIVATE
-    SDLXX_core
-    SDLXX_gui
-    SDLXX_ttf
-    SDLXX_net
-    SDLXX_image
-    SDLXX_mixer
-    TMX
-    box2d::box2d)
+                      SDLXX_core
+                      SDLXX_gui
+                      SDLXX_ttf
+                      SDLXX_net
+                      SDLXX_image
+                      SDLXX_mixer
+                      TMX
+                      box2d::box2d)
 
 # Set C++ standard to C++17
 target_compile_features(menu PRIVATE cxx_std_17)
 
 # IDEs should put the headers in a nice place
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-    PREFIX "Header Files"
-    FILES ${HEADER_LIST})
+             PREFIX "Header Files"
+             FILES ${HEADER_LIST})
 
 # Copy assets to the build directory
 add_custom_command(TARGET menu POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/resources
-        $<TARGET_FILE_DIR:menu>/resources)
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_SOURCE_DIR}/data
+                   $<TARGET_FILE_DIR:menu>/resources)
+
+# file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resources)

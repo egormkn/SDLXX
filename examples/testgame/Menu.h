@@ -5,10 +5,10 @@
 
 #include <string>
 
-#include <sdlxx/core/Events.h>
-#include <sdlxx/core/Renderer.h>
-#include <sdlxx/gui/Scene.h>
+#include <sdlxx/core/events.h>
+#include <sdlxx/core/renderer.h>
 #include <sdlxx/gui/Button.h>
+#include <sdlxx/gui/Scene.h>
 
 class Menu : public sdlxx::gui::Scene {
 public:

@@ -23,7 +23,9 @@ find_package(sdl2-image CONFIG REQUIRED)
 target_link_libraries(SDLXX_image PRIVATE SDL2::SDL2_image)
 find_package(sdl2-ttf CONFIG REQUIRED)
 target_link_libraries(SDLXX_image PRIVATE SDL2::SDL2_ttf)
-target_link_libraries(SDLXX_image PRIVATE SDLXX_core)
+find_package(ZLIB REQUIRED)
+target_link_libraries(SDLXX_image PRIVATE SDLXX_core
+                      ZLIB::ZLIB)
 # /Add dependencies (TODO: Move to corresponding packages)
 
 # Set C++ standard to C++17

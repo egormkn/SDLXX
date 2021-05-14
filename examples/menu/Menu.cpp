@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-#include <sdlxx/core/Log.h>
+#include <sdlxx/core/log.h>
 #include <sdlxx/image/Image.h>
 
 using namespace std;
@@ -60,7 +60,7 @@ bool Menu::handleEvent(const Event& e) {
 }
 
 void Menu::update(uint32_t t, uint32_t dt) {
-  Dimensions dimensions = getWindow()->getSize();
+  Dimensions dimensions = getWindow()->GetSize();
   Point d = {dimensions.width, dimensions.height};
   runButton->update(t, dt);
   exitButton->update(t, dt);
@@ -72,8 +72,7 @@ void Menu::render(Renderer& renderer) {
 
   renderer.setColor(Color(0xFF000000));
   renderer.clear();
-  Rectangle clip(0, 0, getWindow()->getSize().width - 1,
-                 getWindow()->getSize().height - 1);
+  Rectangle clip(0, 0, getWindow()->GetSize().width - 1, getWindow()->GetSize().height - 1);
   renderer.copy(*background, std::make_optional(clip), std::nullopt);
 
   // background->fill(static_cast<SDL_Renderer*>(renderer.renderer_ptr),

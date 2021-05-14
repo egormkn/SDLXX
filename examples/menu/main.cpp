@@ -1,7 +1,7 @@
-#include <sdlxx/core/Log.h>
-#include <sdlxx/core/Renderer.h>
-#include <sdlxx/core/SDLXX_core.h>
-#include <sdlxx/core/Window.h>
+#include <sdlxx/core/log.h>
+#include <sdlxx/core/renderer.h>
+#include <sdlxx/core/sdlxx_core.h>
+#include <sdlxx/core/window.h>
 #include <sdlxx/gui/SceneManager.h>
 #include <sdlxx/image/SDLXX_image.h>
 #include <sdlxx/mixer/SDLXX_mixer.h>
@@ -30,11 +30,10 @@ int main(int argc, char* args[]) {
     SDLXX_net sdlxx_net;
     SDLXX_ttf sdlxx_ttf;
 
-    using WOption = Window::Option;
+    using Flag = Window::Flag;
 
     shared_ptr<Window> window = std::make_shared<Window>(
-        "The Game", 800, 600,
-        WOption::SHOWN | WOption::RESIZABLE | WOption::ALLOW_HIGHDPI);
+        "The Game", 800, 600, Flag::SHOWN | Flag::RESIZABLE | Flag::ALLOW_HIGHDPI);
 
     using ROption = Renderer::Option;
     shared_ptr<Renderer> renderer =

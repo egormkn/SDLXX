@@ -1,4 +1,4 @@
-#include <sdlxx/core/Log.h>
+#include <sdlxx/core/log.h>
 #include <sdlxx/gui/Scene.h>
 
 using namespace sdlxx::core;

@@ -1,6 +1,9 @@
 # SDLXX
 
-[![Build Status](https://travis-ci.com/egormkn/SDLXX.svg?branch=master)](https://travis-ci.com/egormkn/SDLXX)
+
+
+[![Build Status](
+https://travis-ci.com/egormkn/SDLXX.svg?branch=master)](https://travis-ci.com/egormkn/SDLXX)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/egormkn/SDLXX?branch=master&svg=true)](https://ci.appveyor.com/project/egormkn/SDLXX/branch/master)
 

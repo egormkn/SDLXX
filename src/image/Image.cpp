@@ -56,7 +56,7 @@ Texture::Texture(const std::string& text, const Color& color,
     throw std::runtime_error("Unable to create texture" +
                              std::string(SDL_GetError()));
   }
-  Dimensions d = surface.getSize();
+  Dimensions d = surface.GetSize();
   width = d.width;
   height = d.height;
 }

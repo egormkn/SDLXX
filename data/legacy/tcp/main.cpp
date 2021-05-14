@@ -1,12 +1,13 @@
 #include <iostream>
-#include <sstream>
-#include <vector>
-#include <thread>
 #include <mutex>
+#include <sstream>
+#include <thread>
+#include <vector>
+
+#include <sdlxx/core/log.h>
 
 #include "TCPClient.h"
 #include "TCPServer.h"
-#include <sdlxx/core/Log.h>
 
 TCPClient *client;
 TCPServer *server;

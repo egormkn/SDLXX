@@ -1,11 +1,12 @@
 #include "TCPClient.h"
-#include <iostream>
-#include <ostream>
-#include <memory>
-#include <fstream>
-#include <SDL_net.h>
-#include <sdlxx/core/Log.h>
 
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <ostream>
+
+#include <SDL_net.h>
+#include <sdlxx/core/log.h>
 
 TCPClient::TCPClient(const std::string &ip_, uint16_t port_) {
     ip = ip_;

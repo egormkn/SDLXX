@@ -4,6 +4,5 @@
         "ms-vscode.cmake-tools",
         "twxs.cmake",
         "editorconfig.editorconfig"
-    ],
-    "unwantedRecommendations": []
+    ]
 }

@@ -7,19 +7,21 @@ file(GLOB HEADER_LIST CONFIGURE_DEPENDS
 
 # Add source files
 set(SOURCE_LIST
-    Color.cpp
-    Dimensions.cpp
-    Events.cpp
-    Log.cpp
-    Point.cpp
-    Rectangle.cpp
-    Renderer.cpp
-    SDLXX_core.cpp
-    Surface.cpp
-    Texture.cpp
-    Timer.cpp
-    Version.cpp
-    Window.cpp)
+        color.cpp
+        dimensions.cpp
+        display.cpp
+        events.cpp
+        exception.cpp
+        log.cpp
+        point.cpp
+        rectangle.cpp
+        renderer.cpp
+        sdlxx_core.cpp
+        surface.cpp
+        texture.cpp
+        timer.cpp
+        version.cpp
+        window.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(SDLXX_core ${HEADER_LIST} ${SOURCE_LIST})

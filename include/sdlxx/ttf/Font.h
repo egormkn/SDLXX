@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include <sdlxx/core/Color.h>
+#include <sdlxx/core/color.h>
 #include <sdlxx/ttf/Text.h>
 
 namespace sdlxx::ttf {

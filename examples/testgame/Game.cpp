@@ -3,9 +3,11 @@
 //
 
 #include "Game.h"
-#include "Box2DDrawer.h"
-#include <sdlxx/core/Log.h>
+
+#include <sdlxx/core/log.h>
 #include <sdlxx/image/Image.h>
+
+#include "Box2DDrawer.h"
 
 Game::Game(const std::string &title) {
     Log::info("[GAME] Scene constructed");
@@ -125,7 +127,7 @@ void Game::onCreate() {
     body = world->CreateBody(&bodyDef);
 
     body->CreateFixture(&dynamicBox, 0.8);
-    body->SetUserData(&boxName);
+    body->GetUserData().pointer = reinterpret_cast<uintptr_t>(&boxName);
 
 
 
@@ -190,7 +192,7 @@ bool Game::handleEvent(const Event &e) {
         } else if (e.key.keysym.sym == SDLK_UP) {
             if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
-                    if(it->GetUserData() == &boxName) {
+                    if(reinterpret_cast<std::string*>(it->GetUserData().pointer) == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(0.f, -1000 / SCALE), body->GetWorldCenter(), true);
                     }
                 }
@@ -198,7 +200,7 @@ bool Game::handleEvent(const Event &e) {
         } else if (e.key.keysym.sym == SDLK_RIGHT) {
             if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
-                    if (it->GetUserData() == &boxName) {
+                    if (reinterpret_cast<std::string*>(it->GetUserData().pointer) == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(1000 / SCALE, 0.f), body->GetWorldCenter(), true);
                     }
                 }
@@ -206,7 +208,7 @@ bool Game::handleEvent(const Event &e) {
         } else if (e.key.keysym.sym == SDLK_LEFT) {
             if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
-                    if (it->GetUserData() == &boxName) {
+                    if (reinterpret_cast<std::string*>(it->GetUserData().pointer) == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(-1000 / SCALE, 0.f), body->GetWorldCenter(), true);
                     }
                 }
@@ -214,7 +216,7 @@ bool Game::handleEvent(const Event &e) {
         } else if (e.key.keysym.sym == SDLK_DOWN) {
             if (e.key.repeat == 0) {
                 for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
-                    if (it->GetUserData() == &boxName) {
+                    if (reinterpret_cast<std::string*>(it->GetUserData().pointer) == &boxName) {
                         it->ApplyLinearImpulse(b2Vec2(0.f, 1000 / SCALE), body->GetWorldCenter(), true);
                     }
                 }
@@ -225,21 +227,21 @@ bool Game::handleEvent(const Event &e) {
 }
 
 void Game::update(uint32_t t, uint32_t dt) {
-    world->Step(((float32) dt) / 1000.0f, 6, 2);
+    world->Step(((float) dt) / 1000.0f, 6, 2);
 }
 
 void Game::render(sdlxx::core::Renderer& renderer) {
     renderer.setColor(Color(0xFFFFFFFF));
     renderer.clear();
-    Dimensions dimensions = window->getSize();
+    Dimensions dimensions = window->GetSize();
     SCREEN_WIDTH = dimensions.width;
     SCREEN_HEIGHT = dimensions.height;
-    window->setTitle(std::to_string(SCREEN_WIDTH) + " " + std::to_string(SCREEN_HEIGHT));
+    window->SetTitle(std::to_string(SCREEN_WIDTH) + " " + std::to_string(SCREEN_HEIGHT));
 
     for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
-        if (it->GetUserData() == &boxName) {
-            window->setTitle(std::to_string(it->GetPosition().x * SCALE) + " " +
-                             std::to_string(it->GetPosition().y * SCALE));
+        if (reinterpret_cast<std::string*>(it->GetUserData().pointer) == &boxName) {
+          window->SetTitle(std::to_string(it->GetPosition().x * SCALE) + " " +
+                           std::to_string(it->GetPosition().y * SCALE));
             camera.x = (int) (it->GetPosition().x * SCALE - SCREEN_WIDTH / 2);
             camera.y = (int) (it->GetPosition().y * SCALE - SCREEN_HEIGHT / 2);
             if (camera.x < 0) {
@@ -256,7 +258,7 @@ void Game::render(sdlxx::core::Renderer& renderer) {
             }
         }
     }
-    //window->setTitle(std::to_string(camera.x) + " " + std::to_string(camera.y));
+    //window->SetTitle(std::to_string(camera.x) + " " + std::to_string(camera.y));
 
 
     for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();
@@ -286,9 +288,9 @@ void Game::render(sdlxx::core::Renderer& renderer) {
     }
 
     for (b2Body *it = world->GetBodyList(); it != 0; it = it->GetNext()) {
-        if (it->GetUserData() == &boxName) {
+        if (reinterpret_cast<std::string*>(it->GetUserData().pointer) == &boxName) {
             renderBox(renderer, it);
-        } else if (it->GetUserData() == &staticBoxName) {
+        } else if (reinterpret_cast<std::string*>(it->GetUserData().pointer) == &staticBoxName) {
             renderBox(renderer, it);
             /*b2Vec2 position = it->GetPosition();
 

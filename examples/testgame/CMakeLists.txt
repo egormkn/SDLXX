@@ -40,5 +40,5 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
 # Copy assets to the build directory
 add_custom_command(TARGET SDLXX_game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/resources
+        ${CMAKE_SOURCE_DIR}/data
         $<TARGET_FILE_DIR:SDLXX_game>/resources)

@@ -2,10 +2,11 @@
 #define SDLXX_TCPCLIENT_H
 
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
+
 #include <SDL_net.h>
-#include <sdlxx/core/Log.h>
+#include <sdlxx/core/log.h>
 
 /*
  * TCPClient

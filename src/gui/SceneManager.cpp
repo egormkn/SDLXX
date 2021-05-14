@@ -1,7 +1,7 @@
 #include <memory>
 
-#include <sdlxx/core/Log.h>
-#include <sdlxx/core/Timer.h>
+#include <sdlxx/core/log.h>
+#include <sdlxx/core/timer.h>
 #include <sdlxx/gui/SceneManager.h>
 
 using namespace sdlxx::core;
@@ -91,7 +91,7 @@ void SceneManager::run(std::shared_ptr<Window> window) {
       t += dt;
       accumulator -= dt;
       /*std::string str = "Game FPS: " + std::to_string((frameTime == 0 ? 0 :
-      (int) (1000.0 / frameTime))); window->setTitle(str);*/
+      (int) (1000.0 / frameTime))); window->SetTitle(str);*/
     }
 
     const Uint32 alpha = (Uint32)(accumulator / dt);

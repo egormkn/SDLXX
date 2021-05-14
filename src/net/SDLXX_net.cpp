@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include <SDL_net.h>
-#include <sdlxx/core/Version.h>
+#include <sdlxx/core/version.h>
 #include <sdlxx/net/SDLXX_net.h>
 
 using namespace sdlxx::core;

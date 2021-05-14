@@ -4,7 +4,7 @@
 #include <type_traits>
 
 #include <SDL_image.h>
-#include <sdlxx/core/Version.h>
+#include <sdlxx/core/version.h>
 #include <sdlxx/image/SDLXX_image.h>
 
 using namespace sdlxx::core;
@@ -12,7 +12,7 @@ using namespace sdlxx::image;
 
 // Convert options into bit mask
 template <typename Mask = uint32_t, typename Flag>
-Mask getFlagsMask(const std::unordered_set<Flag>& flags) {
+Mask GetFlagsMask(const std::unordered_set<Flag>& flags) {
   return std::accumulate(
       flags.begin(), flags.end(), 0, [](Mask flags, const Flag& flag) {
         return flags | static_cast<std::underlying_type_t<Flag>>(flag);
@@ -36,7 +36,7 @@ SDLXX_image::SDLXX_image(const std::unordered_set<Subsystem>& subsystems) {
   if (initialized) {
     throw std::runtime_error("SDLXX_image was already initialized");
   }
-  int flags = getFlagsMask<int>(subsystems);
+  int flags = GetFlagsMask<int>(subsystems);
   int return_code = IMG_Init(flags);
   if (return_code != flags) {
     throw std::system_error(

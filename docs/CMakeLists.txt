@@ -21,12 +21,11 @@ if(DOXYGEN_FOUND)
 
   # Add target for building documentation
   doxygen_add_docs(sdlxx_docs
-          "${PROJECT_SOURCE_DIR}/README.md"
-          "${PROJECT_SOURCE_DIR}/include"
-          # ALL
-          WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/include"
-          COMMENT "Documentation for ${PROJECT_NAME}"
-          )
+                   "${PROJECT_SOURCE_DIR}/README.md"
+                   "${PROJECT_SOURCE_DIR}/include"
+                   # ALL
+                   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/include"
+                   COMMENT "Documentation for ${PROJECT_NAME}")
 else()
   message(STATUS "Doxygen not found, not building documentation")
 endif()
