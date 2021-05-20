@@ -20,9 +20,8 @@
 */
 
 /**
- * \file window.h
- *
- * \brief A class that represents a graphical window.
+ * \file
+ * \brief Header for the Window class that represents a graphical window.
  */
 
 #pragma once
@@ -32,22 +31,32 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include <unordered_set>
 
 #include "sdlxx/core/dimensions.h"
 #include "sdlxx/core/display.h"
+#include "sdlxx/core/gl.h"
 #include "sdlxx/core/point.h"
-#include "sdlxx/core/renderer.h"
+#include "sdlxx/core/surface.h"
+
+// Declaration of the underlying type
+struct SDL_Window;
 
 namespace sdlxx::core {
 
-// class Surface;  // Forward declaration of a Surface class
+/**
+ * \brief A class for Window exceptions.
+ */
+class WindowException : public Exception {
+  using Exception::Exception;
+};
 
 /**
  * \brief A class that represents a graphical window.
+ *
+ * \upstream SDL_Window
  */
-class Window {  // See SDL_Window
+class Window {
 public:
   /**
    * \brief A type alias for the window ID.
@@ -56,8 +65,10 @@ public:
 
   /**
    * \brief An enumeration of window flags.
+   *
+   * \upstream SDL_WindowFlags
    */
-  enum class Flag : uint32_t {  // See SDL_WindowFlags
+  enum class Flag : uint32_t {
     FULLSCREEN = 0x00000001,    /**< fullscreen window */
     OPENGL = 0x00000002,        /**< window usable with OpenGL context */
     SHOWN = 0x00000004,         /**< window is visible */
@@ -73,7 +84,7 @@ public:
     FOREIGN = 0x00000800,       /**< window not created by SDL */
     ALLOW_HIGHDPI = 0x00002000, /**< window should be created in high-DPI mode if supported.
                                      On macOS NSHighResolutionCapable must be set true in the
-                                     application's Info.plist for this to have any effect. */
+                                     application's Driver.plist for this to have any effect. */
     MOUSE_CAPTURE = 0x00004000, /**< window has mouse captured (unrelated to INPUT_GRABBED) */
     ALWAYS_ON_TOP = 0x00008000, /**< window should always be above others */
     SKIP_TASKBAR = 0x00010000,  /**< window should not be added to the taskbar */
@@ -91,38 +102,42 @@ public:
 
   /**
    * \brief An enumeration of window events.
+   *
+   * \upstream SDL_WindowEventID
    */
-  enum class EventID {  // See SDL_WindowEventID
-    NONE,               /**< Never used */
-    SHOWN,              /**< Window has been shown */
-    HIDDEN,             /**< Window has been hidden */
-    EXPOSED,            /**< Window has been exposed and should be redrawn */
-    MOVED,              /**< Window has been moved to data1, data2 */
-    RESIZED,            /**< Window has been resized to data1 x data2 */
-    SIZE_CHANGED,       /**< The window size has changed, either as a result of an API call
-                             or through the system or user changing the window size. */
-    MINIMIZED,          /**< Window has been minimized */
-    MAXIMIZED,          /**< Window has been maximized */
-    RESTORED,           /**< Window has been restored to normal size and position */
-    ENTER,              /**< Window has gained mouse focus */
-    LEAVE,              /**< Window has lost mouse focus */
-    FOCUS_GAINED,       /**< Window has gained keyboard focus */
-    FOCUS_LOST,         /**< Window has lost keyboard focus */
-    CLOSE,              /**< The window manager requests that the window be closed */
-    TAKE_FOCUS,         /**< Window is being offered a focus (should SetWindowInputFocus() on itself
-                             or a subwindow, or ignore) */
-    HIT_TEST            /**< Window had a hit test that wasn't SDL_HITTEST_NORMAL. */
+  enum class EventID {
+    NONE,         /**< Never used */
+    SHOWN,        /**< Window has been shown */
+    HIDDEN,       /**< Window has been hidden */
+    EXPOSED,      /**< Window has been exposed and should be redrawn */
+    MOVED,        /**< Window has been moved to data1, data2 */
+    RESIZED,      /**< Window has been resized to data1 x data2 */
+    SIZE_CHANGED, /**< The window size has changed, either as a result of an API call
+                       or through the system or user changing the window size. */
+    MINIMIZED,    /**< Window has been minimized */
+    MAXIMIZED,    /**< Window has been maximized */
+    RESTORED,     /**< Window has been restored to normal size and position */
+    ENTER,        /**< Window has gained mouse focus */
+    LEAVE,        /**< Window has lost mouse focus */
+    FOCUS_GAINED, /**< Window has gained keyboard focus */
+    FOCUS_LOST,   /**< Window has lost keyboard focus */
+    CLOSE,        /**< The window manager requests that the window be closed */
+    TAKE_FOCUS,   /**< Window is being offered a focus (should SetWindowInputFocus() on itself
+                       or a subwindow, or ignore) */
+    HIT_TEST      /**< Window had a hit test that wasn't SDL_HITTEST_NORMAL. */
   };
 
   /**
    * \brief Window position that is a default position given by OS.
+   * \upstream SDL_WINDOWPOS_UNDEFINED
    */
-  static const int WINDOW_POS_UNDEFINED = 0x1FFF0000u;  // See SDL_WINDOWPOS_UNDEFINED
+  static const int WINDOW_POS_UNDEFINED = 0x1FFF0000u;
 
   /**
    * \brief Window position that specifies the center of the screen.
+   * \upstream SDL_WINDOWPOS_CENTERED
    */
-  static const int WINDOW_POS_CENTERED = 0x2FFF0000u;  // See SDL_WINDOWPOS_CENTERED
+  static const int WINDOW_POS_CENTERED = 0x2FFF0000u;
 
   /**
    * \brief Create a window with the specified position, dimensions, and flags.
@@ -130,31 +145,34 @@ public:
    * \param title The title of the window, in UTF-8 encoding.
    * \param width The width of the window, in screen coordinates.
    * \param height The height of the window, in screen coordinates.
-   * \param flags The set of window \ref Flags "flags".
+   * \param flags The set of window flags.
    * \param position_x The x position of the window, WINDOW_POS_CENTERED, or WINDOW_POS_UNDEFINED.
    * \param position_y The y position of the window, WINDOW_POS_CENTERED, or WINDOW_POS_UNDEFINED.
    *
-   * If the window is created with the \ref Flag::ALLOW_HIGHDPI flag, its size
+   * If the window is created with the Flag::ALLOW_HIGHDPI flag, its size
    * in pixels may differ from its size in screen coordinates on platforms with
-   * high-DPI support (e.g. iOS and Mac OS X). Use \ref GetSize() to query
-   * the client area's size in screen coordinates, and \ref GL::GetDrawableSize(),
-   * \ref Vulkan::GetDrawableSize(), or \ref Renderer::GetOutputSize() to query the
+   * high-DPI support (e.g. iOS and Mac OS X). Use GetSize() to query
+   * the client area's size in screen coordinates, and GL::Context::GetDrawableSize(),
+   * Vulkan::Context::GetDrawableSize(), or Renderer::GetOutputSize() to query the
    * drawable size in pixels.
    *
-   * If the window is created with any of the \ref Flag::OPENGL or
-   * \ref Flag::VULKAN flags, then the corresponding LoadLibrary function
-   * (\ref GL::LoadLibrary or \ref Vulkan::LoadLibrary) is called and the
-   * corresponding UnloadLibrary function is called by \ref ~Window().
+   * If the window is created with any of the Flag::OPENGL or Flag::VULKAN flags, then the
+   * corresponding LoadLibrary function (GL::LoadLibrary or Vulkan::LoadLibrary) is called and the
+   * corresponding UnloadLibrary function is called by ~Window().
    *
-   * If \ref Flag::VULKAN is specified and there isn't a working Vulkan driver,
-   * \ref Window() will fail because \ref Vulkan::LoadLibrary() will fail.
+   * If Flag::VULKAN is specified and there isn't a working Vulkan driver,
+   * Window() will fail because Vulkan::LoadLibrary() will fail.
    *
-   * If \ref Flag::METAL is specified on an OS that does not support Metal,
-   * \ref Window() will fail.
+   * If Flag::METAL is specified on an OS that does not support Metal,
+   * Window() will fail.
    *
    * \note On non-Apple devices, SDL requires you to either not link to the
    *       Vulkan loader or link to a dynamic library version. This limitation
    *       may be removed in a future version of SDL.
+   *
+   * \throw WindowException on error.
+   *
+   * \upstream SDL_CreateWindow
    */
   Window(const std::string& title, int width, int height, const Flags& flags = {},
          int position_x = WINDOW_POS_CENTERED, int position_y = WINDOW_POS_CENTERED);
@@ -164,13 +182,23 @@ public:
    *
    * \param data A pointer to driver-dependent window creation data,
    *             typically your native window cast to a void*
+   *
+   * \throw WindowException on error.
+   *
+   * \upstream SDL_CreateWindowFrom
    */
   explicit Window(const void* data);
 
   /**
-   * \brief Get an existing window by a stored Id.
+   * \brief Get an existing window from a stored Id.
+   *
+   * \throw WindowException on error.
    *
    * \param id The numeric Id of a window.
+   *
+   * \todo Check destructor
+   *
+   * \upstream SDL_GetWindowFromID
    */
   explicit Window(Id id);
 
@@ -178,6 +206,8 @@ public:
    * \brief Get the numeric Id of a window, for logging purposes.
    *
    * \return uint32_t The numeric Id of a window
+   *
+   * \upstream SDL_GetWindowID
    */
   Id GetId() const;
 
@@ -185,62 +215,68 @@ public:
    * \brief Get the window flags.
    *
    * \return Flags Set of window flags.
+   *
+   * \upstream SDL_GetWindowFlags
    */
   Flags GetFlags() const;
 
   /**
-   * \brief Destroy the window
-   */
-  ~Window();
-
-  /**
-   * \brief Get the display index associated with a window.
+   * \brief Get the display associated with a window.
    *
-   * \return the display index of the display containing the center of the
-   *          window.
+   * \return the display containing the center of the window.
+   *
    * \throws Exception on error
+   *
+   * \upstream SDL_GetWindowDisplayIndex
    */
   Display GetDisplay() const;
 
   /**
-   * \brief Set the display mode used when a fullscreen window is visible.
+   * \brief Set the display mode used when a fullscreen window is visible to a default display mode.
    *
-   * By default the window's dimensions and the desktop format and refresh rate
-   * are used.
+   * By default the window's dimensions and the desktop format and refresh rate are used.
    *
-   * \param mode The mode to use, or NULL for the default mode.
-   *
-   * \throws Exception when setting the display mode failed (-1).
+   * \throws WindowException when setting the display mode failed.
    *
    * \sa GetDisplayMode()
    * \sa SetFullscreen()
-   */
-  void SetDisplayMode(const Display::Mode& mode);
-
-  /**
-   * \brief Set the default display mode to be used when a fullscreen window is visible.
    *
-   * By default the window's dimensions and the desktop format and refresh rate
-   * are used.
-   *
-   * \throws Exception when setting the display mode failed (-1).
-   *
-   * \sa GetDisplayMode()
-   * \sa SetFullscreen()
+   * \upstream SDL_SetWindowDisplayMode
    */
   void SetDefaultDisplayMode();
 
   /**
-   *  \brief Get information about the display mode used when a fullscreen
-   *         window is visible.
+   * \brief Set the display mode used when a fullscreen window is visible.
    *
-   *  \sa SetDisplayMode()
-   *  \sa SetFullscreen()
+   * By default the window's dimensions and the desktop format and refresh rate are used.
+   *
+   * \param mode The mode to use.
+   *
+   * \throws WindowException when setting the display mode failed.
+   *
+   * \sa GetDisplayMode()
+   * \sa SetFullscreen()
+   *
+   * \upstream SDL_SetWindowDisplayMode
+   */
+  void SetDisplayMode(const Display::Mode& mode);
+
+  /**
+   * \brief Get information about the display mode used when a fullscreen window is visible.
+   *
+   * \sa SetDisplayMode()
+   * \sa SetFullscreen()
+   *
+   * \return Display mode that is used when a fullscreen window is visible.
+   *
+   * \upstream SDL_GetWindowDisplayMode
    */
   Display::Mode GetDisplayMode() const;
 
   /**
    *  \brief Get the pixel format associated with the window.
+   *
+   *  \upstream SDL_GetWindowPixelFormat
    */
   uint32_t GetPixelFormat() const;
 
@@ -248,6 +284,8 @@ public:
    * \brief Set the title of a window, in UTF-8 format.
    *
    * \param title The new window title.
+   *
+   * \upstream SDL_SetWindowTitle
    */
   void SetTitle(const std::string& title);
 
@@ -255,6 +293,8 @@ public:
    * \brief Get the title of a window, in UTF-8 format.
    *
    * \return std::string The window title.
+   *
+   * \upstream SDL_GetWindowTitle
    */
   std::string GetTitle() const;
 
@@ -262,8 +302,10 @@ public:
    * \brief Set the icon for a window.
    *
    * \param icon The icon for the window.
+   *
+   * \upstream SDL_SetWindowIcon
    */
-  void SetIcon(std::shared_ptr<Surface> icon);
+  void SetIcon(const Surface& icon);
 
   /**
    * \brief Associate an arbitrary named pointer with a window.
@@ -276,6 +318,8 @@ public:
    * \note The name is case-sensitive.
    *
    * \sa GetData()
+   *
+   * \upstream SDL_SetWindowData
    */
   void* SetData(const std::string& name, void* userdata);
 
@@ -287,6 +331,8 @@ public:
    * \return The value associated with 'name'
    *
    * \sa SetData()
+   *
+   * \upstream SDL_GetWindowData
    */
   void* GetData(const std::string& name) const;
 
@@ -294,13 +340,15 @@ public:
    * \brief Set the position of a window.
    *
    * \param position The X and Y coordinates of the window in screen coordinates,
-   *                 or \ref WINDOW_POS_CENTERED or \ref WINDOW_POS_UNDEFINED.
+   *                 or WINDOW_POS_CENTERED or WINDOW_POS_UNDEFINED.
    *
    * \note The window coordinate origin is the upper left corner of the display.
    *
    * \sa GetPosition()
+   *
+   * \upstream SDL_SetWindowPosition
    */
-  void SetPosition(const Point& position);
+  void SetPosition(Point position);
 
   /**
    * \brief Get the position of a window.
@@ -308,6 +356,8 @@ public:
    * \return Point The X and Y coordinates of the window, in screen coordinates.
    *
    * \sa SetPosition()
+   *
+   * \upstream SDL_GetWindowPosition
    */
   Point GetPosition() const;
 
@@ -317,29 +367,33 @@ public:
    * \param dimensions The width and height of the window, in screen coordinates. Must be >0.
    *
    * \note Fullscreen windows automatically match the size of the display mode,
-   *       and you should use \ref SetDisplayMode() to change their size.
+   *       and you should use SetDisplayMode() to change their size.
    *
    * The window size in screen coordinates may differ from the size in pixels, if
-   * the window was created with \ref Flag::ALLOW_HIGHDPI on a platform with
-   * high-dpi support (e.g. iOS or OS X). Use \ref GL::GetDrawableSize() or
-   * \ref Renderer::GetOutputSize() to get the real client area size in pixels.
+   * the window was created with Flag::ALLOW_HIGHDPI on a platform with
+   * high-dpi support (e.g. iOS or OS X). Use GL::Context::GetDrawableSize() or
+   * Renderer::GetOutputSize() to get the real client area size in pixels.
    *
    * \sa GetSize()
    * \sa SetDisplayMode()
+   *
+   * \upstream SDL_SetWindowSize
    */
   void SetSize(Dimensions dimensions);
 
   /**
    * \brief Get the size of a window's client area
    *
-   * \return Dimensions Window dimensions.
+   * \return Dimensions The width and height of the window, in screen coordinates.
    *
    * The window size in screen coordinates may differ from the size in pixels, if
-   * the window was created with \ref Flag::ALLOW_HIGHDPI on a platform with
-   * high-dpi support (e.g. iOS or OS X). Use \ref GL::GetDrawableSize() or
-   * \ref Renderer::GetOutputSize() to get the real client area size in pixels.
+   * the window was created with Flag::ALLOW_HIGHDPI on a platform with
+   * high-dpi support (e.g. iOS or OS X). Use GL::Context::GetDrawableSize() or
+   * Renderer::GetOutputSize() to get the real client area size in pixels.
    *
    * \sa SetSize()
+   *
+   * \upstream SDL_GetWindowSize
    */
   Dimensions GetSize() const;
 
@@ -354,9 +408,11 @@ public:
    * \brief Get the size of a window's borders (decorations) around the client area.
    *
    * \note if this function fails, the size values will be initialized to 0, 0, 0, 0,
-   *       as if the window in question was borderless.
+   *       as if the window was borderless.
+   *
+   * \upstream SDL_GetWindowBordersSize
    */
-  Borders GetBorders() const;
+  Borders GetBordersSize() const;
 
   /**
    * \brief Set the minimum size of a window's client area.
@@ -365,11 +421,17 @@ public:
    *
    * \note You can't change the minimum size of a fullscreen window, it
    *       automatically matches the size of the display mode.
+   *
+   * \upstream SDL_SetWindowMinimumSize
    */
   void SetMinimumSize(Dimensions dimensions);
 
   /**
    * \brief Get the minimum size of a window's client area.
+   *
+   * \return Dimensions The minimum width and height of the window.
+   *
+   * \upstream SDL_GetWindowMinimumSize
    */
   Dimensions GetMinimumSize() const;
 
@@ -380,139 +442,268 @@ public:
    *
    * \note You can't change the maximum size of a fullscreen window, it
    *       automatically matches the size of the display mode.
+   *
+   * \upstream SDL_SetWindowMaximumSize
    */
   void SetMaximumSize(Dimensions dimensions);
 
   /**
    * \brief Get the maximum size of a window's client area.
+   *
+   * \return Dimensions The maximum width and height of the window.
+   *
+   * \upstream SDL_GetWindowMaximumSize
    */
   Dimensions GetMaximumSize() const;
 
-  // TODO: Below
-
   /**
-   * @brief Set the border state of a window
+   * \brief Set the border state of a window
    *
-   * This will add or remove the window's BORDERLESS flag and add or remove the
+   * This will add or remove the window's Flag::BORDERLESS flag and add or remove the
    * border from the actual window. This is a no-op if the window's border
    * already matches the requested state.
    *
-   * @param bordered false to remove border, true to add border
-   *void setResizable(bool resizable)
-   * @note You can't change the border state of a fullscreen window
+   * \param is_bordered false to remove border, true to add border
+   *
+   * \note You can't change the border state of a fullscreen window
+   *
+   * \upstream SDL_SetWindowBordered
    */
-  void setBordered(bool bordered);
+  void SetBordered(bool is_bordered);
 
   /**
-   * @brief Set the user-resizable state of a window
+   * \brief Set the user-is_resizable state of a window
    *
-   * This will add or remove the window's RESIZABLE flag and allow/disallow user
-   * resizing of the window. This is a no-op if the window's resizable state
+   * This will add or remove the window's Flag::RESIZABLE flag and allow/disallow user
+   * resizing of the window. This is a no-op if the window's is_resizable state
    * already matches the requested state.
    *
-   * @param resizable true to allow resizing, false to disallow.
+   * \param is_resizable true to allow resizing, false to disallow.
    *
-   * @note You can't change the resizable state of a fullscreen window.
-   */
-  void setResizable(bool resizable);
-
-  /**
-   * @brief Show a window
-   */
-  void show();
-
-  /**
-   * @brief Hide a window
-   */
-  void hide();
-
-  /**
-   * @brief Raise a window above other windows and set the input focus
-   */
-  void raise();
-
-  /**
-   * @brief Make window as large as possible
-   */
-  void maximize();
-
-  /**
-   * @brief Minimize a window to an iconic representation
-   */
-  void minimize();
-
-  /**
-   * @brief Restore the size and position of a minimized or maximized window
-   */
-  void restore();
-
-  /**
-   * @brief Set a window's fullscreen state
+   * \note You can't change the is_resizable state of a fullscreen window.
    *
-   * @param options Window options
+   * \upstream SDL_SetWindowResizable
    */
-  void setFullscreen(const Flags& flags = {});
+  void SetResizable(bool is_resizable);
 
   /**
-   * @brief Get the surface associated with the window
+   * \brief Show a window
    *
-   * A new surface will be created with the optimal format for the window,
-   * if necessary. This surface will be freed when the window is destroyed.
-   *
-   * @note You may not combine this with 3D or the rendering API on this window
-   *
-   * @return std::shared_ptr<Surface> The window's framebuffer surface
+   * \upstream SDL_ShowWindow
    */
-  std::shared_ptr<Surface> getSurface();
+  void Show();
 
   /**
-   * @brief Copy the window surface to the screen
+   * \brief Hide a window
+   *
+   * \upstream SDL_HideWindow
    */
-  void updateSurface();
-
-  // TODO: window surface methods, set/get grab and other methods
+  void Hide();
 
   /**
-   * @brief Get the renderer associated with the window.
+   * \brief Raise a window above other windows and set the input focus
    *
-   * If no renderer is associated with the window, a new one will be created.
-   *
-   * @param driver The index of the rendering driver to initialize, or -1 to
-   * initialize the first one supporting the requested options.
-   * @param options The set of requested options
-   *
-   * @return Renderer The renderer that is associated with the window
+   * \upstream SDL_RaiseWindow
    */
-  std::shared_ptr<Renderer> getRenderer(int driver = -1,
-                                        const std::unordered_set<Renderer::Option>& options = {});
+  void Raise();
 
-private:
-  void* window_ptr = nullptr;
+  /**
+   * \brief Make window as large as possible
+   *
+   * \upstream SDL_MaximizeWindow
+   */
+  void Maximize();
 
+  /**
+   * \brief Minimize a window to an iconic representation
+   *
+   * \upstream SDL_MinimizeWindow
+   */
+  void Minimize();
+
+  /**
+   * \brief Restore the size and position of a minimized or maximized window
+   *
+   * \upstream SDL_RestoreWindow
+   */
+  void Restore();
+
+  /**
+   * \brief Set a window's fullscreen state to a "real" fullscreen with a videomode change
+   *
+   * \upstream SDL_SetWindowFullscreen
+   */
+  void SetFullscreen();
+
+  /**
+   * \brief Set a window's fullscreen state to a "fake" fullscreen that takes the size of the
+   * desktop
+   *
+   * \upstream SDL_SetWindowFullscreen
+   */
+  void SetFullscreenDesktop();
+
+  /**
+   * \brief Set a window's fullscreen state to a windowed mode.
+   *
+   * \upstream SDL_SetWindowFullscreen
+   */
+  void SetWindowed();
+
+  /**
+   * \brief Get the Surface associated with the window.
+   *
+   * A new surface will be created with the optimal format for the window, if necessary.
+   * This surface will be freed when the window is destroyed.
+   *
+   * \note You may not combine this with 3D or the rendering API on this window.
+   *
+   * \sa UpdateSurface()
+   * \sa UpdateSurfaceRectangles()
+   *
+   * \return Surface The window's framebuffer surface.
+   *
+   * \throw WindowException on error.
+   *
+   * \upstream SDL_GetWindowSurface
+   */
+  Surface GetSurface() const;
+
+  /**
+   * \brief Copy the window surface to the screen.
+   *
+   * \throw WindowException on error.
+   *
+   * \sa GetSurface()
+   * \sa UpdateSurfaceRects()
+   *
+   * \upstream SDL_UpdateWindowSurface
+   */
+  void UpdateSurface();
+
+  /**
+   * \brief Copy a number of rectangles on the window surface to the screen.
+   *
+   * \throw WindowException on error.
+   *
+   * \sa GetSurface()
+   * \sa UpdateSurface()
+   *
+   * \upstream SDL_UpdateWindowSurfaceRects
+   */
+  void UpdateSurfaceRectangles(const std::vector<Rectangle>& rectangles);
+
+  /**
+   * \brief Set a window's input grab mode.
+   *
+   * \param is_grabbed This is true to grab input, and false to release input.
+   *
+   * If the caller enables a grab while another window is currently grabbed,
+   * the other window loses its grab in favor of the caller's window.
+   *
+   * \sa GetGrab()
+   *
+   * \upstream SDL_SetWindowGrab
+   */
+  void SetGrab(bool is_grabbed);
+
+  /**
+   * \brief Get a window's input grab mode.
+   *
+   * \return This returns true if input is grabbed, and false otherwise.
+   *
+   * \sa SetGrab()
+   *
+   * \upstream SDL_GetWindowGrab
+   */
+  bool GetGrab() const;
+
+  /**
+   * \brief Get the window that currently has an input grab enabled.
+   *
+   * \todo Check destructor
+   *
+   * \return This returns the window if input is grabbed, and NULL otherwise.
+   *
+   * \sa SetGrab()
+   *
+   * \upstream SDL_GetGrabbedWindow
+   */
+  static Window& GetGrabbed();
+
+  /**
+   * \brief Set the brightness (gamma correction) for a window.
+   *
+   * \throw WindowException if setting the brightness isn't supported.
+   *
+   * \sa GetBrightness()
+   * \sa SetGammaRamp()
+   *
+   * \upstream SDL_SetWindowBrightness
+   */
+  void SetBrightness(float brightness);
+
+  /**
+   * \brief Get the brightness (gamma correction) for a window.
+   *
+   * \return The last brightness value passed to SetBrightness()
+   *
+   * \sa SetBrightness()
+   *
+   * \upstream SDL_GetWindowBrightness
+   */
+  float GetBrightness() const;
+
+  /**
+   * \brief Set the opacity for a window
+   *
+   * \param opacity Opacity (0.0f - transparent, 1.0f - opaque)
+   *                This will be clamped internally between 0.0f and 1.0f.
+   *
+   * \throw WindowException if setting the opacity isn't supported.
+   *
+   * \sa GetOpacity()
+   *
+   * \upstream SDL_SetWindowOpacity
+   */
+  void SetOpacity(float opacity);
+
+  /**
+   * \brief Get the opacity of a window.
+   *
+   * If transparency isn't supported on this platform, opacity will be reported as 1.0f.
+   *
+   * \throw WindowException on error (invalid window, etc).
+   *
+   * \return Opacity (0.0f - transparent, 1.0f - opaque)
+   *
+   * \sa SDL_GetWindowOpacity()
+   */
+  float GetOpacity() const;
+
+  // TODO: SDL_SetWindowModalFor, SDL_SetWindowInputFocus, SDL_SetWindowGammaRamp,
+  // SDL_GetWindowGammaRamp, SDL_HitTestResult, SDL_HitTest, SDL_SetWindowHitTest
+
+  /**
+   * \brief Get the raw pointer to SDL_Window.
+   *
+   * After this operation you are responsible for freeing the memory of the window.
+   *
+   * \return A pointer to the SDL_Window
+   */
+  SDL_Window* Release();
+
+  // Friend declarations
   friend class Renderer;
+  friend class GL::Context;
 
-  std::shared_ptr<Renderer> renderer;
+protected:
+  struct Deleter {
+    void operator()(SDL_Window* ptr) const;
+  };
 
-  friend class Surface;
-
-  std::shared_ptr<Surface> surface;
-
-  // Deleted copy constructor
-  // This class is not copyable
-  Window(const Window&) = delete;
-
-  // Deleted copy assignment operator
-  // This class is not copyable
-  Window& operator=(const Window&) = delete;
-
-  Window(Window&& other) = delete;
-
-  Window& operator=(Window&&) = delete;
+  std::unique_ptr<SDL_Window, Deleter> window_ptr;
 };
-
-Window::Flags operator|(const Window::Flag& lhs, const Window::Flag& rhs);
-
-Window::Flags operator|(Window::Flags&& lhs, const Window::Flag& rhs);
 
 }  // namespace sdlxx::core
 

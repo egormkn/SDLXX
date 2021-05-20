@@ -20,9 +20,8 @@
 */
 
 /**
- * \file display.h
- *
- * \brief A class that represents a display.
+ * \file
+ * \brief Header for the Display class that represents a display.
  */
 
 #pragma once
@@ -54,8 +53,10 @@ public:
    * \sa Display::GetClosestMode()
    * \sa Window::SetDisplayMode()
    * \sa Window::GetDisplayMode()
+   *
+   * \upstream SDL_DisplayMode
    */
-  struct Mode {       // See SDL_DisplayMode
+  struct Mode {
     uint32_t format;  /**< pixel format */
     int w;            /**< width, in screen coordinates */
     int h;            /**< height, in screen coordinates */
@@ -74,22 +75,27 @@ public:
 
   /**
    * \brief Event subtype for display events.
+   *
+   * \upstream SDL_DisplayEventID
    */
-  enum class EventID {  // See SDL_DisplayEventID
-    NONE,               /**< Never used */
-    ORIENTATION,        /**< Display orientation has changed to data1 */
-    CONNECTED,          /**< Display has been added to the system */
-    DISCONNECTED        /**< Display has been removed from the system */
+  enum class EventID {
+    NONE,        /**< Never used */
+    ORIENTATION, /**< Display orientation has changed to data1 */
+    CONNECTED,   /**< Display has been added to the system */
+    DISCONNECTED /**< Display has been removed from the system */
   };
 
-  enum class Orientation {  // See SDL_DisplayOrientation
-    UNKNOWN,                /**< The display orientation can't be determined */
-    LANDSCAPE,              /**< The display is in landscape mode, with the right side up,
-                                 relative to portrait mode */
-    LANDSCAPE_FLIPPED,      /**< The display is in landscape mode, with the left side up,
-                                 relative to portrait mode */
-    PORTRAIT,               /**< The display is in portrait mode */
-    PORTRAIT_FLIPPED        /**< The display is in portrait mode, upside down */
+  /**
+   * \upstream SDL_DisplayOrientation
+   */
+  enum class Orientation {
+    UNKNOWN,           /**< The display orientation can't be determined */
+    LANDSCAPE,         /**< The display is in landscape mode, with the right side up,
+                            relative to portrait mode */
+    LANDSCAPE_FLIPPED, /**< The display is in landscape mode, with the left side up,
+                            relative to portrait mode */
+    PORTRAIT,          /**< The display is in portrait mode */
+    PORTRAIT_FLIPPED   /**< The display is in portrait mode, upside down */
   };
 
   /**
@@ -99,6 +105,9 @@ public:
    *       they are normally checked during initialization.
    *
    * \return A vector of names of video drivers.
+   *
+   * \upstream SDL_GetNumVideoDrivers
+   * \upstream SDL_GetVideoDriver
    */
   static std::vector<std::string> GetVideoDrivers();
 
@@ -115,6 +124,8 @@ public:
    * and pixel formats, but does not initialize a window or graphics mode.
    *
    * \sa VideoQuit()
+   *
+   * \upstream SDL_VideoInit
    */
   static void VideoInit(const std::string& driver_name = "");
 
@@ -124,6 +135,8 @@ public:
    * This function closes all windows, and restores the original video mode.
    *
    * \sa VideoInit()
+   *
+   * \upstream SDL_VideoQuit
    */
   static void VideoQuit();
 
@@ -134,6 +147,8 @@ public:
    *         has been initialized.
    *
    * \sa GetVideoDrivers()
+   *
+   * \upstream SDL_GetCurrentVideoDriver
    */
   static std::optional<std::string> GetCurrentVideoDriver();
 
@@ -141,6 +156,8 @@ public:
    * \brief Get available video displays.
    *
    * \return A vector of available video displays.
+   *
+   * \upstream SDL_GetNumVideoDisplays
    */
   static std::vector<Display> GetVideoDisplays();
 
@@ -150,14 +167,25 @@ public:
    * \return The name of a display.
    *
    * \sa GetVideoDisplays()
+   *
+   * \upstream SDL_GetDisplayName
    */
   std::string GetName() const;
+
+  /**
+   * \brief Get the index of a display.
+   *
+   * \return The index of a display.
+   */
+  int GetIndex() const;
 
   /**
    * \brief Get the desktop area represented by a display, with the primary
    *        display located at (0, 0).
    *
    * \sa GetVideoDisplays()
+   *
+   * \upstream SDL_GetDisplayBounds
    */
   Rectangle GetBounds() const;
 
@@ -175,6 +203,8 @@ public:
    *
    * \sa GetBounds()
    * \sa GetVideoDisplays()
+   *
+   * \upstream SDL_GetDisplayUsableBounds
    */
   Rectangle GetUsableBounds() const;
 
@@ -184,6 +214,8 @@ public:
    * \note Diagonal, horizontal and vertical DPI can all be returned.
    *
    * \sa GetVideoDisplays()
+   *
+   * \upstream SDL_GetDisplayDPI
    */
   DPI GetDPI() const;
 
@@ -193,6 +225,8 @@ public:
    * \return The orientation of the display, or \ref Orientation::UNKNOWN if it isn't available.
    *
    * \sa GetVideoDisplays()
+   *
+   * \upstream SDL_GetDisplayOrientation
    */
   Orientation GetOrientation() const;
 
@@ -204,23 +238,30 @@ public:
    *       \li width -> largest to smallest
    *       \li height -> largest to smallest
    *       \li refresh rate -> highest to lowest
+   *
+   * \upstream SDL_GetNumDisplayModes
+   * \upstream SDL_GetDisplayMode
    */
   std::vector<Mode> GetModes() const;
 
   /**
    * \brief Get information about the desktop display mode.
+   *
+   * \upstream SDL_GetDesktopDisplayMode
    */
   Mode GetDesktopMode() const;
 
   /**
    * \brief Get information about the current display mode.
+   *
+   * \upstream SDL_GetCurrentDisplayMode
    */
   Mode GetCurrentMode() const;
 
   /**
    * \brief Get the request match to the requested display mode.
    *
-   * \param mode The desired display mode.
+   * \param request The desired display mode.
    *
    * The available display modes are scanned, and the request mode matching the
    * requested mode is returned. The mode format and refresh_rate default
@@ -230,13 +271,45 @@ public:
    * small, then std::nullopt is returned.
    *
    * \sa GetModes()
+   *
+   * \upstream SDL_GetClosestDisplayMode
    */
   std::optional<Mode> GetClosestMode(Mode request) const;
 
-private:
-  explicit Display(int index);
+  /**
+   * \brief Returns whether the screensaver is currently enabled (default off).
+   *
+   * \sa EnableScreenSaver()
+   * \sa DisableScreenSaver()
+   *
+   * \upstream SDL_IsScreenSaverEnabled
+   */
+  static bool IsScreenSaverEnabled();
 
-  int index;
+  /**
+   * \brief Allow the screen to be blanked by a screensaver.
+   *
+   * \sa IsScreenSaverEnabled()
+   * \sa DisableScreenSaver()
+   *
+   * \upstream SDL_EnableScreenSaver
+   */
+  static void EnableScreenSaver();
+
+  /**
+   * \brief Prevent the screen from being blanked by a screensaver.
+   *
+   * \sa IsScreenSaverEnabled()
+   * \sa EnableScreenSaver()
+   *
+   * \upstream SDL_DisableScreenSaver
+   */
+  static void DisableScreenSaver();
+
+private:
+  int index;  ///< Display index
+
+  explicit Display(int index);
 
   friend class Window;
 };

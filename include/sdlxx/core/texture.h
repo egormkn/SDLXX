@@ -20,9 +20,8 @@
 */
 
 /**
- * @file Texture.h
- * @author Egor Makarenko
- * @brief Class that represents a texture in an efficient driver-specific way
+ * \file
+ * \brief Header for the Texture class that represents a texture.
  */
 
 #pragma once
@@ -30,33 +29,41 @@
 #ifndef SDLXX_CORE_TEXTURE_H
 #define SDLXX_CORE_TEXTURE_H
 
-#include <memory>
 #include <string>
-#include <tuple>
 
-#include <sdlxx/core/renderer.h>
+#include "sdlxx/core/renderer.h"
+
+// Declaration of the underlying type
+struct SDL_Texture;
 
 namespace sdlxx::core {
 
-// Forward declaration of Renderer class
-class Renderer;
-
-// Forward declaration of Dimensions class
-class Dimensions;
-
-// Forward declaration of Color class
-class Color;
-
-// Forward declaration of Color class
-class Surface;
+/**
+ * \brief A class for Texture-related exceptions.
+ */
+class TextureException : public Exception {
+  using Exception::Exception;
+};
 
 /**
- * @brief Class that represents a texture in an efficient driver-specific way
+ * \brief A class that represents a texture in an efficient driver-specific way
+ * \upstream SDL_Texture
  */
 class Texture {
 public:
   /**
-   * @brief The access pattern allowed for a texture.
+   * \brief The scaling mode for a texture.
+   * \upstream SDL_ScaleMode
+   */
+  enum class ScaleMode {
+    NEAREST, /**< nearest pixel sampling */
+    LINEAR,  /**< linear filtering */
+    BEST     /**< anisotropic filtering */
+  };
+
+  /**
+   * \brief The access pattern allowed for a texture.
+   * \upstream SDL_TextureAccess
    */
   enum class Access {
     STATIC,    /**< Changes rarely, not lockable */
@@ -64,101 +71,90 @@ public:
     TARGET     /**< Texture can be used as a render target */
   };
 
+  /**
+   * \brief The texture channel modulation used in Renderer::Copy().
+   * \upstream SDL_TextureModulate
+   */
+  enum class Modulation {
+    NONE = 0x00000000,  /**< No modulation */
+    COLOR = 0x00000001, /**< srcC = srcC * color */
+    ALPHA = 0x00000002  /**< srcA = srcA * alpha */
+  };
+
   using Format = uint32_t;
 
-  /// Default pixel format
-  static const Format UNKNOWN = 0;  // FIXME: Add all available formats
+  /**
+   * \brief Create a texture for a rendering context.
+   *
+   * \param renderer   The renderer.
+   * \param format     The format of the texture.
+   * \param access     One of the enumerated values in ::Access.
+   * \param dimensions The width and height of the texture in pixels.
+   *
+   * \throw TextureException if no rendering context was active, the format was unsupported,
+   *                         or the width or height were out of range.
+   *
+   * \note The contents of the texture are not defined at creation.
+   *
+   * \upstream SDL_CreateTexture
+   */
+  Texture(Renderer& renderer, Dimensions dimensions, Format format = 0,
+          Access access = Access::STATIC);
 
   /**
-   * @brief Create a texture for a rendering context.
+   * \brief Create a texture from an existing surface.
    *
-   * @param renderer The renderer.
-   * @param width The width of the texture in pixels.
-   * @param height The height of the texture in pixels.
-   * @param format The format of the texture.
-   * @param access One of the enumerated values in Texture::Access.
+   * \param renderer The renderer.
+   * \param surface  The surface containing pixel data used to fill the texture.
    *
-   * @throw if no rendering context is active, the format is unsupported, or
-   * the width or height are out of range.
+   * \throw TextureException on error.
    *
-   * @note The contents of the texture are not defined at creation.
+   * \note The surface is not modified or freed by this function.
+   *
+   * \upstream SDL_CreateTextureFromSurface
    */
-  Texture(std::shared_ptr<Renderer> renderer, int width, int height,
-          Format format = UNKNOWN, Access access = Access::STATIC);
+  Texture(Renderer& renderer, const Surface& surface);
 
   /**
-   * @brief Create a texture from an existing surface.
+   * \brief Create a texture frow a raw pointer to SDL_Texture
    *
-   * @param renderer The renderer.
-   * @param surface The surface containing pixel data used to fill the texture.
-   *
-   * @note The surface is not modified or freed by this function.
+   * \param ptr The raw pointer to SDL_Texture
    */
-  Texture(std::shared_ptr<Renderer> renderer, const Surface& surface);
+  explicit Texture(SDL_Texture* ptr);
+
+  struct Attributes {
+    Dimensions dimensions;
+    Format format;
+    Access access;
+  };
 
   /**
-   * @brief Destroy the texture.
-   */
-  ~Texture();
-
-  /**
-   * @brief Query the attributes of a texture.
+   * \brief Query the attributes of a texture
    *
-   * @return std::tuple<Dimensions, Format, Access> The attributes of a texture.
-   */
-  std::tuple<Dimensions, Format, Access> query() const;
-
-  /**
-   * @brief Query the dimensions of a texture.
+   * \throw TextureException if the texture is not valid.
    *
-   * @return Dimensions The dimensions of a texture in pixels.
+   * \upstream SDL_QueryTexture
    */
-  Dimensions getDimensions() const;
+  Attributes Query() const;
 
-  /**
-   * @brief Query the format of a texture.
-   *
-   * @return Format The raw format of the texture.
-   *
-   * @note The actual format may differ, but pixel transfers will use this
-   * format.
-   */
-  Format getFormat() const;
+  // TODO: SDL_SetTextureColorMod, SDL_GetTextureColorMod, SDL_SetTextureAlphaMod,
+  // SDL_GetTextureAlphaMod, SDL_SetTextureBlendMode, SDL_GetTextureBlendMode,
+  // SDL_SetTextureScaleMode, SDL_GetTextureScaleMode, SDL_UpdateTexture, SDL_UpdateYUVTexture,
+  // SDL_LockTexture, SDL_LockTextureToSurface, SDL_UnlockTexture, SDL_GL_BindTexture, SDL_GL_UnbindTexture
 
-  /**
-   * @brief Query the actual access to the texture.
-   *
-   * @return Access The actual access to the texture.
-   */
-  Access getAccess() const;
-
-  /**
-   * @brief Set an additional color value used in render copy operations.
-   *
-   * @param color The color value multiplied into copy operations.
-   */
-  void setModulation(const Color& color);
-
-  /**
-   * @brief Get the additional color value used in render copy operations.
-   *
-   * @return Color The color value multiplied into copy operations.
-   */
-  Color getModulation() const;
-
-  // TODO: setBlendMode/getBlendMode, update, lock/unlock
-
-private:
-  void* texture_ptr = nullptr;
-
+  // Friend declarations
   friend class Renderer;
 
-  // Deleted copy constructor
-  Texture(const Texture&) = delete;
+protected:
+  struct Deleter {
+    void operator()(SDL_Texture* ptr) const;
+  };
 
-  // Deleted copy assignment operator
-  Texture& operator=(const Texture&) = delete;
+  std::unique_ptr<SDL_Texture, Deleter> texture_ptr;
+
+  SDL_Renderer* GetRendererPtr(Renderer& renderer);
 };
+
 }  // namespace sdlxx::core
 
 #endif  // SDLXX_CORE_TEXTURE_H

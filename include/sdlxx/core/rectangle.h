@@ -20,9 +20,8 @@
 */
 
 /**
- * \file rectangle.h
- *
- * \brief A structure that represents a rectangle with the origin at the upper left corner.
+ * \file
+ * \brief Header for the Rectangle structure that represents a 2D rectangle.
  */
 
 #pragma once
@@ -36,11 +35,15 @@
 namespace sdlxx::core {
 
 /**
- * \brief A structure that represents a rectangle with the origin at the upper left corner.
+ * \brief A structure that represents a 2D rectangle with the origin at the upper left corner.
+ *
+ * \upstream SDL_Rect
  */
 struct Rectangle {
-  int x, y;           ///< Coordinates of the upper left corner
-  int width, height;  ///< Dimensions of the rectangle
+  int x;       ///< X coordinate of the upper left corner
+  int y;       ///< Y coordinate of the upper left corner
+  int width;   ///< Width of the rectangle
+  int height;  ///< Height of the rectangle
 
   /**
    * \brief Construct a new rectangle of given size at the given point.
@@ -49,6 +52,14 @@ struct Rectangle {
    * \param width, height Dimensions of the rectangle.
    */
   Rectangle(int x, int y, int width, int height);
+
+  /**
+   * \brief Construct a new rectangle of given size at the given point.
+   *
+   * \param origin Coordinates of the upper left corner.
+   * \param dimensions Dimensions of the rectangle.
+   */
+  Rectangle(Point origin, Dimensions dimensions);
 
   /**
    * \brief Get the upper left corner.

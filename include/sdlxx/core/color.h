@@ -20,9 +20,8 @@
 */
 
 /**
- * \file color.h
- *
- * \brief A structure that represents a color.
+ * \file
+ * \brief Header for the Color structure that represents a color.
  */
 
 #pragma once
@@ -36,6 +35,8 @@ namespace sdlxx::core {
 
 /**
  * \brief A structure that represents a color.
+ *
+ * \upstream SDL_Color
  */
 struct Color {
   uint8_t r;  ///< Red component (0 is none, 255 is full).
@@ -51,9 +52,9 @@ struct Color {
    *   Color(0x0000FF) should give you full blue
    *   Color(0xC0FFEE) I don't know what it is but it has a nice name
    *
-   * \param color Hexadecimal RGB value of a color.
+   * \param rgb Hexadecimal RGB value of a color.
    */
-  Color(uint32_t color = 0x000000);
+  Color(uint32_t rgb = 0x000000);
 
   /**
    * \brief Construct a color from its RGBA values.

@@ -20,9 +20,8 @@
 */
 
 /**
- * \file gl.h
- *
- * \brief OpenGL support functions.
+ * \file
+ * \brief Header for the OpenGL support functions.
  */
 
 #pragma once
@@ -32,214 +31,276 @@
 
 #include <string>
 
+#include "sdlxx/core/dimensions.h"
+#include "sdlxx/core/exception.h"
+
 namespace sdlxx::core {
+
+class Window;
+
+/**
+ * \brief A class for OpenGL exceptions.
+ */
+class GlException : public Exception {
+  using Exception::Exception;
+};
 
 /**
  * \brief OpenGL support functions.
  */
 namespace GL {
-  /**
-   *  \brief OpenGL context type.
-   */
-  using Context = void*;  // See SDL_GLContext
 
+/**
+ * \brief OpenGL configuration attributes.
+ * \upstream SDL_GLattr
+ */
+enum class Attribute {
+  RED_SIZE,
+  GREEN_SIZE,
+  BLUE_SIZE,
+  ALPHA_SIZE,
+  BUFFER_SIZE,
+  DOUBLEBUFFER,
+  DEPTH_SIZE,
+  STENCIL_SIZE,
+  ACCUM_RED_SIZE,
+  ACCUM_GREEN_SIZE,
+  ACCUM_BLUE_SIZE,
+  ACCUM_ALPHA_SIZE,
+  STEREO,
+  MULTISAMPLEBUFFERS,
+  MULTISAMPLESAMPLES,
+  ACCELERATED_VISUAL,
+  RETAINED_BACKING,
+  CONTEXT_MAJOR_VERSION,
+  CONTEXT_MINOR_VERSION,
+  CONTEXT_EGL,
+  CONTEXT_FLAGS,
+  CONTEXT_PROFILE_MASK,
+  SHARE_WITH_CURRENT_CONTEXT,
+  FRAMEBUFFER_SRGB_CAPABLE,
+  CONTEXT_RELEASE_BEHAVIOR,
+  CONTEXT_RESET_NOTIFICATION,
+  CONTEXT_NO_ERROR
+};
+
+/**
+ * \upstream SDL_GLprofile
+ */
+enum class Profile {
+  CORE = 0x0001,
+  COMPATIBILITY = 0x0002,
+  ES = 0x0004 /**< GLX_CONTEXT_ES2_PROFILE_BIT_EXT */
+};
+
+/**
+ * \brief Dynamically load an OpenGL library.
+ *
+ * \param path The platform dependent OpenGL library name, or empty string to use the
+ *             default OpenGL library.
+ *
+ * \throw GlException if the library couldn't be loaded.
+ *
+ * This should be done after initializing the video driver, but before creating any OpenGL windows.
+ * If no OpenGL library is loaded, the default library will be loaded upon creation of the first
+ * OpenGL window.
+ *
+ * \note If you do this, you need to retrieve all of the GL functions used in
+ *       your program from the dynamic library using GL::GetProcAddress().
+ *
+ * \sa GL::GetProcAddress()
+ * \sa GL::UnloadLibrary()
+ *
+ * \upstream SDL_GL_LoadLibrary
+ */
+void LoadLibrary(const std::string& path = "");
+
+/**
+ * \brief Get the address of an OpenGL function.
+ * \upstream SDL_GL_GetProcAddress
+ */
+void* GetProcAddress(const std::string& proc);
+
+/**
+ * \brief Unload the OpenGL library previously loaded by GL::LoadLibrary().
+ *
+ * \sa GL::LoadLibrary()
+ *
+ * \upstream SDL_GL_UnloadLibrary
+ */
+void UnloadLibrary();
+
+/**
+ * \brief A class for OpenGL context.
+ * \upstream SDL_GLContext
+ */
+class Context {
+public:
   /**
-   *  \brief OpenGL configuration attributes.
+   * \upstream SDL_GLcontextFlag
    */
-  enum class Attribute {  // See SDL_GLattr
-    RED_SIZE,
-    GREEN_SIZE,
-    BLUE_SIZE,
-    ALPHA_SIZE,
-    BUFFER_SIZE,
-    DOUBLEBUFFER,
-    DEPTH_SIZE,
-    STENCIL_SIZE,
-    ACCUM_RED_SIZE,
-    ACCUM_GREEN_SIZE,
-    ACCUM_BLUE_SIZE,
-    ACCUM_ALPHA_SIZE,
-    STEREO,
-    MULTISAMPLEBUFFERS,
-    MULTISAMPLESAMPLES,
-    ACCELERATED_VISUAL,
-    RETAINED_BACKING,
-    CONTEXT_MAJOR_VERSION,
-    CONTEXT_MINOR_VERSION,
-    CONTEXT_EGL,
-    CONTEXT_FLAGS,
-    CONTEXT_PROFILE_MASK,
-    SHARE_WITH_CURRENT_CONTEXT,
-    FRAMEBUFFER_SRGB_CAPABLE,
-    CONTEXT_RELEASE_BEHAVIOR,
-    CONTEXT_RESET_NOTIFICATION,
-    CONTEXT_NO_ERROR
+  enum class Flag {
+    DEBUG = 0x0001,
+    FORWARD_COMPATIBLE = 0x0002,
+    ROBUST_ACCESS = 0x0004,
+    RESET_ISOLATION = 0x0008
   };
 
-  enum class Profile {  // See SDL_GLprofile
-    CORE = 0x0001,
-    COMPATIBILITY = 0x0002,
-    ES = 0x0004 /**< GLX_CONTEXT_ES2_PROFILE_BIT_EXT */
-  };
-
-  enum class ContextFlag {  // See SDL_GLcontextFlag
-    CONTEXT_DEBUG_FLAG = 0x0001,
-    CONTEXT_FORWARD_COMPATIBLE_FLAG = 0x0002,
-    CONTEXT_ROBUST_ACCESS_FLAG = 0x0004,
-    CONTEXT_RESET_ISOLATION_FLAG = 0x0008
-  };
-
-  enum class ContextReleaseFlag {  // See SDL_GLcontextReleaseFlag
-    CONTEXT_RELEASE_BEHAVIOR_NONE = 0x0000,
-    CONTEXT_RELEASE_BEHAVIOR_FLUSH = 0x0001
-  };
-
-  enum class ContextResetNotification {  // See SDL_GLContextResetNotification
-    CONTEXT_RESET_NO_NOTIFICATION = 0x0000,
-    CONTEXT_RESET_LOSE_CONTEXT = 0x0001
-  };
+  /**
+   * \upstream SDL_GLcontextReleaseFlag
+   */
+  enum class ReleaseFlag { RELEASE_BEHAVIOR_NONE = 0x0000, RELEASE_BEHAVIOR_FLUSH = 0x0001 };
 
   /**
-   * \brief Dynamically load an OpenGL library.
-   *
-   * \param path The platform dependent OpenGL library name, or empty string to use the
-   *             default OpenGL library.
-   *
-   *  \return 0 on success, or -1 if the library couldn't be loaded.
-   *
-   *  This should be done after initializing the video driver, but before
-   *  creating any OpenGL windows.  If no OpenGL library is loaded, the default
-   *  library will be loaded upon creation of the first OpenGL window.
-   *
-   *  \note If you do this, you need to retrieve all of the GL functions used in
-   *        your program from the dynamic library using SDL_GL_GetProcAddress().
-   *
-   *  \sa SDL_GL_GetProcAddress()
-   *  \sa SDL_GL_UnloadLibrary()
+   * \upstream SDL_GLContextResetNotification
    */
-  extern DECLSPEC int SDLCALL SDL_GL_LoadLibrary(const char* path);
+  enum class ResetNotification { RESET_NO_NOTIFICATION = 0x0000, RESET_LOSE_CONTEXT = 0x0001 };
 
   /**
-   *  \brief Get the address of an OpenGL function.
+   * \brief Return true if an OpenGL extension is supported for the current context.
+   *
+   * \upstream SDL_GL_ExtensionSupported
    */
-  extern DECLSPEC void* SDLCALL SDL_GL_GetProcAddress(const char* proc);
+  static bool ExtensionSupported(const std::string& extension);
 
   /**
-   *  \brief Unload the OpenGL library previously loaded by SDL_GL_LoadLibrary().
-   *
-   *  \sa SDL_GL_LoadLibrary()
+   * \brief Reset all previously set OpenGL context attributes to their default values.
+   * \upstream SDL_GL_ResetAttributes
    */
-  extern DECLSPEC void SDLCALL SDL_GL_UnloadLibrary(void);
+  static void ResetAttributes();
 
   /**
-   *  \brief Return true if an OpenGL extension is supported for the current
-   *         context.
+   * \brief Set an OpenGL window attribute before window creation.
+   *
+   * \throw GlException if the attribute could not be set.
+   *
+   * \upstream SDL_GL_SetAttribute
    */
-  extern DECLSPEC SDL_bool SDLCALL SDL_GL_ExtensionSupported(const char* extension);
+  static void SetAttribute(Attribute attr, int value);
 
   /**
-   *  \brief Reset all previously set OpenGL context attributes to their default values
+   * \brief Get the actual value for an attribute from the current context.
+   *
+   * \throw GlException if the attribute could not be retrieved.
+   *
+   * \return The value of the attribute.
+   *
+   * \upstream SDL_GL_GetAttribute
    */
-  extern DECLSPEC void SDLCALL SDL_GL_ResetAttributes(void);
+  static int GetAttribute(Attribute attr);
 
   /**
-   *  \brief Set an OpenGL window attribute before window creation.
+   * \brief Create an OpenGL context for use with an OpenGL window, and make it current.
    *
-   *  \return 0 on success, or -1 if the attribute could not be set.
+   * \upstream SDL_GL_CreateContext
    */
-  extern DECLSPEC int SDLCALL SDL_GL_SetAttribute(SDL_GLattr attr, int value);
+  explicit Context(Window& window);
 
   /**
-   *  \brief Get the actual value for an attribute from the current context.
+   * \brief Delete an OpenGL context.
    *
-   *  \return 0 on success, or -1 if the attribute could not be retrieved.
-   *          The integer at \c value will be modified in either case.
+   * \sa GL::CreateContext()
+   *
+   * \upstream SDL_GL_DeleteContext
    */
-  extern DECLSPEC int SDLCALL SDL_GL_GetAttribute(SDL_GLattr attr, int* value);
+  ~Context();
 
   /**
-   *  \brief Create an OpenGL context for use with an OpenGL window, and make it
-   *         current.
+   * \brief Set up an OpenGL context for rendering into an OpenGL window.
    *
-   *  \sa SDL_GL_DeleteContext()
+   * \note The context must have been created with a compatible window.
+   *
+   * \upstream SDL_GL_MakeCurrent
    */
-  extern DECLSPEC SDL_GLContext SDLCALL SDL_GL_CreateContext(SDL_Window* window);
+  void MakeCurrent(Window& window);
 
   /**
-   *  \brief Set up an OpenGL context for rendering into an OpenGL window.
+   * \brief Get the currently active OpenGL window.
    *
-   *  \note The context must have been created with a compatible window.
+   * \todo Think about the implementation
+   *
+   * \upstream SDL_GL_GetCurrentWindow
    */
-  extern DECLSPEC int SDLCALL SDL_GL_MakeCurrent(SDL_Window* window, SDL_GLContext context);
+  static Window& GetCurrentWindow();
 
   /**
-   *  \brief Get the currently active OpenGL window.
+   * \brief Get the currently active OpenGL context.
+   *
+   * \upstream SDL_GL_GetCurrentContext
    */
-  extern DECLSPEC SDL_Window* SDLCALL SDL_GL_GetCurrentWindow(void);
+  static void* GetCurrentContext();
 
   /**
-   *  \brief Get the currently active OpenGL context.
+   * \brief Get the size of a window's underlying drawable in pixels (for use with glViewport).
+   *
+   * \param window Window from which the drawable size should be queried
+   *
+   * This may differ from Window::GetSize() if we're rendering to a high-DPI drawable, i.e. the
+   * window was created with SDL_WINDOW_ALLOW_HIGHDPI on a platform with high-DPI support (Apple
+   * calls this "Retina"), and not disabled by the SDL_HINT_VIDEO_HIGHDPI_DISABLED hint.
+   *
+   * \sa Window::GetSize()
+   * \sa Window::Window()
+   *
+   * \upstream SDL_GL_GetDrawableSize
    */
-  extern DECLSPEC SDL_GLContext SDLCALL SDL_GL_GetCurrentContext(void);
+  static Dimensions GetDrawableSize(Window& window);
 
   /**
-   *  \brief Get the size of a window's underlying drawable in pixels (for use
-   *         with glViewport).
+   * \brief Set the swap interval for the current OpenGL context.
    *
-   *  \param window   Window from which the drawable size should be queried
-   *  \param w        Pointer to variable for storing the width in pixels, may be NULL
-   *  \param h        Pointer to variable for storing the height in pixels, may be NULL
+   * \param interval 0 for immediate updates, 1 for updates synchronized with the
+   *                 vertical retrace. If the system supports it, you may
+   *                 specify -1 to allow late swaps to happen immediately
+   *                 instead of waiting for the next retrace.
    *
-   * This may differ from SDL_GetWindowSize() if we're rendering to a high-DPI
-   * drawable, i.e. the window was created with SDL_WINDOW_ALLOW_HIGHDPI on a
-   * platform with high-DPI support (Apple calls this "Retina"), and not disabled
-   * by the SDL_HINT_VIDEO_HIGHDPI_DISABLED hint.
+   * \throw GlException if setting the swap interval is not supported.
    *
-   *  \sa SDL_GetWindowSize()
-   *  \sa SDL_CreateWindow()
+   * \sa GetSwapInterval()
+   *
+   * \upstream SDL_GL_SetSwapInterval
    */
-  extern DECLSPEC void SDLCALL SDL_GL_GetDrawableSize(SDL_Window* window, int* w, int* h);
+  static void SetSwapInterval(int interval);
 
   /**
-   *  \brief Set the swap interval for the current OpenGL context.
+   * \brief Get the swap interval for the current OpenGL context.
    *
-   *  \param interval 0 for immediate updates, 1 for updates synchronized with the
-   *                  vertical retrace. If the system supports it, you may
-   *                  specify -1 to allow late swaps to happen immediately
-   *                  instead of waiting for the next retrace.
+   * \return 0 if there is no vertical retrace synchronization, 1 if the buffer
+   *         swap is synchronized with the vertical retrace, and -1 if late
+   *         swaps happen immediately instead of waiting for the next retrace.
+   *         If the system can't determine the swap interval, or there isn't a
+   *         valid current context, this will return 0 as a safe default.
    *
-   *  \return 0 on success, or -1 if setting the swap interval is not supported.
+   * \sa SetSwapInterval()
    *
-   *  \sa SDL_GL_GetSwapInterval()
+   * \upstream SDL_GL_GetSwapInterval
    */
-  extern DECLSPEC int SDLCALL SDL_GL_SetSwapInterval(int interval);
+  static int GetSwapInterval();
 
   /**
-   *  \brief Get the swap interval for the current OpenGL context.
+   * \brief Swap the OpenGL buffers for a window, if double-buffering is supported.
    *
-   *  \return 0 if there is no vertical retrace synchronization, 1 if the buffer
-   *          swap is synchronized with the vertical retrace, and -1 if late
-   *          swaps happen immediately instead of waiting for the next retrace.
-   *          If the system can't determine the swap interval, or there isn't a
-   *          valid current context, this will return 0 as a safe default.
-   *
-   *  \sa SDL_GL_SetSwapInterval()
+   * \upstream SDL_GL_SwapWindow
    */
-  extern DECLSPEC int SDLCALL SDL_GL_GetSwapInterval(void);
+  static void SwapWindow(Window& window);
 
-  /**
-   * \brief Swap the OpenGL buffers for a window, if double-buffering is
-   *        supported.
-   */
-  extern DECLSPEC void SDLCALL SDL_GL_SwapWindow(SDL_Window* window);
+private:
+  void* context_ptr = nullptr;
 
-  /**
-   *  \brief Delete an OpenGL context.
-   *
-   *  \sa SDL_GL_CreateContext()
-   */
-  extern DECLSPEC void SDLCALL SDL_GL_DeleteContext(SDL_GLContext context);
-  };
+  // Deleted copy constructor
+  Context(const Context& other) = delete;
+
+  // Deleted copy assignment operator
+  Context& operator=(const Context& other) = delete;
+
+  // Deleted move constructor
+  Context(Context&& other) = delete;
+
+  // Deleted move assignment operator
+  Context& operator=(Context&& other) = delete;
+};
+
+} // namespace GL
 
 }  // namespace sdlxx::core
 

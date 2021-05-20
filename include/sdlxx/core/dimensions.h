@@ -20,9 +20,8 @@
 */
 
 /**
- * \file dimensions.h
- *
- * \brief A structure that represents the dimensions of a 2D object.
+ * \file
+ * \brief Header for the Dimensions structure that represents the dimensions of a 2D object.
  */
 
 #pragma once

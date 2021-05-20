@@ -21,29 +21,40 @@
 
 /**
  * \file
- * \brief Header for the Exception class.
+ * \brief Header for the ImageTexture class that represents a texture loaded from an image file.
  */
 
 #pragma once
 
-#ifndef SDLXX_CORE_EXCEPTION_H
-#define SDLXX_CORE_EXCEPTION_H
+#ifndef SDLXX_IMAGE_IMAGE_TEXTURE_H
+#define SDLXX_IMAGE_IMAGE_TEXTURE_H
 
 #include <string>
-#include <exception>
 
-namespace sdlxx::core {
+#include "sdlxx/core/renderer.h"
+#include "sdlxx/core/texture.h"
 
-class Exception : public std::exception {
-public:
-  explicit Exception(const std::string& message);
+namespace sdlxx::image {
 
-  const char* what() const noexcept override;
+using sdlxx::core::Exception;
+using sdlxx::core::Renderer;
+using sdlxx::core::Texture;
 
-private:
-  std::string message;
+/**
+ * \brief A class for ImageTexture-related exceptions.
+ */
+class ImageTextureException : public Exception {
+  using Exception::Exception;
 };
 
-}
+/**
+ * \brief A class that represents a texture loaded from an image file.
+ */
+class ImageTexture : public Texture {
+public:
+  explicit ImageTexture(Renderer& renderer, const std::string& path);
+};
 
-#endif  // SDLXX_CORE_EXCEPTION_H
+}  // namespace sdlxx::image
+
+#endif  // SDLXX_IMAGE_IMAGE_TEXTURE_H

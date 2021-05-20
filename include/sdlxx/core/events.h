@@ -20,9 +20,8 @@
 */
 
 /**
- * \file events.h
- *
- * \brief Class that allows to work with events
+ * \file
+ * \brief Header for the Events class that handles events.
  */
 
 #pragma once
@@ -31,164 +30,117 @@
 #define SDLXX_CORE_EVENTS_H
 
 #include <cstdint>
-#include <optional>
 #include <vector>
 
-// TODO: Try to get rid of SDL dependency (seems to be impossible)
-#include <SDL_events.h>
+#include "sdlxx/core/exception.h"
+
+union SDL_Event;
 
 namespace sdlxx::core {
 
+/**
+ * \brief Type alias for SDL_Event
+ * \upstream SDL_Event
+ */
 using Event = SDL_Event;
 
 /**
- * @brief Class that allows to work with events
+ * \brief A class for Event-related exceptions.
+ */
+class EventException : public Exception {
+  using Exception::Exception;
+};
+
+/**
+ * \brief Class that handles events.
  */
 class Events {
 public:
   /**
-   * @brief An enumeration of event types
+   * General keyboard/mouse state definitions
+   *
+   * \upstream SDL_RELEASED
+   * \upstream SDL_PRESSED
+   */
+  enum class ButtonState { RELEASED = 0, PRESSED = 1 };
+
+  /**
+   * \brief The types of events that can be delivered.
+   * \upstream SDL_EventType
    */
   enum Type : uint32_t {
-    /** Unused (do not remove) */
-    FIRSTEVENT = 0,
+    FIRSTEVENT = 0, /**< Unused (do not remove) */
 
     /* === Application events === */
+    QUIT = 0x100, /**< User-requested quit */
 
-    /** User-requested quit */
-    QUIT = 0x100,
+    APP_TERMINATING, /**< The application is being terminated by the OS
+                          Called on iOS in applicationWillTerminate()
+                          Called on Android in onDestroy() */
 
-    /**
-     * The application is being terminated by the OS
-     * Called on iOS in applicationWillTerminate()
-     * Called on Android in onDestroy()
-     */
-    APP_TERMINATING,
+    APP_LOWMEMORY, /**< The application is low on memory, free memory if possible.
+                        Called on iOS in applicationDidReceiveMemoryWarning()
+                        Called on Android in onLowMemory() */
 
-    /**
-     * The application is low on memory, free memory if possible.
-     * Called on iOS in applicationDidReceiveMemoryWarning()
-     * Called on Android in onLowMemory()
-     */
-    APP_LOWMEMORY,
+    APP_WILLENTERBACKGROUND, /**< The application is about to enter the background
+                                  Called on iOS in applicationWillResignActive()
+                                  Called on Android in onPause() */
 
-    /**
-     * The application is about to enter the background
-     * Called on iOS in applicationWillResignActive()
-     * Called on Android in onPause()
-     */
-    APP_WILLENTERBACKGROUND,
+    APP_DIDENTERBACKGROUND, /**< The application did enter the background and may not Get CPU for
+                                 some time Called on iOS in applicationDidEnterBackground() Called
+                                 on Android in onPause() */
 
-    /**
-     * The application did enter the background and may not get CPU for some
-     * time
-     * Called on iOS in applicationDidEnterBackground()
-     * Called on Android in onPause()
-     */
-    APP_DIDENTERBACKGROUND,
+    APP_WILLENTERFOREGROUND, /**< The application is about to enter the foreground
+                                  Called on iOS in applicationWillEnterForeground()
+                                  Called on Android in onResume() */
 
-    /**
-     * The application is about to enter the foreground
-     * Called on iOS in applicationWillEnterForeground()
-     * Called on Android in onResume()
-     */
-    APP_WILLENTERFOREGROUND,
+    APP_DIDENTERFOREGROUND, /**< The application is now interactive
+                                 Called on iOS in applicationDidBecomeActive()
+                                 Called on Android in onResume() */
 
-    /** The application is now interactive
-     * Called on iOS in applicationDidBecomeActive()
-     * Called on Android in onResume()
-     */
-    APP_DIDENTERFOREGROUND,
+    LOCALECHANGED, /**< The user's locale preferences have changed. */
 
     /* === Display events === */
-
-    /** Display state change */
-    DISPLAYEVENT = 0x150,
+    DISPLAYEVENT = 0x150, /**< Display state change */
 
     /* === Window events === */
-
-    /** Window state change */
-    WINDOWEVENT = 0x200,
-
-    /** System specific event */
-    SYSWMEVENT,
+    WINDOWEVENT = 0x200, /**< Window state change */
+    SYSWMEVENT,          /**< System specific event */
 
     /* === Keyboard events === */
-
-    /** Key pressed */
-    KEYDOWN = 0x300,
-
-    /** Key released */
-    KEYUP,
-
-    /** Keyboard text editing (composition) */
-    TEXTEDITING,
-
-    /** Keyboard text input */
-    TEXTINPUT,
-
-    /**
-     * Keymap changed due to a system event such as an input language or
-     * keyboard layout change.
-     */
-    KEYMAPCHANGED,
+    KEYDOWN = 0x300, /**< Key pressed */
+    KEYUP,           /**< Key released */
+    TEXTEDITING,     /**< Keyboard text editing (composition) */
+    TEXTINPUT,       /**< Keyboard text input */
+    KEYMAPCHANGED,   /**< Keymap changed due to a system event such as an input language or keyboard
+                          layout change. */
 
     /* === Mouse events === */
-
-    /** Mouse moved */
-    MOUSEMOTION = 0x400,
-
-    /** Mouse button pressed */
-    MOUSEBUTTONDOWN,
-
-    /** Mouse button released */
-    MOUSEBUTTONUP,
-
-    /** Mouse wheel motion */
-    MOUSEWHEEL,
+    MOUSEMOTION = 0x400, /**< Mouse moved */
+    MOUSEBUTTONDOWN,     /**< Mouse button pressed */
+    MOUSEBUTTONUP,       /**< Mouse button released */
+    MOUSEWHEEL,          /**< Mouse wheel motion */
 
     /* === Joystick events === */
-
-    /** Joystick axis motion */
-    JOYAXISMOTION = 0x600,
-
-    /** Joystick trackball motion */
-    JOYBALLMOTION,
-
-    /** Joystick hat position change */
-    JOYHATMOTION,
-
-    /** Joystick button pressed */
-    JOYBUTTONDOWN,
-
-    /** Joystick button released */
-    JOYBUTTONUP,
-
-    /** A new joystick has been inserted into the system */
-    JOYDEVICEADDED,
-
-    /** An opened joystick has been removed */
-    JOYDEVICEREMOVED,
+    JOYAXISMOTION = 0x600, /**< Joystick axis motion */
+    JOYBALLMOTION,         /**< Joystick trackball motion */
+    JOYHATMOTION,          /**< Joystick hat position change */
+    JOYBUTTONDOWN,         /**< Joystick button pressed */
+    JOYBUTTONUP,           /**< Joystick button released */
+    JOYDEVICEADDED,        /**< A new joystick has been inserted into the system */
+    JOYDEVICEREMOVED,      /**< An opened joystick has been removed */
 
     /* === Game controller events === */
-
-    /** Game controller axis motion */
-    CONTROLLERAXISMOTION = 0x650,
-
-    /** Game controller button pressed */
-    CONTROLLERBUTTONDOWN,
-
-    /** Game controller button released */
-    CONTROLLERBUTTONUP,
-
-    /** A new Game controller has been inserted into the system */
-    CONTROLLERDEVICEADDED,
-
-    /** An opened Game controller has been removed */
-    CONTROLLERDEVICEREMOVED,
-
-    /** The controller mapping was updated */
-    CONTROLLERDEVICEREMAPPED,
+    CONTROLLERAXISMOTION = 0x650, /**< Game controller axis motion */
+    CONTROLLERBUTTONDOWN,         /**< Game controller button pressed */
+    CONTROLLERBUTTONUP,           /**< Game controller button released */
+    CONTROLLERDEVICEADDED,        /**< A new Game controller has been inserted into the system */
+    CONTROLLERDEVICEREMOVED,      /**< An opened Game controller has been removed */
+    CONTROLLERDEVICEREMAPPED,     /**< The controller mapping was updated */
+    CONTROLLERTOUCHPADDOWN,       /**< Game controller touchpad was touched */
+    CONTROLLERTOUCHPADMOTION,     /**< Game controller touchpad finger was moved */
+    CONTROLLERTOUCHPADUP,         /**< Game controller touchpad finger was lifted */
+    CONTROLLERSENSORUPDATE,       /**< Game controller sensor was updated */
 
     /* === Touch events === */
     FINGERDOWN = 0x700,
@@ -201,183 +153,219 @@ public:
     MULTIGESTURE,
 
     /* === Clipboard events === */
-
-    /** The clipboard changed */
-    CLIPBOARDUPDATE = 0x900,
+    CLIPBOARDUPDATE = 0x900, /**< The clipboard changed */
 
     /* === Drag and drop events === */
-
-    /** The system requests a file open */
-    DROPFILE = 0x1000,
-
-    /** text/plain drag-and-drop event */
-    DROPTEXT,
-
-    /** A new set of drops is beginning (NULL filename) */
-    DROPBEGIN,
-
-    /** Current set of drops is now complete (NULL filename) */
-    DROPCOMPLETE,
+    DROPFILE = 0x1000, /**< The system requests a file open */
+    DROPTEXT,          /**< text/plain drag-and-drop event */
+    DROPBEGIN,         /**< A new set of drops is beginning (NULL filename) */
+    DROPCOMPLETE,      /**< Current set of drops is now complete (NULL filename) */
 
     /* === Audio hotplug events === */
-
-    /** A new audio device is available */
-    AUDIODEVICEADDED = 0x1100,
-
-    /** An audio device has been removed. */
-    AUDIODEVICEREMOVED,
+    AUDIODEVICEADDED = 0x1100, /**< A new audio device is available */
+    AUDIODEVICEREMOVED,        /**< An audio device has been removed. */
 
     /* === Sensor events === */
-
-    /** A sensor was updated */
-    SENSORUPDATE = 0x1200,
+    SENSORUPDATE = 0x1200, /**< A sensor was updated */
 
     /* === Render events === */
+    RENDER_TARGETS_RESET =
+        0x2000, /**< The render targets have been reset and their contents need to be updated */
+    RENDER_DEVICE_RESET, /**< The device has been reset and all textures need to be recreated */
 
-    /**
-     * The render targets have been reset and their contents need to be updated
-     */
-    RENDER_TARGETS_RESET = 0x2000,
-
-    /** The device has been reset and all textures need to be recreated */
-    RENDER_DEVICE_RESET,
-
-    /**
-     * Events Type::USEREVENT through Type::LASTEVENT are for your use,
-     * and should be allocated with RegisterEvents()
+    /** Events ::USEREVENT through ::LASTEVENT are for your use,
+     *  and should be allocated with Events::Register()
      */
     USEREVENT = 0x8000,
 
     /**
-     * This last event is only for bounding internal arrays
+     *  This last event is only for bounding internal arrays
      */
     LASTEVENT = 0xFFFF
   };
 
+  // TODO: SDL_CommonEvent, SDL_DisplayEvent, SDL_WindowEvent, SDL_KeyboardEvent,
+  // SDL_TextEditingEvent, SDL_TextInputEvent, SDL_MouseMotionEvent, SDL_MouseButtonEvent,
+  // SDL_MouseWheelEvent, SDL_JoyAxisEvent, SDL_JoyBallEvent, SDL_JoyHatEvent, SDL_JoyButtonEvent,
+  // SDL_JoyDeviceEvent, SDL_ControllerAxisEvent, SDL_ControllerButtonEvent,
+  // SDL_ControllerDeviceEvent, SDL_ControllerTouchpadEvent, SDL_ControllerSensorEvent,
+  // SDL_AudioDeviceEvent, SDL_TouchFingerEvent, SDL_MultiGestureEvent, SDL_DollarGestureEvent,
+  // SDL_DropEvent, SDL_SensorEvent, SDL_QuitEvent, SDL_OSEvent, SDL_UserEvent, SDL_SysWMEvent
+
   /**
-   * @brief Pumps the event loop, gathering events from the input devices.
+   * \brief Pump the event loop, gathering events from the input devices.
    *
    * This function updates the event queue and internal input device state.
    *
-   * @note This should only be run in the thread that sets the video mode.
+   * \note This should only be run in the thread that sets the video mode.
+   *
+   * \upstream SDL_PumpEvents
    */
-  static void pump();
+  static void Pump();
 
   /**
-   * @brief Add events to the back of the event queue.
+   * \brief Add events to the back of the event queue.
    *
    * This function is thread-safe.
    *
-   * @param events Vector of events to add to the queue
-   * @return int The number of events actually added
+   * \param events Vector of events to Add to the queue
+   * \return int The number of events actually added
+   *
+   * \throw EventException if there was some error.
+   *
+   * \upstream SDL_PeepEvents
    */
-  static int add(const std::vector<Event>& events);
+  static int Add(std::vector<Event> events);
 
   /**
-   * @brief Peek up to @c numevents events at the front of the event queue,
+   * \brief Peek up to \c numevents events at the front of the event queue,
    * within the specified minimum and maximum type.
    *
    * This function is thread-safe.
    *
-   * @param numevents Maximum number of events to peek
-   * @param minType, maxType Range of event types
-   * @return std::vector<Event> Events from the event queue
+   * \param numevents Maximum number of events to peek.
+   * \param minType, maxType Range of event types.
+   *
+   * \return std::vector<Event> Events from the front of event queue.
+   *
+   * \throw EventException if there was some error.
+   *
+   * \upstream SDL_PeepEvents
    */
-  static std::vector<Event> peek(int numevents, Type minType, Type maxType);
+  static std::vector<Event> Peek(int numevents, Type minType = Type::FIRSTEVENT,
+                                 Type maxType = Type::LASTEVENT);
 
   /**
-   * @brief Get up to @c numevents events at the front of the event queue,
+   * \brief Get up to \c numevents events at the front of the event queue,
    * within the specified minimum and maximum type, and remove them from the
    * queue.
    *
    * This function is thread-safe.
    *
-   * @param numevents Maximum number of events to get
-   * @param minType, maxType Range of event types
-   * @return std::vector<Event> Events removed from the event queue
-   */
-  static std::vector<Event> get(int numevents, Type minType, Type maxType);
-
-  /**
-   * @brief Checks to see if certain event type is in the event queue.
+   * \param numevents Maximum number of events to Get
+   * \param minType, maxType Range of event types
    *
-   * @param type Event type
-   * @return true if queue contains events with specified type
-   * @return false otherwise
-   */
-  static bool inQueue(Type type);
-
-  /**
-   * @brief Checks to see if certain event types are in the event queue.
+   * \return std::vector<Event> Events removed from the event queue.
    *
-   * @param minType, maxType Range of event types
-   * @return true if queue contains events within specified type range
-   * @return false otherwise
+   * \throw EventException if there was some error.
+   *
+   * \upstream SDL_PeepEvents
    */
-  static bool inQueue(Type minType, Type maxType);
+  static std::vector<Event> Get(int numevents, Type minType = Type::FIRSTEVENT,
+                                Type maxType = Type::LASTEVENT);
 
   /**
-   * @brief Clear events from the event queue
+   * \brief Checks to see if certain event type is in the event queue.
+   *
+   * \param type Event type.
+   * \return true if queue contains events with specified type.
+   * \return false otherwise.
+   *
+   * \upstream SDL_HasEvent
+   */
+  static bool InQueue(Type type);
+
+  /**
+   * \brief Checks to see if certain event types are in the event queue.
+   *
+   * \param minType, maxType Range of event types.
+   * \return true if queue contains events within specified type range.
+   * \return false otherwise.
+   *
+   * \upstream SDL_HasEvents
+   */
+  static bool InQueue(Type minType, Type maxType);
+
+  /**
+   * \brief Checks to see if event queue is empty.
+   *
+   * \return true if event queue is empty.
+   * \return false if event queue contains some events.
+   *
+   * \upstream SDL_PollEvent
+   */
+  static bool IsEmpty();
+
+  /**
+   * \brief Clear events from the event queue.
    *
    * This function only affects currently queued events. If you want to make
-   * sure that all pending OS events are flushed, you can call Events::get()
-   * on the main thread immediately before the flush call.
+   * sure that all pending OS events are flushed, you can call Events::Pump()
+   * on the main thread immediately before the Flush call.
    *
-   * @param type Event type
+   * \param type Event type
+   *
+   * \upstream SDL_FlushEvent
    */
-  static void flush(Type type);
+  static void Flush(Type type);
 
   /**
-   * @brief Clear events from the event queue
+   * \brief Clear events from the event queue.
    *
    * This function only affects currently queued events. If you want to make
-   * sure that all pending OS events are flushed, you can call Events::get()
-   * on the main thread immediately before the flush call.
+   * sure that all pending OS events are flushed, you can call Events::Pump()
+   * on the main thread immediately before the Flush call.
    *
-   * @param minType, maxType Range of event types
+   * \param minType, maxType Range of event types
+   *
+   * \upstream SDL_FlushEvents
    */
-  static void flush(Type minType, Type maxType);
+  static void Flush(Type minType, Type maxType);
 
   /**
-   * @brief Checks to see if event queue contains some events
+   * \brief Poll for currently pending events.
    *
-   * @return true if event queue contains some events
-   * @return false if event queue is empty
+   * \param event If not nullptr, the next event is removed from the queue and stored in that area.
+   *
+   * \return true if event that was polled from the queue
+   * \return false otherwise
+   *
+   * \upstream SDL_PollEvent
    */
-  static bool inQueue();
+  static bool Poll(Event* event);
 
   /**
-   * @brief Poll for currently pending events.
+   * \brief Wait indefinitely for the next available event.
    *
-   * @return std::optional<Event> Optional event that was polled from the
-   * queue
+   * \param event If not nullptr, the next event is removed from the queue and stored in that area.
+   *
+   * \return true if event was polled from the queue (always)
+   *
+   * \throw EventException if there was an error while waiting for events.
+   *
+   * \upstream SDL_WaitEvent
    */
-  static std::optional<Event> poll();
+  static bool Wait(Event* event);
 
   /**
-   * @brief Wait indefinitely for the next available event.
+   * \brief Waits until the specified timeout (in milliseconds) for the next available event.
    *
-   * @return Event Event that was polled from the queue
+   * \param timeout The timeout (in milliseconds) to wait for next event.
+   *
+   * \return true if event was polled from the queue, false if the timeout was reached
+   *
+   * \throw EventException if there was an error while waiting for events.
+   *
+   * \upstream SDL_WaitEventTimeout
    */
-  static Event wait();
+  static bool WaitTimeout(Event* event, int timeout);
 
   /**
-   * @brief Wait for the next available event until the specified timeout
+   * \brief Add an event to the event queue.
    *
-   * @param timeout Timeout in milliseconds
-   * @return std::optional<Event> An optional event that was polled from the
-   * queue
+   * \param event The event to copy to the event queue.
+   *
+   * \return true if event was added to the queue.
+   * \return false if event was filtered.
+   *
+   * \throw EventException if the event queue was full or there was some other error.
+   *
+   * \upstream SDL_PushEvent
    */
-  static std::optional<Event> wait(int timeout);
+  static bool Push(Event* event);
 
-  /**
-   * @brief Add an event to the event queue.
-   *
-   * @param event The event to add to the event queue
-   * @return true if event was added to the queue
-   * @return false if event was filtered
-   */
-  static bool push(Event event);
+  // TODO: SDL_EventFilter, SDL_SetEventFilter, SDL_GetEventFilter, SDL_AddEventWatch,
+  // SDL_DelEventWatch, SDL_FilterEvents, SDL_EventState, SDL_GetEventState, SDL_RegisterEvents
 };
 
 }  // namespace sdlxx::core

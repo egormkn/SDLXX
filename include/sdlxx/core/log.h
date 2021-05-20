@@ -20,9 +20,8 @@
 */
 
 /**
- * @file Log.h
- * @author Egor Makarenko
- * @brief Class that represents the logger
+ * \file
+ * \brief Header for the Log class that represents the logger.
  */
 
 #pragma once
@@ -30,40 +29,38 @@
 #ifndef SDLXX_CORE_LOG_H
 #define SDLXX_CORE_LOG_H
 
+#include <iostream>
 #include <string>
 
 namespace sdlxx::core {
 
 /**
- * @brief Class that represents the logger
+ * \brief A class that represents the logger.
  */
 class Log {
 public:
-  static void error(std::string msg);
+  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
 
-  static void warning(std::string msg);
+  static void Trace(const std::string& message);
 
-  static void info(std::string msg);
+  static void Debug(const std::string& message);
 
-  static void debug(std::string msg);
+  static void Info(const std::string& message);
 
-  static void raw(std::string msg);
+  static void Warning(const std::string& message);
 
-  static void verbose(std::string msg);
+  static void Error(const std::string& message);
 
-  static void debugMode(bool option);
+  static void Fatal(const std::string& message);
 
-  static void verboseMode(bool option);
-
-  static void newline();
+  static void SetVerbosity(Verbosity new_verbosity);
 
 private:
-  static bool isDebugMode;    ///< Tells if we're on debug mode.
-  static bool isVerboseMode;  ///< Tells if we're on verbose mode.
+  static Verbosity verbosity;
+  static bool have_escape_codes;
 
-  static bool haveEscapeCodes;
-
-  static void clearLine();
+  static void Print(Verbosity verbosity, const std::string& message,
+                    std::ostream& stream = std::cout);
 };
 
 }  // namespace sdlxx::core

@@ -21,29 +21,40 @@
 
 /**
  * \file
- * \brief Header for the Exception class.
+ * \brief Header for the ImageSurface class that represents a surface loaded from an image file.
  */
 
 #pragma once
 
-#ifndef SDLXX_CORE_EXCEPTION_H
-#define SDLXX_CORE_EXCEPTION_H
+#ifndef SDLXX_IMAGE_IMAGE_SURFACE_H
+#define SDLXX_IMAGE_IMAGE_SURFACE_H
 
 #include <string>
-#include <exception>
 
-namespace sdlxx::core {
+#include "sdlxx/core/surface.h"
 
-class Exception : public std::exception {
-public:
-  explicit Exception(const std::string& message);
+namespace sdlxx::image {
 
-  const char* what() const noexcept override;
+using sdlxx::core::Exception;
+using sdlxx::core::Surface;
 
-private:
-  std::string message;
+/**
+ * \brief A class for ImageSurface-related exceptions.
+ */
+class ImageSurfaceException : public Exception {
+  using Exception::Exception;
 };
 
-}
+/**
+ * \brief A class that represents a surface loaded from an image file.
+ */
+class ImageSurface : public Surface {
+public:
+  explicit ImageSurface(const std::string& path);
 
-#endif  // SDLXX_CORE_EXCEPTION_H
+  // TODO: IMG_isXXX
+};
+
+}  // namespace sdlxx::image
+
+#endif  // SDLXX_IMAGE_IMAGE_SURFACE_H

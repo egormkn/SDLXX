@@ -1,253 +1,295 @@
-#include <numeric>
-#include <system_error>
-#include <type_traits>
+#include "sdlxx/core/window.h"
 
-#include <SDL_render.h>
 #include <SDL_video.h>
-#include <sdlxx/core/renderer.h>
-#include <sdlxx/core/surface.h>
-#include <sdlxx/core/window.h>
+
+#include "sdlxx/core/surface.h"
 
 using namespace sdlxx::core;
+using namespace std::literals::string_literals;
 
-// Convert options into bit mask
-template <typename Flag>
-Uint32 GetFlagsMask(const std::unordered_set<Flag>& flags) {
-  return std::accumulate(flags.begin(), flags.end(), 0, [](Uint32 flags, const Flag& flag) {
-    return flags | static_cast<std::underlying_type_t<Flag>>(flag);
-  });
-}
-
-static_assert(Window::WINDOW_POS_CENTERED == SDL_WINDOWPOS_CENTERED);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::FULLSCREEN) == SDL_WINDOW_FULLSCREEN);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::OPENGL) == SDL_WINDOW_OPENGL);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::SHOWN) == SDL_WINDOW_SHOWN);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::HIDDEN) == SDL_WINDOW_HIDDEN);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::BORDERLESS) == SDL_WINDOW_BORDERLESS);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::RESIZABLE) == SDL_WINDOW_RESIZABLE);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::MINIMIZED) == SDL_WINDOW_MINIMIZED);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::MAXIMIZED) == SDL_WINDOW_MAXIMIZED);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::INPUT_GRABBED) ==
+              SDL_WINDOW_INPUT_GRABBED);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::INPUT_FOCUS) == SDL_WINDOW_INPUT_FOCUS);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::MOUSE_FOCUS) == SDL_WINDOW_MOUSE_FOCUS);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::FULLSCREEN_DESKTOP) ==
+              SDL_WINDOW_FULLSCREEN_DESKTOP);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::FOREIGN) == SDL_WINDOW_FOREIGN);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::ALLOW_HIGHDPI) ==
+              SDL_WINDOW_ALLOW_HIGHDPI);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::MOUSE_CAPTURE) ==
+              SDL_WINDOW_MOUSE_CAPTURE);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::ALWAYS_ON_TOP) ==
+              SDL_WINDOW_ALWAYS_ON_TOP);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::SKIP_TASKBAR) == SDL_WINDOW_SKIP_TASKBAR);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::UTILITY) == SDL_WINDOW_UTILITY);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::TOOLTIP) == SDL_WINDOW_TOOLTIP);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::POPUP_MENU) == SDL_WINDOW_POPUP_MENU);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::VULKAN) == SDL_WINDOW_VULKAN);
+static_assert(static_cast<SDL_WindowFlags>(Window::Flag::METAL) == SDL_WINDOW_METAL);
 
 static_assert(Window::WINDOW_POS_UNDEFINED == SDL_WINDOWPOS_UNDEFINED);
+static_assert(Window::WINDOW_POS_CENTERED == SDL_WINDOWPOS_CENTERED);
+
+Uint32 GetFlagsMask(const Window::Flags& flags) {
+  Uint32 flags_mask = 0;
+  for (Window::Flag flag : flags) {
+    flags_mask |= static_cast<Uint32>(flag);
+  }
+  return flags_mask;
+}
 
 Window::Window(const std::string& title, int width, int height, const Window::Flags& flags,
-               int position_x, int position_y) {
-  Uint32 flags_mask = GetFlagsMask(flags);
-  window_ptr = SDL_CreateWindow(title.c_str(), position_x, position_y, width, height, flags_mask);
-  if (!window_ptr) {
-    throw std::runtime_error("Could not create window: " + std::string(SDL_GetError()));
+               int position_x, int position_y)
+    : window_ptr(SDL_CreateWindow(title.c_str(), position_x, position_y, width, height,
+                                  GetFlagsMask(flags))) {
+  if (window_ptr == NULL) {
+    throw WindowException("Failed to create a window");
   }
 }
 
-Window::Window(const void* data) {
-  window_ptr = SDL_CreateWindowFrom(data);
-  if (!window_ptr) {
-    throw std::runtime_error("Could not create window: " + std::string(SDL_GetError()));
+Window::Window(const void* data) : window_ptr(SDL_CreateWindowFrom(data)) {
+  if (window_ptr == NULL) {
+    throw WindowException("Failed to create a window");
   }
 }
 
 Window::Window(Window::Id id) {
-  window_ptr = SDL_GetWindowFromID(id);
-  if (!window_ptr) {
-    throw std::runtime_error("Could not find window: " + std::string(SDL_GetError()));
-  }
+  throw WindowException("Getting a window by id is not implemented yet");
 }
 
-Window::Id Window::GetId() const {
-  return static_cast<uint32_t>(SDL_GetWindowID(static_cast<SDL_Window*>(window_ptr)));
-}
+Window::Id Window::GetId() const { return static_cast<Id>(SDL_GetWindowID(window_ptr.get())); }
 
 Window::Flags Window::GetFlags() const {
-  Uint32 current = SDL_GetWindowFlags(static_cast<SDL_Window*>(window_ptr));
+  Uint32 flags_mask = SDL_GetWindowFlags(window_ptr.get());
   Flags result;
-  for (const Flag& f : {Flag::ALLOW_HIGHDPI, Flag::ALWAYS_ON_TOP, Flag::BORDERLESS,
-                        Flag::FOREIGN,       Flag::FULLSCREEN,    Flag::FULLSCREEN_DESKTOP,
-                        Flag::HIDDEN,        Flag::INPUT_FOCUS,   Flag::INPUT_GRABBED,
-                        Flag::MAXIMIZED,     Flag::MINIMIZED,     Flag::MOUSE_CAPTURE,
-                        Flag::MOUSE_FOCUS,   Flag::OPENGL,        Flag::POPUP_MENU,
-                        Flag::RESIZABLE,     Flag::SHOWN,         Flag::SKIP_TASKBAR,
-                        Flag::TOOLTIP,       Flag::UTILITY,       Flag::VULKAN,
-                        Flag::METAL}) {
-    if (static_cast<uint32_t>(f) & current) {
-      result.insert(f);
+  for (Flag flag :
+       {Flag::FULLSCREEN,    Flag::OPENGL,        Flag::SHOWN,         Flag::HIDDEN,
+        Flag::BORDERLESS,    Flag::RESIZABLE,     Flag::MINIMIZED,     Flag::MAXIMIZED,
+        Flag::INPUT_GRABBED, Flag::INPUT_FOCUS,   Flag::MOUSE_FOCUS,   Flag::FULLSCREEN_DESKTOP,
+        Flag::FOREIGN,       Flag::ALLOW_HIGHDPI, Flag::MOUSE_CAPTURE, Flag::ALWAYS_ON_TOP,
+        Flag::SKIP_TASKBAR,  Flag::UTILITY,       Flag::TOOLTIP,       Flag::POPUP_MENU,
+        Flag::VULKAN,        Flag::METAL}) {
+    Uint32 flag_mask = static_cast<Uint32>(flag);
+    if ((flags_mask & flag_mask) == flag_mask) {
+      result.insert(flag);
     }
   }
   return result;
 }
 
-Window::~Window() {
-  if (renderer) {
-    renderer.reset();
-  }
-  if (window_ptr) {
-    SDL_DestroyWindow(static_cast<SDL_Window*>(window_ptr));
-    window_ptr = nullptr;
-  }
-}
-
 Display Window::GetDisplay() const {
-  if (int index = SDL_GetWindowDisplayIndex(static_cast<SDL_Window*>(window_ptr)); index != -1) {
+  if (int index = SDL_GetWindowDisplayIndex(window_ptr.get()); index != -1) {
     return Display(index);
   } else {
-    throw std::runtime_error("Can't get display for the window");
+    throw WindowException("Failed to get display index for the window");
   }
 }
 
 void Window::SetDisplayMode(const Display::Mode& mode) {
   SDL_DisplayMode new_mode = {mode.format, mode.w, mode.h, mode.refresh_rate, mode.driverdata};
-  int return_code = SDL_SetWindowDisplayMode(static_cast<SDL_Window*>(window_ptr), &new_mode);
-  if (return_code == -1) {
-    throw std::runtime_error("Can't set display mode for the window");
+  int return_code = SDL_SetWindowDisplayMode(window_ptr.get(), &new_mode);
+  if (return_code != 0) {
+    throw WindowException("Failed to set display mode for the window");
   }
 }
 
 void Window::SetDefaultDisplayMode() {
-  int return_code = SDL_SetWindowDisplayMode(static_cast<SDL_Window*>(window_ptr), NULL);
-  if (return_code == -1) {
-    throw std::runtime_error("Can't set default display mode for the window");
+  int return_code = SDL_SetWindowDisplayMode(window_ptr.get(), NULL);
+  if (return_code != 0) {
+    throw WindowException("Failed to set display mode for the window");
   }
 }
 
 Display::Mode Window::GetDisplayMode() const {
   SDL_DisplayMode mode;
-  int return_code = SDL_GetWindowDisplayMode(static_cast<SDL_Window*>(window_ptr), &mode);
-  if (return_code == -1) {
-    throw std::runtime_error("Can't get display mode for the window");
+  int return_code = SDL_GetWindowDisplayMode(window_ptr.get(), &mode);
+  if (return_code != 0) {
+    throw WindowException("Failed to get display mode for the window");
   }
   return {mode.format, mode.w, mode.h, mode.refresh_rate, mode.driverdata};
 }
 
 uint32_t Window::GetPixelFormat() const {
-  return static_cast<uint32_t>(SDL_GetWindowPixelFormat(static_cast<SDL_Window*>(window_ptr)));
+  return static_cast<uint32_t>(SDL_GetWindowPixelFormat(window_ptr.get()));
 }
 
-void Window::SetTitle(const std::string& title) {
-  SDL_SetWindowTitle(static_cast<SDL_Window*>(window_ptr), title.c_str());
-}
+void Window::SetTitle(const std::string& title) { SDL_SetWindowTitle(window_ptr.get(), title.c_str()); }
 
-std::string Window::GetTitle() const {
-  return {SDL_GetWindowTitle(static_cast<SDL_Window*>(window_ptr))};
-}
+std::string Window::GetTitle() const { return SDL_GetWindowTitle(window_ptr.get()); }
 
-void Window::SetIcon(std::shared_ptr<Surface> icon) {}
+void Window::SetIcon(const Surface& icon) { SDL_SetWindowIcon(window_ptr.get(), icon.surface_ptr.get()); }
 
 void* Window::SetData(const std::string& name, void* userdata) {
-  return SDL_SetWindowData(static_cast<SDL_Window*>(window_ptr), name.c_str(), userdata);
+  return SDL_SetWindowData(window_ptr.get(), name.c_str(), userdata);
 }
 
 void* Window::GetData(const std::string& name) const {
-  return SDL_GetWindowData(static_cast<SDL_Window*>(window_ptr), name.c_str());
+  return SDL_GetWindowData(window_ptr.get(), name.c_str());
 }
 
-void Window::SetPosition(const Point& position) {
-  SDL_SetWindowPosition(static_cast<SDL_Window*>(window_ptr), position.x, position.y);
+void Window::SetPosition(Point position) {
+  SDL_SetWindowPosition(window_ptr.get(), position.x, position.y);
 }
 
 Point Window::GetPosition() const {
   Point position;
-  SDL_GetWindowPosition(static_cast<SDL_Window*>(window_ptr), &position.x, &position.y);
+  SDL_GetWindowPosition(window_ptr.get(), &position.x, &position.y);
   return position;
 }
 
 void Window::SetSize(Dimensions dimensions) {
-  SDL_SetWindowSize(static_cast<SDL_Window*>(window_ptr), dimensions.width, dimensions.height);
+  SDL_SetWindowSize(window_ptr.get(), dimensions.width, dimensions.height);
 }
 
 Dimensions Window::GetSize() const {
   Dimensions dimensions;
-  SDL_GetWindowSize(static_cast<SDL_Window*>(window_ptr), &dimensions.width, &dimensions.height);
+  SDL_GetWindowSize(window_ptr.get(), &dimensions.width, &dimensions.height);
   return dimensions;
 }
 
-Window::Borders Window::GetBorders() const {
+Window::Borders Window::GetBordersSize() const {
   Window::Borders borders;
-  SDL_GetWindowBordersSize(static_cast<SDL_Window*>(window_ptr), &borders.top, &borders.left,
-                           &borders.bottom, &borders.right);
+  SDL_GetWindowBordersSize(window_ptr.get(), &borders.top, &borders.left, &borders.bottom,
+                           &borders.right);
   return borders;
 }
 
 void Window::SetMinimumSize(Dimensions dimensions) {
-  SDL_SetWindowMinimumSize(static_cast<SDL_Window*>(window_ptr), dimensions.width,
-                           dimensions.height);
+  SDL_SetWindowMinimumSize(window_ptr.get(), dimensions.width, dimensions.height);
 }
 
 Dimensions Window::GetMinimumSize() const {
   Dimensions dimensions;
-  SDL_GetWindowMinimumSize(static_cast<SDL_Window*>(window_ptr), &dimensions.width,
-                           &dimensions.height);
+  SDL_GetWindowMinimumSize(window_ptr.get(), &dimensions.width, &dimensions.height);
   return dimensions;
 }
 
 void Window::SetMaximumSize(Dimensions dimensions) {
-  SDL_SetWindowMaximumSize(static_cast<SDL_Window*>(window_ptr), dimensions.width,
-                           dimensions.height);
+  SDL_SetWindowMaximumSize(window_ptr.get(), dimensions.width, dimensions.height);
 }
 
 Dimensions Window::GetMaximumSize() const {
   Dimensions dimensions;
-  SDL_GetWindowMaximumSize(static_cast<SDL_Window*>(window_ptr), &dimensions.width,
-                           &dimensions.height);
+  SDL_GetWindowMaximumSize(window_ptr.get(), &dimensions.width, &dimensions.height);
   return dimensions;
 }
 
-void Window::setBordered(bool bordered) {
-  SDL_SetWindowBordered(static_cast<SDL_Window*>(window_ptr), bordered ? SDL_TRUE : SDL_FALSE);
+void Window::SetBordered(bool is_bordered) {
+  SDL_SetWindowBordered(window_ptr.get(), is_bordered ? SDL_TRUE : SDL_FALSE);
 }
 
-void Window::setResizable(bool resizable) {
-  SDL_SetWindowResizable(static_cast<SDL_Window*>(window_ptr), resizable ? SDL_TRUE : SDL_FALSE);
+void Window::SetResizable(bool is_resizable) {
+  SDL_SetWindowResizable(window_ptr.get(), is_resizable ? SDL_TRUE : SDL_FALSE);
 }
 
-void Window::show() { SDL_ShowWindow(static_cast<SDL_Window*>(window_ptr)); }
+void Window::Show() { SDL_ShowWindow(window_ptr.get()); }
 
-void Window::hide() { SDL_HideWindow(static_cast<SDL_Window*>(window_ptr)); }
+void Window::Hide() { SDL_HideWindow(window_ptr.get()); }
 
-void Window::raise() { SDL_RaiseWindow(static_cast<SDL_Window*>(window_ptr)); }
+void Window::Raise() { SDL_RaiseWindow(window_ptr.get()); }
 
-void Window::maximize() { SDL_MaximizeWindow(static_cast<SDL_Window*>(window_ptr)); }
+void Window::Maximize() { SDL_MaximizeWindow(window_ptr.get()); }
 
-void Window::minimize() { SDL_MinimizeWindow(static_cast<SDL_Window*>(window_ptr)); }
+void Window::Minimize() { SDL_MinimizeWindow(window_ptr.get()); }
 
-void Window::restore() { SDL_RestoreWindow(static_cast<SDL_Window*>(window_ptr)); }
+void Window::Restore() { SDL_RestoreWindow(window_ptr.get()); }
 
-void Window::setFullscreen(const Flags& options) {
-  Uint32 flags = GetFlagsMask(options);
-  int return_code = SDL_SetWindowFullscreen(static_cast<SDL_Window*>(window_ptr), flags);
+void Window::SetFullscreen() {
+  Uint32 flags_mask = static_cast<Uint32>(Flag::FULLSCREEN);
+  int return_code = SDL_SetWindowFullscreen(window_ptr.get(), flags_mask);
   if (return_code != 0) {
-    throw std::system_error(return_code, std::generic_category(),
-                            "Unable to set fullscreen mode: " + std::string(SDL_GetError()));
+    throw WindowException("Failed to set fullscreen mode");
   }
 }
 
-std::shared_ptr<Surface> Window::getSurface() {
-  SDL_Surface* surface_ptr = SDL_GetWindowSurface(static_cast<SDL_Window*>(window_ptr));
-  if (!surface_ptr) {
-    throw std::runtime_error("Unable to get the surface for the window: " +
-                             std::string(SDL_GetError()));
-  }
-  if (!surface || surface->surface_ptr != surface_ptr) {
-    surface.reset(new Surface(surface_ptr));
-  }
-  return surface;
-}
-
-void Window::updateSurface() {
-  int return_code = SDL_UpdateWindowSurface(static_cast<SDL_Window*>(window_ptr));
+void Window::SetFullscreenDesktop() {
+  Uint32 flags_mask = static_cast<Uint32>(Flag::FULLSCREEN_DESKTOP);
+  int return_code = SDL_SetWindowFullscreen(window_ptr.get(), flags_mask);
   if (return_code != 0) {
-    throw std::runtime_error("Failed to update the surface: " + std::string(SDL_GetError()));
+    throw WindowException("Failed to set fullscreen desktop mode");
   }
 }
 
-std::shared_ptr<Renderer> Window::getRenderer(int driver,
-                                              const std::unordered_set<Renderer::Option>& options) {
-  SDL_Renderer* renderer_ptr = SDL_GetRenderer(static_cast<SDL_Window*>(window_ptr));
-  if (!renderer || renderer->renderer_ptr != renderer_ptr) {
-    if (!renderer_ptr) {
-      renderer.reset(new Renderer(window_ptr, driver, options));
-    } else {
-      renderer.reset(new Renderer(renderer_ptr));
-    }
+void Window::SetWindowed() {
+  Uint32 flags_mask = 0;
+  int return_code = SDL_SetWindowFullscreen(window_ptr.get(), flags_mask);
+  if (return_code != 0) {
+    throw WindowException("Failed to set windowed mode");
   }
-  return renderer;
 }
 
-Window::Flags sdlxx::core::operator|(const Window::Flag& lhs, const Window::Flag& rhs) {
-  return {lhs, rhs};
+Surface Window::GetSurface() const {
+  SDL_Surface* surface_ptr = SDL_GetWindowSurface(window_ptr.get());
+  if (surface_ptr == NULL) {
+    throw WindowException("Failed to get the surface for the window");
+  }
+  return Surface{surface_ptr};
 }
 
-Window::Flags sdlxx::core::operator|(Window::Flags&& lhs, const Window::Flag& rhs) {
-  lhs.insert(rhs);
-  return lhs;
+void Window::UpdateSurface() {
+  int return_code = SDL_UpdateWindowSurface(window_ptr.get());
+  if (return_code != 0) {
+    throw WindowException("Failed to update the window surface");
+  }
+}
+
+void Window::UpdateSurfaceRectangles(const std::vector<Rectangle>& rectangles) {
+  if (rectangles.empty()) {
+    return;
+  }
+  std::vector<SDL_Rect> rects;
+  rects.reserve(rectangles.size());
+  for (Rectangle rectangle : rectangles) {
+    rects.push_back({rectangle.x, rectangle.y, rectangle.width, rectangle.height});
+  }
+  int return_code = SDL_UpdateWindowSurfaceRects(window_ptr.get(), &rects.front(), rects.size());
+  if (return_code != 0) {
+    throw WindowException("Failed to update the window surface rectangles");
+  }
+}
+
+void Window::SetGrab(bool is_grabbed) {
+  SDL_SetWindowGrab(window_ptr.get(), is_grabbed ? SDL_TRUE : SDL_FALSE);
+}
+
+bool Window::GetGrab() const { return SDL_GetWindowGrab(window_ptr.get()) == SDL_TRUE; }
+
+Window& Window::GetGrabbed() { throw WindowException("Getting grabbed window is not implemented"); }
+
+void Window::SetBrightness(float brightness) {
+  int return_code = SDL_SetWindowBrightness(window_ptr.get(), brightness);
+  if (return_code != 0) {
+    throw WindowException("Failed to set the brightness for a window");
+  }
+}
+
+float Window::GetBrightness() const { return SDL_GetWindowBrightness(window_ptr.get()); }
+
+void Window::SetOpacity(float opacity) {
+  int return_code = SDL_SetWindowOpacity(window_ptr.get(), opacity);
+  if (return_code != 0) {
+    throw WindowException("Failed to set the opacity for a window");
+  }
+}
+
+float Window::GetOpacity() const {
+  float opacity;
+  SDL_GetWindowOpacity(window_ptr.get(), &opacity);
+  return opacity;
+}
+
+SDL_Window* Window::Release() { return window_ptr.release(); }
+
+void Window::Deleter::operator()(SDL_Window* ptr) const {
+  if (ptr) {
+    SDL_DestroyWindow(ptr);
+  }
 }

@@ -4,6 +4,25 @@
 
 using namespace sdlxx::core;
 
+static_assert(static_cast<SDL_DisplayEventID>(Display::EventID::NONE) == SDL_DISPLAYEVENT_NONE);
+static_assert(static_cast<SDL_DisplayEventID>(Display::EventID::ORIENTATION) ==
+              SDL_DISPLAYEVENT_ORIENTATION);
+static_assert(static_cast<SDL_DisplayEventID>(Display::EventID::CONNECTED) ==
+              SDL_DISPLAYEVENT_CONNECTED);
+static_assert(static_cast<SDL_DisplayEventID>(Display::EventID::DISCONNECTED) ==
+              SDL_DISPLAYEVENT_DISCONNECTED);
+
+static_assert(static_cast<SDL_DisplayOrientation>(Display::Orientation::UNKNOWN) ==
+              SDL_ORIENTATION_UNKNOWN);
+static_assert(static_cast<SDL_DisplayOrientation>(Display::Orientation::LANDSCAPE) ==
+              SDL_ORIENTATION_LANDSCAPE);
+static_assert(static_cast<SDL_DisplayOrientation>(Display::Orientation::LANDSCAPE_FLIPPED) ==
+              SDL_ORIENTATION_LANDSCAPE_FLIPPED);
+static_assert(static_cast<SDL_DisplayOrientation>(Display::Orientation::PORTRAIT) ==
+              SDL_ORIENTATION_PORTRAIT);
+static_assert(static_cast<SDL_DisplayOrientation>(Display::Orientation::PORTRAIT_FLIPPED) ==
+              SDL_ORIENTATION_PORTRAIT_FLIPPED);
+
 std::vector<std::string> Display::GetVideoDrivers() {
   int num_drivers = SDL_GetNumVideoDrivers();
   std::vector<std::string> result;
@@ -49,6 +68,8 @@ std::string Display::GetName() const {
     throw std::runtime_error("Invalid display index: " + std::to_string(index));
   }
 }
+
+int Display::GetIndex() const { return index; }
 
 Rectangle Display::GetBounds() const {
   SDL_Rect bounds;
@@ -133,5 +154,11 @@ std::optional<Display::Mode> Display::GetClosestMode(Display::Mode mode) const {
     return std::nullopt;
   }
 }
+
+bool Display::IsScreenSaverEnabled() { return SDL_IsScreenSaverEnabled() == SDL_TRUE; }
+
+void Display::EnableScreenSaver() { SDL_EnableScreenSaver(); }
+
+void Display::DisableScreenSaver() { SDL_DisableScreenSaver(); }
 
 Display::Display(int index) : index(index) {}

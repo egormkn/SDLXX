@@ -20,9 +20,8 @@
 */
 
 /**
- * @file Timer.h
- * @author Egor Makarenko
- * @brief Class that represents the time management routines
+ * \file
+ * \brief Header for the Timer class and time management routines.
  */
 
 #pragma once
@@ -36,69 +35,98 @@
 namespace sdlxx::core {
 
 /**
- * @brief Class that represents the time management routines
+ * \brief A class that represents the timer.
  */
 class Timer {
 public:
   /**
-   * @brief Get the number of milliseconds since the library initialization
+   * \brief Get the number of milliseconds since the library initialization.
    *
-   * @return uint32_t The number of milliseconds since the library
-   * initialization
+   * \return uint32_t The number of milliseconds since the library initialization.
    *
-   * @note This value wraps if the program runs for more than ~49 days
+   * \note This value wraps if the program runs for more than ~49 days.
+   *
+   * \upstream SDL_GetTicks
    */
-  static uint32_t getTicks();
+  static uint32_t GetTicks();
 
   /**
-   * @brief Get the current value of the high resolution counter
+   * \brief Compare ticks values, and return true if \a lhs has passed \a rhs.
    *
-   * @return uint64_t The current value of the high resolution counter
+   * e.g. if you want to wait 100 ms, you could do this:
+   *  uint32_t timeout = Timer::GetTicks() + 100;
+   *  while (!Timer::TicksPassed(Timer::GetTicks(), timeout)) {
+   *      ... do work until timeout has elapsed
+   *  }
+   *
+   * \upstream SDL_TICKS_PASSED
    */
-  static uint64_t getPerformanceCounter();
+  static bool TicksPassed(uint32_t lhs, uint32_t rhs);
 
   /**
-   * @brief Get the count per second of the high resolution counter
+   * \brief Get the current value of the high resolution counter.
    *
-   * @return uint64_t The count per second of the high resolution counter
+   * \return uint64_t The current value of the high resolution counter.
+   *
+   * \upstream SDL_GetPerformanceCounter
    */
-  static uint64_t getPerformanceFrequency();
+  static uint64_t GetPerformanceCounter();
 
   /**
-   * @brief Wait a specified number of milliseconds before returning
+   * \brief Get the count per second of the high resolution counter.
    *
-   * @param milliseconds A number of milliseconds to wait
+   * \return uint64_t The count per second of the high resolution counter.
+   *
+   * \upstream SDL_GetPerformanceFrequency
    */
-  static void delay(uint32_t milliseconds);
+  static uint64_t GetPerformanceFrequency();
 
   /**
-   * Function prototype for the timer callback function.
+   * \brief Wait a specified number of milliseconds before returning.
+   *
+   * \param milliseconds A number of milliseconds to wait.
+   *
+   * \upstream SDL_Delay
+   */
+  static void Delay(uint32_t milliseconds);
+
+  /**
+   * \brief Function prototype for the timer callback function.
    *
    * The callback function is passed the current timer interval and returns
    * the next timer interval. If the returned value is the same as the one
    * passed in, the periodic alarm continues, otherwise a new alarm is
    * scheduled. If the callback returns 0, the periodic alarm is cancelled.
+   *
+   * \upstream SDL_TimerCallback
    */
   using Callback = std::function<uint32_t(uint32_t, void*)>;
 
   /**
-   * @brief Construct a new timer and add it to the pool of timers already
-   * running.
+   * \upstream SDL_TimerID
+   */
+  using Id = int;
+
+  /**
+   * \brief Construct a new timer and add it to the pool of timers already running.
    *
-   * @param interval The current timer interval
-   * @param callback The timer callback function
-   * @param param Attached user data
+   * \param interval The current timer interval.
+   * \param callback The timer callback function.
+   * \param param Attached user data.
+   *
+   * \upstream SDL_AddTimer
    */
   Timer(uint32_t interval, Callback callback, void* param);
 
   /**
-   * @brief Stop and destroy the timer
+   * \brief Stop and destroy the timer
+   *
+   * \upstream SDL_RemoveTimer
    */
   ~Timer();
 
 private:
-  // Timer ID
-  int id;
+  Id id;  ///< Timer ID
 
   // Deleted copy constructor
   Timer(const Timer&) = delete;

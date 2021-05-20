@@ -20,9 +20,8 @@
 */
 
 /**
- * \file point.h
- *
- * \brief A structure that represents a 2D point.
+ * \file
+ * \brief Header for the Point structure that represents a 2D point.
  */
 
 #pragma once
@@ -34,6 +33,8 @@ namespace sdlxx::core {
 
 /**
  * \brief A structure that represents a 2D point.
+ *
+ * \upstream SDL_Point
  */
 struct Point {
   int x;  ///< X coordinate value

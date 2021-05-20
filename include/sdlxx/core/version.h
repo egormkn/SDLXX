@@ -20,9 +20,8 @@
 */
 
 /**
- * @file Version.h
- * @author Egor Makarenko
- * @brief Class that contains information about the version of the library
+ * \file
+ * \brief Header for the Version structure that contains information about the library version.
  */
 
 #pragma once
@@ -35,37 +34,54 @@
 namespace sdlxx::core {
 
 /**
- * @brief Class that contains information about the version of the library
+ * \brief A structure that contains information about the library version.
+ *
+ * Represents the library's version as three levels:
+ * - major revision (increments with massive changes, additions, and enhancements),
+ * - minor revision (increments with backwards-compatible changes to the major revision),
+ * - patchlevel (increments with fixes to the minor revision).
  */
-class Version {
-public:
-  /**
-   * @brief Major revision (increments with massive changes, additions, and
-   * enhancements)
-   */
-  uint8_t major;
+struct Version {
+  uint8_t major;  ///< Major revision (increments with massive changes and enhancements).
+  uint8_t minor;  ///< Minor revision (increments with backwards-compatible changes).
+  uint8_t patch;  ///< Patchlevel (increments with fixes to the minor revision).
 
   /**
-   * @brief Minor revision (increments with backwards-compatible changes to
-   * the major revision)
-   */
-  uint8_t minor;
-
-  /**
-   * @brief Patchlevel (increments with fixes to the minor revision)
-   */
-  uint8_t patch;
-
-  /**
-   * @brief Construct a new Version object
+   * \brief Construct a new Version object.
    *
-   * @param major Major revision
-   * @param minor Minor revision
-   * @param patch Patchlevel
+   * \param major Major revision.
+   * \param minor Minor revision.
+   * \param patch Patchlevel.
+   *
+   * \upstream SDL_version
    */
   Version(uint8_t major, uint8_t minor, uint8_t patch);
 
-  // TODO: operator< and other meaningful operators
+  /**
+   * \brief Test whether this version is less than other.
+   *
+   * \param other Version object to compare to.
+   * \return true if the version is less than other, false otherwise.
+   *
+   * \upstream SDL_VERSIONNUM
+   * \upstream SDL_VERSION_ATLEAST
+   */
+  bool operator<(const Version& other) const;
+  bool operator>(Version& other) const;
+  bool operator<=(Version& other) const;
+  bool operator>=(Version& other) const;
+
+  /**
+   * \brief Test whether this version is equal to other.
+   *
+   * \param other Version object to compare to.
+   * \return true if the version is equal to other, false otherwise.
+   *
+   * \upstream SDL_VERSIONNUM
+   * \upstream SDL_VERSION_ATLEAST
+   */
+  bool operator==(const Version& other) const;
+  bool operator!=(const Version& other) const;
 };
 
 }  // namespace sdlxx::core

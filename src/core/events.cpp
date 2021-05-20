@@ -1,91 +1,83 @@
-#include <sdlxx/core/events.h>
+#include "sdlxx/core/events.h"
 
+#include <SDL_events.h>
+
+using namespace std;
 using namespace sdlxx::core;
 
-void Events::pump() { SDL_PumpEvents(); }
+void Events::Pump() { SDL_PumpEvents(); }
 
-int Events::add(const std::vector<Event>& events) {
-  const int numevents = events.size();
-  int num_added =
-      SDL_PeepEvents(const_cast<SDL_Event*>(events.data()), numevents,
-                     SDL_ADDEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
+int Events::Add(std::vector<Event> events) {
+  if (events.empty()) {
+    return 0;
+  }
+  SDL_Event* data = events.data();
+  int size = events.size();
+  int num_added = SDL_PeepEvents(data, size, SDL_ADDEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
   if (num_added < 0) {
-    throw std::runtime_error("Failed to add events to the event queue");
+    throw EventException("Failed to add events to the event queue");
   }
   return num_added;
 }
 
-std::vector<Event> Events::peek(int numevents, Type minType, Type maxType) {
-  std::vector<SDL_Event> events;
-  int num_peeked = SDL_PeepEvents(events.data(), numevents, SDL_PEEKEVENT,
-                                  static_cast<uint32_t>(minType),
-                                  static_cast<uint32_t>(maxType));
+std::vector<Event> Events::Peek(int numevents, Type minType, Type maxType) {
+  std::vector<Event> events(numevents);
+  int num_peeked = SDL_PeepEvents(events.data(), events.size(), SDL_PEEKEVENT,
+                                  static_cast<Uint32>(minType), static_cast<Uint32>(maxType));
   if (num_peeked < 0) {
-    throw std::runtime_error("Failed to peek events from the event queue");
+    throw EventException("Failed to peek events from the event queue");
   }
+  events.resize(num_peeked);
   return events;
 }
 
-std::vector<Event> Events::get(int numevents, Type minType, Type maxType) {
-  std::vector<SDL_Event> events;
-  int num_got = SDL_PeepEvents(events.data(), numevents, SDL_PEEKEVENT,
-                               static_cast<uint32_t>(minType),
-                               static_cast<uint32_t>(maxType));
+std::vector<Event> Events::Get(int numevents, Type minType, Type maxType) {
+  std::vector<Event> events(numevents);
+  int num_got = SDL_PeepEvents(events.data(), events.size(), SDL_GETEVENT,
+                               static_cast<Uint32>(minType), static_cast<Uint32>(maxType));
   if (num_got < 0) {
-    throw std::runtime_error("Failed to get events from the event queue");
+    throw EventException("Failed to geek events from the event queue");
   }
+  events.resize(num_got);
   return events;
 }
 
-bool Events::inQueue(Type type) {
-  return SDL_HasEvent(static_cast<uint32_t>(type));
+bool Events::InQueue(Type type) { return SDL_HasEvent(static_cast<Uint32>(type)) == SDL_TRUE; }
+
+bool Events::InQueue(Type minType, Type maxType) {
+  return SDL_HasEvents(static_cast<Uint32>(minType), static_cast<Uint32>(maxType)) == SDL_TRUE;
 }
 
-bool Events::inQueue(Type minType, Type maxType) {
-  return SDL_HasEvents(static_cast<uint32_t>(minType),
-                       static_cast<uint32_t>(maxType));
+bool Events::IsEmpty() { return SDL_PollEvent(NULL) == 0; }
+
+void Events::Flush(Type type) { SDL_FlushEvent(static_cast<Uint32>(type)); }
+
+void Events::Flush(Type minType, Type maxType) {
+  SDL_FlushEvents(static_cast<Uint32>(minType), static_cast<Uint32>(maxType));
 }
 
-void Events::flush(Type type) { SDL_FlushEvent(static_cast<uint32_t>(type)); }
-
-void Events::flush(Type minType, Type maxType) {
-  SDL_FlushEvents(static_cast<uint32_t>(minType),
-                  static_cast<uint32_t>(maxType));
+bool Events::Poll(Event* event) {
+  int return_code = SDL_PollEvent(event);
+  return (return_code != 0);
 }
 
-bool Events::inQueue() { return SDL_PollEvent(NULL); }
-
-std::optional<Event> Events::poll() {
-  SDL_Event event;
-  int is_polled = SDL_PollEvent(&event);
-  if (!is_polled) {
-    return std::nullopt;
+bool Events::Wait(Event* event) {
+  int return_code = SDL_WaitEvent(event);
+  if (return_code == 0) {
+    throw EventException("Error while waiting for events");
   }
-  return {event};
+  return true;
 }
 
-Event Events::wait() {
-  SDL_Event event;
-  int is_polled = SDL_WaitEvent(&event);
-  if (!is_polled) {
-    throw std::runtime_error("Failed to wait for an event");
-  }
-  return event;
+bool Events::WaitTimeout(Event* event, int timeout) {
+  int return_code = SDL_WaitEventTimeout(event, timeout);
+  return (return_code != 0);
 }
 
-std::optional<Event> Events::wait(int timeout) {
-  SDL_Event event;
-  int is_polled = SDL_WaitEventTimeout(&event, timeout);
-  if (!is_polled) {
-    return std::nullopt;
-  }
-  return {event};
-}
-
-bool Events::push(Event event) {
-  int return_code = SDL_PushEvent(&event);
+bool Events::Push(SDL_Event* event) {
+  int return_code = SDL_PushEvent(event);
   if (return_code < 0) {
-    throw std::runtime_error("Failed to push event to the event queue");
+    throw EventException("Failed to push event to the event queue");
   }
   return return_code != 0;
 }
