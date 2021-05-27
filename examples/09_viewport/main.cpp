@@ -18,14 +18,16 @@ int main(int argc, char* args[]) {
     if (!CoreApi::SetHint("SDL_RENDER_SCALE_QUALITY", "1")) {
       Log::Warning("Linear texture filtering is not enabled");
     }
+
     ImageApi image_api({ImageApi::Flag::PNG});
 
-    Window window("SDL Tutorial", 640, 480, {Window::Flag::SHOWN});
+    const int SCREEN_WIDTH = 640;
+    const int SCREEN_HEIGHT = 480;
+    Window window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT, {Window::Flag::SHOWN});
 
     Renderer renderer(window, {Renderer::Flag::ACCELERATED});
-    renderer.SetDrawColor(Color::WHITE);
 
-    Texture image = ImageTexture(renderer, "texture.png");
+    Texture image = ImageTexture(renderer, "viewport.png");
 
     Event e;
     bool quit = false;
@@ -37,8 +39,18 @@ int main(int argc, char* args[]) {
         }
       }
 
+      renderer.SetDrawColor(Color::WHITE);
       renderer.Clear();
+
+      renderer.SetViewport({0, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
       renderer.Copy(image);
+
+      renderer.SetViewport({SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+      renderer.Copy(image);
+
+      renderer.SetViewport({0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2});
+      renderer.Copy(image);
+
       renderer.Render();
     }
   } catch (std::exception& e) {

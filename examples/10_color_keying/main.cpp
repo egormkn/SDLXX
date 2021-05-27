@@ -1,4 +1,5 @@
 #include <SDL_events.h>
+#include <SDL_render.h>
 #include <sdlxx/core/core_api.h>
 #include <sdlxx/core/events.h>
 #include <sdlxx/core/log.h>
@@ -6,6 +7,7 @@
 #include <sdlxx/core/surface.h>
 #include <sdlxx/core/window.h>
 #include <sdlxx/image/image_api.h>
+#include <sdlxx/image/image_surface.h>
 #include <sdlxx/image/image_texture.h>
 
 using namespace std;
@@ -18,14 +20,26 @@ int main(int argc, char* args[]) {
     if (!CoreApi::SetHint("SDL_RENDER_SCALE_QUALITY", "1")) {
       Log::Warning("Linear texture filtering is not enabled");
     }
+
     ImageApi image_api({ImageApi::Flag::PNG});
 
-    Window window("SDL Tutorial", 640, 480, {Window::Flag::SHOWN});
+    const int SCREEN_WIDTH = 640;
+    const int SCREEN_HEIGHT = 480;
+    Window window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT, {Window::Flag::SHOWN});
 
     Renderer renderer(window, {Renderer::Flag::ACCELERATED});
     renderer.SetDrawColor(Color::WHITE);
 
-    Texture image = ImageTexture(renderer, "texture.png");
+    Texture background = ImageTexture(renderer, "background.png");
+    Texture stickman;
+    Dimensions stickman_size;
+
+    {
+      Surface foo = ImageSurface("foo.png");
+      foo.SetColorKey(0x00FFFF);
+      stickman = Texture(renderer, foo);
+      stickman_size = foo.GetSize();
+    }
 
     Event e;
     bool quit = false;
@@ -37,8 +51,14 @@ int main(int argc, char* args[]) {
         }
       }
 
+      renderer.SetDrawColor(Color::WHITE);
       renderer.Clear();
-      renderer.Copy(image);
+
+      renderer.ResetViewport();
+      renderer.Copy(background);
+
+      renderer.Copy(stickman, {240, 190, stickman_size.width, stickman_size.height});
+
       renderer.Render();
     }
   } catch (std::exception& e) {

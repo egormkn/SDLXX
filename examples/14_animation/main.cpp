@@ -1,4 +1,5 @@
 #include <SDL_events.h>
+#include <SDL_render.h>
 #include <sdlxx/core/core_api.h>
 #include <sdlxx/core/events.h>
 #include <sdlxx/core/log.h>
@@ -6,6 +7,7 @@
 #include <sdlxx/core/surface.h>
 #include <sdlxx/core/window.h>
 #include <sdlxx/image/image_api.h>
+#include <sdlxx/image/image_surface.h>
 #include <sdlxx/image/image_texture.h>
 
 using namespace std;
@@ -19,14 +21,32 @@ int main(int argc, char* args[]) {
       Log::Warning("Linear texture filtering is not enabled");
     }
 
+    ImageApi image_api({ImageApi::Flag::PNG});
+
     const int SCREEN_WIDTH = 640;
     const int SCREEN_HEIGHT = 480;
     Window window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT, {Window::Flag::SHOWN});
 
-    Renderer renderer(window, {Renderer::Flag::ACCELERATED});
+    Renderer renderer(window, {Renderer::Flag::ACCELERATED, Renderer::Flag::PRESENTVSYNC});
+    renderer.SetDrawColor(Color::WHITE);
+
+    Texture stickman;
+    Dimensions stickman_size;
+
+    {
+      Surface foo = ImageSurface("foo.png");
+      foo.SetColorKey(0x00FFFF);
+      stickman = Texture(renderer, foo);
+      stickman_size = foo.GetSize();
+    }
+
+    array<Rectangle, 4> clips = {Rectangle{0, 0, 64, 205}, Rectangle{64, 0, 64, 205},
+                                 Rectangle{128, 0, 64, 205}, Rectangle{196, 0, 64, 205}};
 
     Event e;
     bool quit = false;
+
+    int frame = 0;
 
     while (!quit) {
       while (Events::Poll(&e)) {
@@ -38,23 +58,14 @@ int main(int argc, char* args[]) {
       renderer.SetDrawColor(Color::WHITE);
       renderer.Clear();
 
-      renderer.SetDrawColor(Color::RED);
-      renderer.FillRectangle(
-          {SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
-
-      renderer.SetDrawColor(Color::GREEN);
-      renderer.DrawRectangle(
-          {SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT * 2 / 3});
-
-      renderer.SetDrawColor(Color::BLUE);
-      renderer.DrawLine({0, SCREEN_HEIGHT / 2}, {SCREEN_WIDTH, SCREEN_HEIGHT / 2});
-
-      renderer.SetDrawColor(Color::YELLOW);
-      for (int i = 0; i < SCREEN_HEIGHT; i += 4) {
-        renderer.DrawPoint({SCREEN_WIDTH / 2, i});
-      }
+      Rectangle& src = clips[frame / 4];
+      Rectangle dst = {(SCREEN_WIDTH - src.width) / 2, (SCREEN_HEIGHT - src.height) / 2,
+                       stickman_size.width / 4, stickman_size.height};
+      renderer.Copy(stickman, src, dst);
 
       renderer.Render();
+
+      frame = (frame + 1) % (clips.size() * 4);
     }
   } catch (std::exception& e) {
     Log::Error(e.what());
