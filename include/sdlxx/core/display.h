@@ -34,9 +34,17 @@
 #include <vector>
 
 #include "sdlxx/core/dimensions.h"
+#include "sdlxx/core/exception.h"
 #include "sdlxx/core/rectangle.h"
 
 namespace sdlxx::core {
+
+/**
+ * \brief A class for Display-related exceptions.
+ */
+class DisplayException : public Exception {
+  using Exception::Exception;
+};
 
 /**
  * \brief A class that represents a display.

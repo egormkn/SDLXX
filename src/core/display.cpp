@@ -36,8 +36,7 @@ std::vector<std::string> Display::GetVideoDrivers() {
 void Display::VideoInit(const std::string& driver_name) {
   int return_code = SDL_VideoInit(driver_name.empty() ? NULL : driver_name.c_str());
   if (return_code == -1) {
-    throw std::runtime_error("Could not initialize the video subsystem: " +
-                             std::string(SDL_GetError()));
+    throw DisplayException("Could not initialize the video subsystem");
   }
 }
 
@@ -65,7 +64,7 @@ std::string Display::GetName() const {
   if (auto name = SDL_GetDisplayName(index); name != NULL) {
     return name;
   } else {
-    throw std::runtime_error("Invalid display index: " + std::to_string(index));
+    throw DisplayException("Invalid display index: " + std::to_string(index));
   }
 }
 
@@ -76,7 +75,7 @@ Rectangle Display::GetBounds() const {
   if (int return_code = SDL_GetDisplayBounds(index, &bounds); return_code != -1) {
     return {bounds.x, bounds.y, bounds.w, bounds.h};
   } else {
-    throw std::runtime_error("Invalid display index: " + std::to_string(index));
+    throw DisplayException("Invalid display index: " + std::to_string(index));
   }
 }
 
@@ -85,7 +84,7 @@ Rectangle Display::GetUsableBounds() const {
   if (int return_code = SDL_GetDisplayUsableBounds(index, &bounds); return_code != -1) {
     return {bounds.x, bounds.y, bounds.w, bounds.h};
   } else {
-    throw std::runtime_error("Invalid display index: " + std::to_string(index));
+    throw DisplayException("Invalid display index: " + std::to_string(index));
   }
 }
 
@@ -95,7 +94,7 @@ Display::DPI Display::GetDPI() const {
       return_code != -1) {
     return dpi;
   } else {
-    throw std::runtime_error(
+    throw DisplayException(
         "No DPI information is available or the display index is out of range: " +
         std::to_string(index));
   }
@@ -113,7 +112,7 @@ std::vector<Display::Mode> Display::GetModes() const {
     SDL_DisplayMode mode;
     int return_code = SDL_GetDisplayMode(index, i, &mode);
     if (return_code == -1) {
-      throw std::runtime_error(
+      throw DisplayException(
           "No display mode information is available or the display index is out of range: " +
           std::to_string(index) + ", mode " + std::to_string(i));
     }
@@ -126,7 +125,7 @@ Display::Mode Display::GetDesktopMode() const {
   SDL_DisplayMode mode;
   int return_code = SDL_GetDesktopDisplayMode(index, &mode);
   if (return_code == -1) {
-    throw std::runtime_error(
+    throw DisplayException(
         "No display mode information is available or the display index is out of range: " +
         std::to_string(index) + ", desktop mode");
   }
@@ -137,7 +136,7 @@ Display::Mode Display::GetCurrentMode() const {
   SDL_DisplayMode mode;
   int return_code = SDL_GetCurrentDisplayMode(index, &mode);
   if (return_code == -1) {
-    throw std::runtime_error(
+    throw DisplayException(
         "No display mode information is available or the display index is out of range: " +
         std::to_string(index) + ", current mode");
   }
