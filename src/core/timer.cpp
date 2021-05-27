@@ -2,7 +2,7 @@
 
 #include <SDL_timer.h>
 
-using namespace std::literals;
+using namespace std::literals::string_literals;
 using namespace sdlxx::core;
 
 uint32_t Timer::GetTicks() { return SDL_GetTicks(); }
@@ -19,7 +19,7 @@ Timer::Timer(uint32_t interval, Callback callback, void* param) {
   SDL_TimerCallback timer_callback = *callback.target<SDL_TimerCallback>();
   id = SDL_AddTimer(interval, timer_callback, param);
   if (id == 0) {
-    throw std::runtime_error("Failed to create a timer: "s + SDL_GetError());
+    throw TimerException("Failed to create a timer: "s + SDL_GetError());
   }
 }
 

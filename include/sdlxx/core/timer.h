@@ -32,7 +32,16 @@
 #include <cstdint>
 #include <functional>
 
+#include "sdlxx/core/exception.h"
+
 namespace sdlxx::core {
+
+/**
+ * \brief A class for Timer-related exceptions.
+ */
+class TimerException : public Exception {
+  using Exception::Exception;
+};
 
 /**
  * \brief A class that represents the timer.
