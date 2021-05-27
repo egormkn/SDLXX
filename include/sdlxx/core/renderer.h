@@ -184,6 +184,11 @@ public:
    */
   Renderer(Surface& surface);
 
+  /**
+   * \brief Create an empty renderer
+   */
+  Renderer() = default;
+
   // TODO: SDL_GetRenderer, SDL_GetRendererInfo
 
   /**
@@ -518,6 +523,18 @@ public:
   void Copy(const Texture& texture);
 
   /**
+   * \brief Copy a texture to the current rendering target.
+   *
+   * \param texture The source texture.
+   * \param dest    The destination rectangle.
+   *
+   * \throw RendererException on error.
+   *
+   * \upstream SDL_RenderCopy
+   */
+  void Copy(const Texture& texture, const Rectangle& dest);
+
+  /**
    * \brief Copy a portion of the texture to the current rendering target.
    *
    * \param texture The source texture.
@@ -562,6 +579,22 @@ public:
   void Copy(const Texture& texture, double angle, Point center, Flip flip = Flip::NONE);
 
   /**
+   * \brief Copy the source texture to the current rendering target, rotating it by
+   * angle around the center of dest
+   *
+   * \param texture The source texture.
+   * \param dest    The destination rectangle.
+   * \param angle   An angle in degrees that indicates the rotation that will be applied to dest,
+   *                rotating it in a clockwise direction
+   * \param flip    A Flip value stating which flipping actions should be performed on the texture
+   *
+   * \throw RendererException on error.
+   *
+   * \upstream SDL_RenderCopyEx
+   */
+  void Copy(const Texture& texture, const Rectangle& dest, double angle, Flip flip = Flip::NONE);
+
+  /**
    * \brief Copy a portion of the source texture to the current rendering target, rotating it by
    * angle around the center of dest
    *
@@ -577,6 +610,24 @@ public:
    * \upstream SDL_RenderCopyEx
    */
   void Copy(const Texture& texture, const Rectangle& source, const Rectangle& dest, double angle,
+            Flip flip = Flip::NONE);
+
+  /**
+   * \brief Copy a portion of the source texture to the current rendering target, rotating it by
+   * angle around the given center
+   *
+   * \param texture The source texture.
+   * \param dest    The destination rectangle.
+   * \param angle   An angle in degrees that indicates the rotation that will be applied to dest,
+   *                rotating it in a clockwise direction
+   * \param center  The point around which dest will be rotated.
+   * \param flip    A Flip value stating which flipping actions should be performed on the texture
+   *
+   * \throw RendererException on error.
+   *
+   * \upstream SDL_RenderCopyEx
+   */
+  void Copy(const Texture& texture, const Rectangle& dest, double angle, Point center,
             Flip flip = Flip::NONE);
 
   /**
@@ -642,6 +693,8 @@ public:
    */
   void Render();
 
+  // TODO: SDL_RenderFlush, SDL_RenderGetMetalLayer, SDL_RenderGetMetalCommandEncoder
+
   /**
    * \brief Release the raw pointer to the underlying SDL_Renderer structure
    *
@@ -650,8 +703,6 @@ public:
    * \return The raw pointer to the underlying SDL_Renderer structure
    */
   SDL_Renderer* Release();
-
-  // TODO: SDL_RenderFlush, SDL_RenderGetMetalLayer, SDL_RenderGetMetalCommandEncoder
 
   friend class Texture;
 

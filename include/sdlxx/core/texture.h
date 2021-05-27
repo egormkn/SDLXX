@@ -31,6 +31,7 @@
 
 #include <string>
 
+#include "sdlxx/core/blendmode.h"
 #include "sdlxx/core/renderer.h"
 
 // Declaration of the underlying type
@@ -116,6 +117,11 @@ public:
   Texture(Renderer& renderer, const Surface& surface);
 
   /**
+   * \brief Create an empty texture
+   */
+  Texture() = default;
+
+  /**
    * \brief Create a texture frow a raw pointer to SDL_Texture
    *
    * \param ptr The raw pointer to SDL_Texture
@@ -137,10 +143,109 @@ public:
    */
   Attributes Query() const;
 
-  // TODO: SDL_SetTextureColorMod, SDL_GetTextureColorMod, SDL_SetTextureAlphaMod,
-  // SDL_GetTextureAlphaMod, SDL_SetTextureBlendMode, SDL_GetTextureBlendMode,
-  // SDL_SetTextureScaleMode, SDL_GetTextureScaleMode, SDL_UpdateTexture, SDL_UpdateYUVTexture,
-  // SDL_LockTexture, SDL_LockTextureToSurface, SDL_UnlockTexture, SDL_GL_BindTexture, SDL_GL_UnbindTexture
+  /**
+   * \brief Set an additional color value used in render copy operations.
+   *
+   * \param color The RGB color value multiplied into copy operations.
+   *
+   * \throw TextureException if the texture is not valid or color modulation is not supported.
+   *
+   * \upstream SDL_SetTextureColorMod
+   */
+  void SetColorModulation(Color color);
+
+  /**
+   * \brief Get the additional color value used in render copy operations.
+   *
+   * \return Current RGB color modulation value
+   *
+   * \throw TextureException if the texture is not valid.
+   *
+   * \upstream SDL_GetTextureColorMod
+   */
+  Color GetColorModulation() const;
+
+  /**
+   * \brief Set an additional alpha value used in render copy operations.
+   *
+   * \param alpha The alpha value multiplied into copy operations.
+   *
+   * \throw TextureException if the texture is not valid or alpha modulation is not supported.
+   *
+   * \upstream SDL_SetTextureAlphaMod
+   */
+  void SetAlphaModulation(uint8_t alpha);
+
+  /**
+   * \brief Get the additional alpha value used in render copy operations.
+   *
+   * \return The current alpha value.
+   *
+   * \throw TextureException if the texture is not valid.
+   *
+   * \upstream SDL_GetTextureAlphaMod
+   */
+  uint8_t GetAlphaModulation() const;
+
+  /**
+   * \brief Set the blend mode used for texture copy operations.
+   *
+   * \param blend_mode BlendMode to use for texture blending.
+   *
+   * \throw TextureException if the texture is not valid or the blend mode is not supported.
+   *
+   * \note If the blend mode is not supported, the closest supported mode is chosen.
+   *
+   * \upstream SDL_SetTextureBlendMode
+   */
+  void SetBlendMode(BlendMode blend_mode);
+
+  /**
+   * \brief Get the blend mode used for texture copy operations.
+   *
+   * \return The current blend mode
+   *
+   * \throw TextureException if the texture is not valid.
+   *
+   * \upstream SDL_GetTextureBlendMode
+   */
+  BlendMode GetBlendMode() const;
+
+  /**
+   * \brief Set the scale mode used for texture scale operations.
+   *
+   * \param scale_mode ScaleMode to use for texture scaling.
+   *
+   * \throw TextureException if the texture is not valid.
+   *
+   * \note If the scale mode is not supported, the closest supported mode is chosen.
+   *
+   * \upstream SDL_SetTextureScaleMode
+   */
+  void SetScaleMode(ScaleMode scale_mode);
+
+  /**
+   * \brief Get the scale mode used for texture scale operations.
+   *
+   * \return The current scale mode.
+   *
+   * \throw TextureException if the texture is not valid.
+   *
+   * \upstream SDL_GetTextureScaleMode
+   */
+  ScaleMode GetScaleMode() const;
+
+  // TODO: SDL_UpdateTexture, SDL_UpdateYUVTexture, SDL_LockTexture, SDL_LockTextureToSurface,
+  // SDL_UnlockTexture, SDL_GL_BindTexture, SDL_GL_UnbindTexture
+
+  /**
+   * \brief Get the raw pointer to SDL_Texture.
+   *
+   * After this operation you are responsible for freeing the memory of the texture.
+   *
+   * \return A pointer to the SDL_Texture
+   */
+  SDL_Texture* Release();
 
   // Friend declarations
   friend class Renderer;

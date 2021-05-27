@@ -190,6 +190,11 @@ public:
   explicit Window(const void* data);
 
   /**
+   * \brief Create an empty window
+   */
+  Window() = default;
+
+  /**
    * \brief Get an existing window from a stored Id.
    *
    * \throw WindowException on error.

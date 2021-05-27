@@ -51,6 +51,26 @@ void Surface::SaveBMP(const std::string& file) const {
   }
 }
 
+void Surface::SetColorKey(Color color) {
+  Uint32 key = SDL_MapRGB(surface_ptr->format, color.r, color.g, color.b);
+  int return_code = SDL_SetColorKey(surface_ptr.get(), 1, key);
+  if (return_code != 0) {
+    throw SurfaceException("Failed to set color key for the surface");
+  }
+}
+
+void Surface::ResetColorKey() {
+  Uint32 key = SDL_MapRGB(surface_ptr->format, 0, 0, 0);
+  int return_code = SDL_SetColorKey(surface_ptr.get(), 0, key);
+  if (return_code != 0) {
+    throw SurfaceException("Failed to reset color key for the surface");
+  }
+}
+
+bool Surface::HasColorKey() const {
+  return SDL_HasColorKey(surface_ptr.get()) == SDL_TRUE;
+}
+
 bool Surface::SetClipRectangle(const Rectangle& rectangle) {
   SDL_Rect rect{rectangle.x, rectangle.y, rectangle.width, rectangle.height};
   return SDL_SetClipRect(surface_ptr.get(), &rect) == SDL_TRUE;

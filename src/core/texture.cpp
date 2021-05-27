@@ -33,6 +33,74 @@ Texture::Attributes Texture::Query() const {
   return attributes;
 }
 
+void Texture::SetColorModulation(Color color) {
+  int return_code = SDL_SetTextureColorMod(texture_ptr.get(), color.r, color.g, color.b);
+  if (return_code != 0) {
+    throw TextureException("Failed to set color modulation for the texture");
+  }
+}
+
+Color Texture::GetColorModulation() const {
+  Color color;
+  int return_code = SDL_GetTextureColorMod(texture_ptr.get(), &color.r, &color.g, &color.b);
+  if (return_code != 0) {
+    throw TextureException("Failed to get color modulation for the texture");
+  }
+  return color;
+}
+
+void Texture::SetAlphaModulation(uint8_t alpha) {
+  int return_code = SDL_SetTextureAlphaMod(texture_ptr.get(), alpha);
+  if (return_code != 0) {
+    throw TextureException("Failed to set alpha modulation for the texture");
+  }
+}
+
+uint8_t Texture::GetAlphaModulation() const {
+  uint8_t alpha;
+  int return_code = SDL_GetTextureAlphaMod(texture_ptr.get(), &alpha);
+  if (return_code != 0) {
+    throw TextureException("Failed to get alpha modulation for the texture");
+  }
+  return alpha;
+}
+
+void Texture::SetBlendMode(BlendMode blend_mode) {
+  int return_code =
+      SDL_SetTextureBlendMode(texture_ptr.get(), static_cast<SDL_BlendMode>(blend_mode));
+  if (return_code != 0) {
+    throw TextureException("Failed to set blend mode for the texture");
+  }
+}
+
+BlendMode Texture::GetBlendMode() const {
+  SDL_BlendMode blend_mode;
+  int return_code = SDL_GetTextureBlendMode(texture_ptr.get(), &blend_mode);
+  if (return_code != 0) {
+    throw TextureException("Failed to get blend mode for the texture");
+  }
+  return static_cast<BlendMode>(blend_mode);
+}
+
+void Texture::SetScaleMode(Texture::ScaleMode scale_mode) {
+  int return_code =
+      SDL_SetTextureScaleMode(texture_ptr.get(), static_cast<SDL_ScaleMode>(scale_mode));
+  if (return_code != 0) {
+    throw TextureException("Failed to set scale mode for the texture");
+  }
+}
+
+Texture::ScaleMode Texture::GetScaleMode() const {
+  SDL_ScaleMode scale_mode;
+  int return_code = SDL_GetTextureScaleMode(texture_ptr.get(), &scale_mode);
+  if (return_code != 0) {
+    throw TextureException("Failed to get scale mode for the texture");
+  }
+  return static_cast<ScaleMode>(scale_mode);
+}
+
+SDL_Texture* Texture::Release() { return texture_ptr.release(); }
+
 void Texture::Deleter::operator()(SDL_Texture* ptr) const {
   if (ptr) {
     SDL_DestroyTexture(ptr);

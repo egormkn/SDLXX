@@ -321,6 +321,14 @@ void Renderer::Copy(const Texture& texture) {
   }
 }
 
+void Renderer::Copy(const Texture& texture, const Rectangle& dest) {
+  SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
+  int return_code = SDL_RenderCopy(renderer_ptr.get(), texture.texture_ptr.get(), NULL, &dstrect);
+  if (return_code != 0) {
+    throw RendererException("Failed to copy the texture to the current rendering target");
+  }
+}
+
 void Renderer::Copy(const Texture& texture, const Rectangle& source, const Rectangle& dest) {
   SDL_Rect srcrect{source.x, source.y, source.width, source.height};
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
@@ -350,6 +358,17 @@ void Renderer::Copy(const Texture& texture, double angle, Point center, Renderer
   }
 }
 
+void Renderer::Copy(const Texture& texture, const Rectangle& dest, double angle,
+                    Renderer::Flip flip) {
+  SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
+  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), NULL, &dstrect,
+                                     angle, NULL, flip_value);
+  if (return_code != 0) {
+    throw RendererException("Failed to copy the texture to the current rendering target");
+  }
+}
+
 void Renderer::Copy(const Texture& texture, const Rectangle& source, const Rectangle& dest,
                     double angle, Renderer::Flip flip) {
   SDL_Rect srcrect{source.x, source.y, source.width, source.height};
@@ -357,6 +376,18 @@ void Renderer::Copy(const Texture& texture, const Rectangle& source, const Recta
   SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), &srcrect,
                                      &dstrect, angle, NULL, flip_value);
+  if (return_code != 0) {
+    throw RendererException("Failed to copy the texture to the current rendering target");
+  }
+}
+
+void Renderer::Copy(const Texture& texture, const Rectangle& dest, double angle, Point center,
+                    Renderer::Flip flip) {
+  SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
+  SDL_Point center_value{center.x, center.y};
+  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), NULL, &dstrect,
+                                     angle, &center_value, flip_value);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }

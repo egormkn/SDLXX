@@ -130,6 +130,11 @@ public:
   Surface(void* pixels, int width, int height, int depth, int pitch, uint32_t format);
 
   /**
+   * \brief Create an empty surface
+   */
+  Surface() = default;
+
+  /**
    * \brief Create a surface from the raw pointer to SDL_Surface
    *
    * \param ptr The raw pointer to SDL_Surface
@@ -213,8 +218,38 @@ public:
    */
   void SaveBMP(const std::string& file) const;
 
-  // TODO: SDL_LoadBMP_RW, SDL_SaveBMP_RW, SDL_SetSurfaceRLE, SDL_HasSurfaceRLE, SDL_SetColorKey,
-  // SDL_HasColorKey, SDL_GetColorKey, SDL_SetSurfaceColorMod, SDL_GetSurfaceColorMod,
+  // TODO: SDL_LoadBMP_RW, SDL_SaveBMP_RW, SDL_SetSurfaceRLE, SDL_HasSurfaceRLE
+
+  /**
+   * \brief Sets the color key (transparent pixel) in a blittable surface.
+   *
+   * \param color The transparent pixel color.
+   *
+   * \throw SurfaceException if the surface is not valid
+   *
+   * \upstream SDL_SetColorKey
+   */
+  void SetColorKey(Color color);
+
+  /**
+   * \brief Sets the color key (transparent pixel) in a blittable surface.
+   *
+   * \throw SurfaceException if the surface is not valid
+   *
+   * \upstream SDL_SetColorKey
+   */
+  void ResetColorKey();
+
+  /**
+   * \brief Returns whether the surface has a color key
+   *
+   * \return true if the surface has a color key, or false if the surface has no color key
+   *
+   * \upstream SDL_HasColorKey
+   */
+  bool HasColorKey() const;
+
+  // TODO: SDL_GetColorKey, SDL_SetSurfaceColorMod, SDL_GetSurfaceColorMod,
   // SDL_SetSurfaceAlphaMod, SDL_GetSurfaceAlphaMod, SDL_SetSurfaceBlendMode,
   // SDL_GetSurfaceBlendMode
 
