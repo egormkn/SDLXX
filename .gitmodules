@@ -1,0 +1,27 @@
+[submodule "libs/SDL"]
+	path = libs/SDL
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "libs/SDL_image"]
+	path = libs/SDL_image
+	url = https://github.com/libsdl-org/SDL_image.git
+[submodule "libs/SDL_mixer"]
+	path = libs/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer.git
+[submodule "libs/SDL_net"]
+	path = libs/SDL_net
+	url = https://github.com/libsdl-org/SDL_net.git
+[submodule "libs/SDL_rtf"]
+	path = libs/SDL_rtf
+	url = https://github.com/libsdl-org/SDL_rtf.git
+[submodule "libs/SDL_ttf"]
+	path = libs/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "libs/tinyxml2"]
+	path = libs/tinyxml2
+	url = https://github.com/leethomason/tinyxml2.git
+[submodule "libs/box2d"]
+	path = libs/box2d
+	url = https://github.com/erincatto/box2d.git
+[submodule "libs/Nuklear"]
+	path = libs/Nuklear
+	url = https://github.com/Immediate-Mode-UI/Nuklear.git
