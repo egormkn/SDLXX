@@ -1,4 +1,6 @@
 ---
-Checks:          '*'
+Checks:          '-*'
 WarningsAsErrors: '-*'
 FormatStyle:     none
+InheritParentConfig: false
+...

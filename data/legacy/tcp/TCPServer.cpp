@@ -1,8 +1,10 @@
-#include <SDL_net.h>
-#include <fstream>
 #include "TCPServer.h"
+
+#include <fstream>
 #include <thread>
-#include <sdlxx/core/Log.h>
+
+#include <SDL_net.h>
+#include <sdlxx/core/log.h>
 
 int TCPServer::fileSize(const char *filename) {
     std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);

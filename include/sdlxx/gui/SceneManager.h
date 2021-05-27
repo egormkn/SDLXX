@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <stack>
 
-#include <sdlxx/core/Window.h>
+#include <sdlxx/core/window.h>
 #include <sdlxx/gui/Scene.h>
 
 namespace sdlxx::gui {

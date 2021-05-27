@@ -2,7 +2,7 @@
 #include <system_error>
 
 #include <SDL_ttf.h>
-#include <sdlxx/core/Version.h>
+#include <sdlxx/core/version.h>
 #include <sdlxx/ttf/SDLXX_ttf.h>
 
 using namespace sdlxx::core;

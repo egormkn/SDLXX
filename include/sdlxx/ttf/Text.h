@@ -10,7 +10,8 @@
 #define SDLXX_TTF_TEXT_H
 
 #include <string>
-#include <sdlxx/core/Surface.h>
+
+#include <sdlxx/core/surface.h>
 
 namespace sdlxx::ttf {
 

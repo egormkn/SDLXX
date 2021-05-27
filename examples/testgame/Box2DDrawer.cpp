@@ -26,14 +26,14 @@ void Box2DDrawer::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount,
   DrawPolygon(vertices, vertexCount, color);
 }
 
-void Box2DDrawer::DrawCircle(const b2Vec2& center, float32 radius,
+void Box2DDrawer::DrawCircle(const b2Vec2& center, float radius,
                              const b2Color& color) {
   SetColor(color);
 
-  const float32 k_segments = 24.0f;
-  const float32 k_increment = 2.0f * b2_pi / k_segments;
-  float32 sinInc = sinf(k_increment);
-  float32 cosInc = cosf(k_increment);
+  const float k_segments = 24.0f;
+  const float k_increment = 2.0f * b2_pi / k_segments;
+  float sinInc = sinf(k_increment);
+  float cosInc = cosf(k_increment);
   b2Vec2 r1(1.0f, 0.0f);
   b2Vec2 v1 = center + radius * r1;
   for (int32 i = 0; i < k_segments; ++i) {
@@ -49,7 +49,7 @@ void Box2DDrawer::DrawCircle(const b2Vec2& center, float32 radius,
   }
 }
 
-void Box2DDrawer::DrawSolidCircle(const b2Vec2& center, float32 radius,
+void Box2DDrawer::DrawSolidCircle(const b2Vec2& center, float radius,
                                   const b2Vec2& axis, const b2Color& color) {
   DrawCircle(center, radius, color);
   int x = (int)(center.x * scale);
@@ -73,7 +73,7 @@ void Box2DDrawer::DrawTransform(const b2Transform& xf) {
   // TODO
 }
 
-void Box2DDrawer::DrawPoint(const b2Vec2& p, float32 size,
+void Box2DDrawer::DrawPoint(const b2Vec2& p, float size,
                             const b2Color& color) {
   SetColor(color);
   const int halfSize = (int)(size * scale / 2 + 1);

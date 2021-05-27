@@ -2,12 +2,12 @@
 #define SDLXX_BUTTON_H
 
 #include <nuklear.h>
+#include <sdlxx/core/events.h>
+#include <sdlxx/core/texture.h>
+#include <sdlxx/core/window.h>
 
+#include "../core/point.h"
 #include "../gui/Object.h"
-#include "../core/Point.h"
-#include <sdlxx/core/Texture.h>
-#include <sdlxx/core/Window.h>
-#include <sdlxx/core/Events.h>
 
 namespace sdlxx::gui {
 class Button : public sdlxx::gui::Object {

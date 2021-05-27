@@ -1,7 +1,7 @@
+#include <sdlxx/core/log.h>
+#include <sdlxx/core/texture.h>
 #include <sdlxx/gui/Button.h>
-#include <sdlxx/core/Log.h>
 #include <sdlxx/ttf/Font.h>
-#include <sdlxx/core/Texture.h>
 
 using namespace sdlxx::core;
 using namespace sdlxx::gui;
@@ -97,6 +97,6 @@ void Button::setText(const std::string &text, const std::shared_ptr<Renderer>& r
         delete textTexture;
     }
     Font font("resources/OpenSans.ttf", 16);
-    Text surface = font.render(text, Font::Mode::BLENDED, Color::black);
+    Text surface = font.render(text, Font::Mode::BLENDED, Color::BLACK);
     textTexture = new Texture(renderer, surface);
 }

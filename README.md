@@ -1,6 +1,11 @@
 # SDLXX
 
-[![Build Status](https://travis-ci.org/egormkn/sdlxx.svg?branch=master)](https://travis-ci.org/egormkn/sdlxx) [![Build status](https://ci.appveyor.com/api/projects/status/github/egormkn/sdlxx?branch=master&svg=true)](https://ci.appveyor.com/project/egormkn/sdlxx/branch/master)
+
+
+[![Build Status](
+https://travis-ci.com/egormkn/SDLXX.svg?branch=master)](https://travis-ci.com/egormkn/SDLXX)
+
+[![Build status](https://ci.appveyor.com/api/projects/status/github/egormkn/SDLXX?branch=master&svg=true)](https://ci.appveyor.com/project/egormkn/SDLXX/branch/master)
 
 SDLXX is a library that implements a modern C++17 interface to the widely used [SDL](https://www.libsdl.org/) library and its addons: [SDL_image](https://www.libsdl.org/projects/SDL_image/), [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/), [SDL_net](https://www.libsdl.org/projects/SDL_net/), [SDL_ttf](https://www.libsdl.org/projects/SDL_ttf/). It is designed to provide a type-safe low-level access to audio, keyboard, mouse, joystick, network and graphics hardware.
 
@@ -51,4 +56,4 @@ Install IDE (VSCode or CLion preferred), Git, CMake 3.15+, vcpkg
 
 Copyright (C) 2019 Egor Makarenko
 
-This software is provided 'as-is', without any express or implied warranty. See our [LICENSE](LICENCE.md) file for more information.
+This software is provided 'as-is', without any express or implied warranty. See our [LICENSE](LICENSE) file for more information.

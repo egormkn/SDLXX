@@ -11,9 +11,9 @@
 
 #include <cstdint>
 
-#include <sdlxx/core/Events.h>
-#include <sdlxx/core/Point.h>
-#include <sdlxx/core/Renderer.h>
+#include <sdlxx/core/events.h>
+#include <sdlxx/core/point.h>
+#include <sdlxx/core/renderer.h>
 
 namespace sdlxx::gui {
 

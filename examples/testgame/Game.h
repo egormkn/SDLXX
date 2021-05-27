@@ -2,15 +2,16 @@
 #define SDLXX_GAME_H
 
 #include <fstream>
-#include <SDL_timer.h>
 #include <vector>
-#include <sdlxx/image/SDLXX_image.h>
+
+#include <box2d/box2d.h>
+#include <SDL_timer.h>
+#include <sdlxx/core/texture.h>
 #include <sdlxx/gui/Scene.h>
-#include <sdlxx/core/Texture.h>
-#include "Box2DDrawer.h"
+#include <sdlxx/image/SDLXX_image.h>
 #include <tmx/TMX_map.h>
 
-#include <Box2D/Box2D.h>
+#include "Box2DDrawer.h"
 
 using namespace sdlxx::core;
 using namespace sdlxx::gui;
@@ -149,7 +150,7 @@ public:
     }
 
     void onDestroy() override {
-        Log::log("[" + getTitle() + "] Scene destroyed");
+        Log::log("[" + GetTitle() + "] Scene destroyed");
         // Free resources
 
 
@@ -254,7 +255,7 @@ public:
                 }
             }
         }
-        //window->setTitle(std::to_string(camera.x) + " " + std::to_string(camera.y));
+        //window->SetTitle(std::to_string(camera.x) + " " + std::to_string(camera.y));
 
 
         for (std::vector<TMX_layer>::const_iterator tmx_layers = map2->tmx_layers.begin();

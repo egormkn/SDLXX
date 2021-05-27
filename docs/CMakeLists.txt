@@ -1,26 +1,36 @@
-# Include undocumented public and protected methods and class members
-set(DOXYGEN_EXTRACT_ALL YES)
+find_package(Doxygen)
 
-# Improve STL support
-set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
+if(DOXYGEN_FOUND)
+  # Include undocumented public and protected methods and class members
+  set(DOXYGEN_EXTRACT_ALL YES)
 
-# Hide include guards from the documentation
-set(DOXYGEN_EXCLUDE_SYMBOLS "SDLXX_*_H" "SDLXX_*_HPP")
+  # Improve STL support
+  set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
 
-# Set repository README as the main mage
-set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${PROJECT_SOURCE_DIR}/README.md")
+  # Hide include guards from the documentation
+  set(DOXYGEN_EXCLUDE_SYMBOLS "SDLXX_*_H" "SDLXX_*_HPP")
 
-# Set directory with the image files
-set(DOXYGEN_IMAGE_PATH "${PROJECT_SOURCE_DIR}/data")
+  # Set repository README as the main mage
+  set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "${PROJECT_SOURCE_DIR}/README.md")
 
-# FIXME: Exclude TMX from docs
-set(DOXYGEN_EXCLUDE_PATTERNS "${PROJECT_SOURCE_DIR}/include/tmx/*")
+  # Set directory with the image files
+  set(DOXYGEN_IMAGE_PATH "${PROJECT_SOURCE_DIR}/data")
 
-# Add target for building documentation
-doxygen_add_docs(sdlxx_docs
-    "${PROJECT_SOURCE_DIR}/README.md"
-    "${PROJECT_SOURCE_DIR}/include"
-    # ALL
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/include"
-    COMMENT "Documentation for ${PROJECT_NAME}"
-)
+  # FIXME: Exclude TMX from docs
+  set(DOXYGEN_EXCLUDE_PATTERNS "${PROJECT_SOURCE_DIR}/include/tmx/*")
+
+  set(DOXYGEN_TAGFILES "${PROJECT_SOURCE_DIR}/docs/SDL.tag")
+
+  set(DOXYGEN_ALIASES [[upstream=\xrefitem upstream \"Use instead of\" \"Implemented SDL functions\" \ref]])
+
+  # Add target for building documentation
+  doxygen_add_docs(SDLXX_docs
+                   "${PROJECT_SOURCE_DIR}/README.md"
+                   "${PROJECT_SOURCE_DIR}/include"
+                   # ALL
+                   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/include"
+                   COMMENT "Documentation for ${PROJECT_NAME}")
+else()
+  message(STATUS "Doxygen not found, not building documentation")
+endif()
+

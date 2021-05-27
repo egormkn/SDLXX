@@ -6,30 +6,39 @@ root = true
 
 # Configuration for all files
 [*]
-# Enforce Unix style line endings (\n only)
 end_of_line = lf
-# Always end files with a blank line
 insert_final_newline = true
-# Force space characters for indentation
 indent_style = space
-# Remove whitespace characters at the end of line
 trim_trailing_whitespace = true
-# Use UTF-8 charset
 charset = utf-8
 
 # Configuration for C/C++ files
-[*.{c,cc,cpp,cxx,h,hh,hpp,hxx}]
-# Use two spaces for indentation
+[*.{c, cc, cpp, cxx, h, hh, hpp, hxx}]
 indent_size = 2
+max_line_length = 100
 
 # Configuration for CMake files
-[{CMakeLists.txt,*.cmake}]
-# Use four spaces for indentation
-indent_size = 4
+[{CMakeLists.txt, *.cmake}]
+indent_size = 2
+max_line_length = 100
+ij_any_align_multiline_parameters_in_calls = true
+ij_continuation_indent_size = 4
+ij_cmake_align_multiline_parameters_in_calls = true
+ij_cmake_force_commands_case = 1
+ij_cmake_keep_blank_lines_in_code = 2
+ij_cmake_space_before_for_parentheses = false
+ij_cmake_space_before_if_parentheses = false
+ij_cmake_space_before_method_call_parentheses = false
+ij_cmake_space_before_method_parentheses = false
+ij_cmake_space_before_while_parentheses = false
+ij_cmake_spaces_within_for_parentheses = false
+ij_cmake_spaces_within_if_parentheses = false
+ij_cmake_spaces_within_method_call_parentheses = false
+ij_cmake_spaces_within_method_parentheses = false
+ij_cmake_spaces_within_while_parentheses = false
 
 # Configuration for Makefiles
 [Makefile]
-# Use tab character for indentation
 indent_style = tab
-# Use four spaces for indentation
 indent_size = 4
+max_line_length = 100
