@@ -1,13 +1,20 @@
 # Range of supported CMake versions to pick up the best policies
+# We need at least v3.12 for file globbing to work properly
 cmake_minimum_required(VERSION 3.12...3.20)
 
 # Require out-of-source builds
-if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
   message(FATAL_ERROR
           "You cannot build in a source directory.\n"
           "Please use `cmake -S . -B build`.\n"
           "NOTE: cmake will now create CMakeCache.txt and CMakeFiles/*.\n"
           "      You must delete them, or cmake will refuse to work.")
+endif()
+
+# Enable vcpkg using manifest mode
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/libs/vcpkg/scripts/buildsystems/vcpkg.cmake)
+  set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/libs/vcpkg/scripts/buildsystems/vcpkg.cmake
+      CACHE STRING "Vcpkg toolchain file")
 endif()
 
 # Project name and some basic information

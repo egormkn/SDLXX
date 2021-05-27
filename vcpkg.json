@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "sdlxx",
+  "version": "0.1.0",
+  "description": "Modern C++ interface for SDL2",
+  "dependencies": [
+    "sdl2"
+  ],
+  "default-features": ["image"],
+  "features": {
+    "gui": {
+      "description": "User interface for SDL2",
+      "dependencies": [
+        "nuklear"
+      ]
+    },
+    "image": {
+      "description": "Image support for SDL2",
+      "dependencies": [
+        "sdl2-image"
+      ]
+    },
+    "mixer": {
+      "description": "Audio support for SDL2",
+      "dependencies": [
+        "sdl2-mixer"
+      ]
+    },
+    "net": {
+      "description": "Network support for SDL2",
+      "dependencies": [
+        "sdl2-net"
+      ]
+    },
+    "ttf": {
+      "description": "Fonts support for SDL2",
+      "dependencies": [
+        "sdl2-ttf"
+      ]
+    }
+  }
+}

@@ -25,3 +25,6 @@
 [submodule "libs/Nuklear"]
 	path = libs/Nuklear
 	url = https://github.com/Immediate-Mode-UI/Nuklear.git
+[submodule "libs/vcpkg"]
+	path = libs/vcpkg
+	url = https://github.com/microsoft/vcpkg.git
