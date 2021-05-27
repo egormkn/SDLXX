@@ -44,7 +44,7 @@ jobs:
           CXX: ${{ matrix.cxx }}
 
       - name: Build
-        run: cmake --build build --config ${{env.BUILD_TYPE}} -- -j4
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
 
       - name: Test
         working-directory: build
