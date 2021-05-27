@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12...3.20)
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   message(FATAL_ERROR
           "You cannot build in a source directory.\n"
-          "Please use `cmake -H . -B build`.\n"
+          "Please use `cmake -S . -B build`.\n"
           "NOTE: cmake will now create CMakeCache.txt and CMakeFiles/*.\n"
           "      You must delete them, or cmake will refuse to work.")
 endif()
@@ -13,7 +13,7 @@ endif()
 # Project name and some basic information
 project(SDLXX
         VERSION 1.0.0
-        DESCRIPTION "Modern C++ wrapper for SDL"
+        DESCRIPTION "Modern C++ interface for SDL2"
         HOMEPAGE_URL "https://github.com/egormkn/SDLXX"
         LANGUAGES CXX)
 
