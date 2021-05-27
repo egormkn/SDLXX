@@ -19,8 +19,12 @@ if(DOXYGEN_FOUND)
   # FIXME: Exclude TMX from docs
   set(DOXYGEN_EXCLUDE_PATTERNS "${PROJECT_SOURCE_DIR}/include/tmx/*")
 
+  set(DOXYGEN_TAGFILES "${PROJECT_SOURCE_DIR}/docs/SDL.tag")
+
+  set(DOXYGEN_ALIASES [[upstream=\xrefitem upstream \"Use instead of\" \"Implemented SDL functions\" \ref]])
+
   # Add target for building documentation
-  doxygen_add_docs(sdlxx_docs
+  doxygen_add_docs(SDLXX_docs
                    "${PROJECT_SOURCE_DIR}/README.md"
                    "${PROJECT_SOURCE_DIR}/include"
                    # ALL
