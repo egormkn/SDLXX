@@ -50,9 +50,6 @@ if(MAIN_PROJECT)
   # Improve support of folders in some IDE's
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-  # TODO: Remove
-  add_compile_options(-w -Wno-error=shadow -Wno-error=reorder)
-
   # Declare options that enable documentation, examples and tests
   option(BUILD_DOCS "Build documentation" OFF)
   option(BUILD_EXAMPLES "Build examples" OFF)
@@ -88,9 +85,10 @@ if(MAIN_PROJECT AND BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
 
+# Include test utilities and set BUILD_TESTING variable
+include(CTest)
+
 # Build tests if this is the main project
 if(MAIN_PROJECT AND BUILD_TESTING)
-  include(CTest)
-  enable_testing()
   add_subdirectory(tests)
 endif()
