@@ -8,7 +8,8 @@ on:
 
 env:
   BUILD_TYPE: Release
-  VCPKG_BINARY_SOURCES: 'clear;files,${{github.workspace}}/build/vcpkg_binary_cache,readwrite'
+  BUILD_PATH: '${{ github.workspace }}/build'
+  VCPKG_BINARY_SOURCES: 'clear;files,${{ env.BUILD_PATH }}/vcpkg_binary_cache,readwrite'
 
 jobs:
   build:
@@ -18,12 +19,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {os: ubuntu-latest, cc: gcc, cxx: g++}
-          - {os: ubuntu-latest, cc: clang, cxx: clang++}
-          - {os: windows-latest, cc: gcc, cxx: g++}
-          - {os: windows-latest, cc: cl, cxx: cl}
-          - {os: macos-latest, cc: gcc, cxx: g++}
-          - {os: macos-latest, cc: clang, cxx: clang++}
+          - { os: ubuntu-latest, cc: gcc, cxx: g++ }
+          - { os: ubuntu-latest, cc: clang, cxx: clang++ }
+          - { os: windows-latest, cc: gcc, cxx: g++ }
+          - { os: windows-latest, cc: cl, cxx: cl }
+          - { os: macos-latest, cc: gcc, cxx: g++ }
+          - { os: macos-latest, cc: clang, cxx: clang++ }
 
     steps:
       - name: Checkout ${{ github.repository }}
@@ -34,18 +35,18 @@ jobs:
       - name: Restore cached dependencies
         uses: actions/cache@v2
         with:
-          path: ${{github.workspace}}/build/vcpkg_binary_cache
+          path: ${{ env.BUILD_PATH }}/vcpkg_binary_cache
           key: ${{ matrix.os }}-${{ matrix.cc }}-${{ matrix.cxx }}
 
       - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: cmake -S . -B ${{ env.BUILD_PATH }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
         env:
           CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
 
       - name: Build
-        run: cmake --build build --config ${{env.BUILD_TYPE}}
+        run: cmake --build ${{ env.BUILD_PATH }} --config ${{ env.BUILD_TYPE }}
 
       - name: Test
-        working-directory: build
-        run: ctest -C ${{env.BUILD_TYPE}}
+        working-directory: ${{ env.BUILD_PATH }}
+        run: ctest -C ${{ env.BUILD_TYPE }}
