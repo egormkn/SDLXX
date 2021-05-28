@@ -6,7 +6,7 @@
   "dependencies": [
     "sdl2"
   ],
-  "default-features": ["image"],
+  "default-features": ["image", "ttf"],
   "features": {
     "gui": {
       "description": "User interface for SDL2",
@@ -35,7 +35,8 @@
     "ttf": {
       "description": "Fonts support for SDL2",
       "dependencies": [
-        "sdl2-ttf"
+        "sdl2-ttf",
+        "zlib"
       ]
     }
   }

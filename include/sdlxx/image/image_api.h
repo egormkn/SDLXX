@@ -48,7 +48,7 @@ class ImageApiException : public Exception {
 };
 
 /**
- * \brief A class for SDLXX object that initializes the image API.
+ * \brief A class that initializes the image API.
  */
 class ImageApi {
 public:
@@ -69,15 +69,16 @@ public:
   using Flags = std::unordered_set<Flag>;
 
   /**
-   * \brief Get the SDL_image version the project is compiled against.
+   * \brief Get the SDL_image version the library was compiled against.
    *
    * This is determined by what header the compiler used.
-   * Note that if you dynamically linked the library, you might have a slightly newer or older
-   * version at runtime. That version can be determined with GetLinkedSdlImageVersion().
+   *
+   * \note If you dynamically linked the library, you might have a slightly newer or older version
+   * at runtime. That version can be determined with GetLinkedSdlImageVersion().
    *
    * This function may be called safely at any time.
    *
-   * \return Version Version of SDL_image the project was compiled against.
+   * \return Version The version of SDL_image the library was compiled against.
    *
    * \upstream SDL_IMAGE_VERSION
    * \upstream SDL_IMAGE_COMPILEDVERSION
@@ -88,14 +89,14 @@ public:
   static Version GetCompiledSdlImageVersion();
 
   /**
-   * \brief Get the SDL_image version the project is linked against.
+   * \brief Get the SDL_image version the library was linked against.
    *
    * If you are linking to SDL_image dynamically, then it is possible that the
    * current version will be different than the version you compiled against.
    *
    * This function may be called safely at any time.
    *
-   * \return Version Version of SDL_image the project was linked against.
+   * \return Version The version of SDL_image the library was linked against.
    *
    * \upstream IMG_Linked_Version
    */
@@ -149,7 +150,6 @@ public:
    */
   bool WasInit(Flag flag) const;
 
-private:
   // Deleted copy constructor
   ImageApi(const ImageApi& other) = delete;
 

@@ -1,7 +1,7 @@
 #include <sdlxx/core/log.h>
 #include <sdlxx/core/texture.h>
 #include <sdlxx/gui/Button.h>
-#include <sdlxx/ttf/Font.h>
+#include <sdlxx/ttf/font.h>
 
 using namespace sdlxx::core;
 using namespace sdlxx::gui;

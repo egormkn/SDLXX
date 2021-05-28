@@ -12,6 +12,7 @@ if("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
 # Enable vcpkg using manifest mode
+# list(APPEND VCPKG_MANIFEST_FEATURES image mixer net ttf)
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/libs/vcpkg/scripts/buildsystems/vcpkg.cmake)
   set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/libs/vcpkg/scripts/buildsystems/vcpkg.cmake
       CACHE STRING "Vcpkg toolchain file")

@@ -1,5 +1,4 @@
 #include <SDL_events.h>
-#include <SDL_render.h>
 #include <sdlxx/core/core_api.h>
 #include <sdlxx/core/events.h>
 #include <sdlxx/core/log.h>
