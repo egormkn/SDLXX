@@ -1,5 +1,5 @@
-# Note that headers are optional and do not affect add_library, but they
-# will not show up in IDEs unless they are listed in add_library.
+# Note that headers are optional, and do not affect add_library,
+# but they will not show up in IDEs unless they are listed in add_library.
 
 # Add header files
 file(GLOB HEADERS_LIST CONFIGURE_DEPENDS
@@ -8,7 +8,7 @@ file(GLOB HEADERS_LIST CONFIGURE_DEPENDS
 # Add source files
 set(SOURCES_LIST
     color.cpp
-        core_api.cpp
+    core_api.cpp
     dimensions.cpp
     display.cpp
     events.cpp
@@ -25,20 +25,21 @@ set(SOURCES_LIST
     window.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
-add_library(SDLXX_Core ${HEADERS_LIST} ${SOURCES_LIST})
-add_library(SDLXX::Core ALIAS SDLXX_Core)
+add_library(sdlxx_core ${HEADERS_LIST} ${SOURCES_LIST})
+add_library(sdlxx::core ALIAS sdlxx_core)
+add_library(SDLXX::Core ALIAS sdlxx_core)
 
 # Set include directory and make it visible to users
-target_include_directories(SDLXX_Core PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(sdlxx_core PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 # Add dependencies
 find_package(SDL2 CONFIG REQUIRED)
-target_link_libraries(SDLXX_Core PUBLIC
+target_link_libraries(sdlxx_core PUBLIC
                       SDL2::SDL2main
                       SDL2::SDL2-static)
 
 # Set C++ standard to C++17
-target_compile_features(SDLXX_Core PRIVATE cxx_std_17)
+target_compile_features(sdlxx_core PRIVATE cxx_std_17)
 
 # IDEs should put the headers in a nice place
 source_group(TREE "${PROJECT_SOURCE_DIR}/include"

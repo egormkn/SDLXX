@@ -8,10 +8,13 @@
 #include <sdlxx/image/image_api.h>
 #include <sdlxx/image/image_surface.h>
 #include <sdlxx/image/image_texture.h>
+#include <sdlxx/ttf/font.h>
+#include <sdlxx/ttf/ttf_api.h>
 
 using namespace std;
 using namespace sdlxx::core;
 using namespace sdlxx::image;
+using namespace sdlxx::ttf;
 
 int main(int argc, char* args[]) {
   try {
@@ -22,45 +25,43 @@ int main(int argc, char* args[]) {
 
     ImageApi image_api({ImageApi::Flag::PNG});
 
+    TtfApi ttf_api;
+
     const int SCREEN_WIDTH = 640;
     const int SCREEN_HEIGHT = 480;
     Window window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT, {Window::Flag::SHOWN});
 
-    Renderer renderer(window, {Renderer::Flag::ACCELERATED});
+    Renderer renderer(window, {Renderer::Flag::ACCELERATED, Renderer::Flag::PRESENTVSYNC});
     renderer.SetDrawColor(Color::WHITE);
 
-    Texture fadein = ImageTexture(renderer, "fadein.png");
-    Texture fadeout = ImageTexture(renderer, "fadeout.png");
-    fadeout.SetBlendMode(BlendMode::BLEND);
+    Font font("xkcd-script.ttf", 28);
+
+    Texture texture;
+    Dimensions texture_size;
+
+    {
+      Surface text = font.RenderSolid("The quick brown fox jumps over the lazy dog", Color::BLACK);
+      texture = Texture(renderer, text);
+      texture_size = text.GetSize();
+    }
 
     Event e;
     bool quit = false;
-
-    uint8_t alpha = 255;
 
     while (!quit) {
       while (Events::Poll(&e)) {
         if (e.type == SDL_QUIT) {
           quit = true;
-        } else if (e.type == SDL_KEYDOWN) {
-          switch (e.key.keysym.sym) {
-            case SDLK_w:
-              alpha = alpha <= 255 - 32 ? alpha + 32 : 255;
-              break;
-            case SDLK_s:
-              alpha = alpha >= 32 ? alpha - 32 : 0;
-              break;
-          }
         }
       }
 
       renderer.SetDrawColor(Color::WHITE);
       renderer.Clear();
 
-      renderer.Copy(fadein);
-
-      fadeout.SetAlphaModulation(alpha);
-      renderer.Copy(fadeout);
+      Rectangle dest = {(SCREEN_WIDTH - texture_size.width) / 2,
+                        (SCREEN_HEIGHT - texture_size.height) / 2, texture_size.width,
+                        texture_size.height};
+      renderer.Copy(texture, dest);
 
       renderer.Render();
     }

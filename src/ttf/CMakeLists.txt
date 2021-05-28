@@ -1,37 +1,37 @@
-# Note that headers are optional, and do not affect add_library, but they
-# will not show up in IDEs unless they are listed in add_library.
+# Note that headers are optional, and do not affect add_library,
+# but they will not show up in IDEs unless they are listed in add_library.
 
 # Add header files
-file(GLOB HEADER_LIST CONFIGURE_DEPENDS
-    "${PROJECT_SOURCE_DIR}/include/sdlxx/ttf/*.h")
+file(GLOB HEADERS_LIST CONFIGURE_DEPENDS
+     "${PROJECT_SOURCE_DIR}/include/sdlxx/ttf/*.h")
 
 # Add source files
-set(SOURCE_LIST
-    Font.cpp
-    SDLXX_ttf.cpp
-    Text.cpp)
+set(SOURCES_LIST
+    font.cpp
+    ttf_api.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
-add_library(SDLXX_ttf ${HEADER_LIST} ${SOURCE_LIST})
+add_library(sdlxx_ttf ${HEADERS_LIST} ${SOURCES_LIST})
+add_library(sdlxx::ttf ALIAS sdlxx_ttf)
+add_library(SDLXX::TTF ALIAS sdlxx_ttf)
 
 # Set include directory and make it visible to users
-target_include_directories(SDLXX_ttf PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_include_directories(sdlxx_ttf PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
-# Add dependencies (TODO: Move to corresponding packages)
-find_package(SDL2 CONFIG REQUIRED)
-target_link_libraries(SDLXX_ttf PRIVATE SDL2::SDL2main SDL2::SDL2-static)
-find_package(sdl2-image CONFIG REQUIRED)
-target_link_libraries(SDLXX_ttf PRIVATE SDL2::SDL2_image)
+# Add dependencies
+find_package(SDL2 CONFIG REQUIRED) # TODO: Remove
+find_package(ZLIB REQUIRED) # TODO: Remove
 find_package(sdl2-ttf CONFIG REQUIRED)
-target_link_libraries(SDLXX_ttf PRIVATE SDL2::SDL2_ttf)
-
-target_link_libraries(SDLXX_ttf PRIVATE SDLXX_core)
-# /Add dependencies (TODO: Move to corresponding packages)
+target_link_libraries(sdlxx_ttf PUBLIC
+                      sdlxx_core
+                      sdlxx_image
+                      SDL2::SDL2_ttf
+                      ZLIB::ZLIB) # TODO: Remove
 
 # Set C++ standard to C++17
-target_compile_features(SDLXX_ttf PRIVATE cxx_std_17)
+target_compile_features(sdlxx_ttf PRIVATE cxx_std_17)
 
 # IDEs should put the headers in a nice place
 source_group(TREE "${PROJECT_SOURCE_DIR}/include"
-    PREFIX "Header Files"
-    FILES ${HEADER_LIST})
+             PREFIX "Header Files"
+             FILES ${HEADERS_LIST})
