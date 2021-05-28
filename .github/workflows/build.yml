@@ -9,7 +9,7 @@ on:
 env:
   BUILD_TYPE: Release
   BUILD_PATH: '${{ github.workspace }}/build'
-  VCPKG_BINARY_SOURCES: 'clear;files,${{ env.BUILD_PATH }}/vcpkg_binary_cache,readwrite'
+  VCPKG_BINARY_SOURCES: 'clear;files,${{ github.workspace }}/build/vcpkg_binary_cache,readwrite'
 
 jobs:
   build:
