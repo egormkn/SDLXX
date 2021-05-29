@@ -160,6 +160,16 @@ public:
   Surface& operator=(const Surface& other);
 
   /**
+   * \brief Move constructor
+   */
+  Surface(Surface&& other) = default;
+
+  /**
+   * \brief Move assignment operator
+   */
+  Surface& operator=(Surface&& other) = default;
+
+  /**
    * \brief Destroy the surface
    */
   virtual ~Surface() = default;
@@ -469,18 +479,18 @@ protected:
  */
 class SurfaceLock {
 public:
-  SurfaceLock(Surface& surface);
+  explicit SurfaceLock(Surface& surface);
 
   ~SurfaceLock();
-
-private:
-  Surface& surface;
 
   // Deleted copy constructor
   SurfaceLock(const SurfaceLock&) = delete;
 
   // Deleted copy assignment operator
   SurfaceLock& operator=(const SurfaceLock&) = delete;
+
+private:
+  Surface& surface;
 };
 
 }  // namespace sdlxx::core

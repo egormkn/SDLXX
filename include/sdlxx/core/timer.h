@@ -134,14 +134,14 @@ public:
    */
   ~Timer();
 
-private:
-  Id id;  ///< Timer ID
-
   // Deleted copy constructor
   Timer(const Timer&) = delete;
 
   // Deleted copy assignment operator
   Timer& operator=(const Timer&) = delete;
+
+private:
+  Id id;  ///< Timer ID
 };
 
 }  // namespace sdlxx::core

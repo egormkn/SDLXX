@@ -54,7 +54,7 @@ struct Color {
    *
    * \param rgb Hexadecimal RGB value of a color.
    */
-  Color(uint32_t rgb = 0x000000);
+  Color(uint32_t rgb = 0x000000); // NOLINT
 
   /**
    * \brief Construct a color from its RGBA values.

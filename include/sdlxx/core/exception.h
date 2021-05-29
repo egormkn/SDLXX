@@ -29,8 +29,8 @@
 #ifndef SDLXX_CORE_EXCEPTION_H
 #define SDLXX_CORE_EXCEPTION_H
 
-#include <string>
 #include <exception>
+#include <string>
 
 namespace sdlxx::core {
 
@@ -44,6 +44,6 @@ private:
   std::string message;
 };
 
-}
+}  // namespace sdlxx::core
 
 #endif  // SDLXX_CORE_EXCEPTION_H

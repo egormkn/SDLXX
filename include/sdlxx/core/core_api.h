@@ -359,7 +359,6 @@ public:
    */
   static void ClearHints();
 
-private:
   // Deleted copy constructor
   CoreApi(const CoreApi& other) = delete;
 

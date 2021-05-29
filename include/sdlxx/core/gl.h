@@ -284,9 +284,6 @@ public:
    */
   static void SwapWindow(Window& window);
 
-private:
-  void* context_ptr = nullptr;
-
   // Deleted copy constructor
   Context(const Context& other) = delete;
 
@@ -298,9 +295,12 @@ private:
 
   // Deleted move assignment operator
   Context& operator=(Context&& other) = delete;
+
+private:
+  void* context_ptr = nullptr;
 };
 
-} // namespace GL
+}  // namespace GL
 
 }  // namespace sdlxx::core
 
