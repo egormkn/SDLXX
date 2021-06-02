@@ -21,35 +21,32 @@
 
 /**
  * \file
- * \brief Header for the Dimensions structure that represents the dimensions of a 2D object.
+ * \brief Header for the ParentNode class that represents a node of scene graph with its children.
  */
 
-#ifndef SDLXX_CORE_DIMENSIONS_H
-#define SDLXX_CORE_DIMENSIONS_H
+#pragma once
 
-namespace sdlxx::core {
+#ifndef SDLXX_GUI_PARENT_NODE_H
+#define SDLXX_GUI_PARENT_NODE_H
 
-/**
- * \brief A structure that represents the dimensions of a 2D object.
- */
-struct Dimensions {
-  int width;   ///< Width of a 2D object
-  int height;  ///< Height of a 2D object
+#include "sdlxx/gui/node.h"
 
-  /**
-   * \brief Construct a new dimensions object with width = height = 0.
-   */
-  constexpr Dimensions() : width(0), height(0) {}
+namespace sdlxx::gui {
 
-  /**
-   * \brief Construct a new dimensions object with given width and height.
-   *
-   * \param width Width of a 2D object.
-   * \param height Height of a 2D object.
-   */
-  constexpr Dimensions(int width, int height) : width(width), height(height) {}
+class ParentNode : public Node {
+public:
+  std::vector<std::unique_ptr<Node>>& GetChildren();
+
+  void Update(uint32_t t, uint32_t dt) override;
+
+  void Render() override;
+
+  bool HandleEvent(const sdlxx::core::Event& e) override;
+
+private:
+  std::vector<std::unique_ptr<Node>> children;
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx::gui
 
-#endif  // SDLXX_CORE_DIMENSIONS_H
+#endif  // SDLXX_GUI_PARENT_NODE_H

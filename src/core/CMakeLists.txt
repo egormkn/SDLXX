@@ -22,7 +22,8 @@ set(SOURCES_LIST
     texture.cpp
     timer.cpp
     version.cpp
-    window.cpp)
+    window.cpp
+    blendmode.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(sdlxx_core ${HEADERS_LIST} ${SOURCES_LIST})

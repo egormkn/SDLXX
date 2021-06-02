@@ -24,17 +24,15 @@
  * \brief Header for the CoreApi class that initializes the video API.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_API_H
 #define SDLXX_CORE_API_H
 
 #include <functional>
 #include <optional>
 #include <string>
-#include <unordered_set>
 
 #include "sdlxx/core/exception.h"
+#include "sdlxx/core/utils/bitmask.h"
 #include "sdlxx/core/version.h"
 
 namespace sdlxx::core {
@@ -66,24 +64,19 @@ public:
    * \upstream SDL_INIT_EVERYTHING
    */
   enum class Flag : uint32_t {
-    TIMER = 0x00000001u,     ///< Timer subsystem
-    AUDIO = 0x00000010u,     ///< Audio subsystem
-    VIDEO = 0x00000020u,     ///< Video subsystem; automatically initializes the events subsystem
-    JOYSTICK = 0x00000200u,  ///< Joystick subsystem; automatically initializes the events subsystem
-    HAPTIC = 0x00001000u,    ///< Haptic (force feedback) subsystem
-    GAMECONTROLLER = 0x00002000u,  ///< Controller subsystem;
+    TIMER = 0x00000001U,     ///< Timer subsystem NOLINT(hicpp-uppercase-literal-suffix)
+    AUDIO = 0x00000010U,     ///< Audio subsystem
+    VIDEO = 0x00000020U,     ///< Video subsystem; automatically initializes the events subsystem
+    JOYSTICK = 0x00000200U,  ///< Joystick subsystem; automatically initializes the events subsystem
+    HAPTIC = 0x00001000U,    ///< Haptic (force feedback) subsystem
+    GAMECONTROLLER = 0x00002000U,  ///< Controller subsystem;
                                    ///< automatically initializes the joystick subsystem
-    EVENTS = 0x00004000u,          ///< Events subsystem
-    SENSOR = 0x00008000u,          ///< Sensor subsystem
-    NOPARACHUTE = 0x00100000u,     ///< Compatibility; this flag is ignored.
+    EVENTS = 0x00004000U,          ///< Events subsystem
+    SENSOR = 0x00008000U,          ///< Sensor subsystem
+    NOPARACHUTE = 0x00100000U,     ///< Compatibility; this flag is ignored.
     EVERYTHING = TIMER | AUDIO | VIDEO | JOYSTICK | HAPTIC | GAMECONTROLLER | EVENTS |
-                 SENSOR,  ///< All subsystems
+                 SENSOR  ///< All subsystems
   };
-
-  /**
-   * \brief A type alias for a set of library flags.
-   */
-  using Flags = std::unordered_set<Flag>;
 
   /**
    * \brief An enumeration of hint priorities.
@@ -151,19 +144,6 @@ public:
   static int GetRevisionNumber();
 
   /**
-   * \brief Construct the CoreApi object that initializes the specified part of the library.
-   *
-   * This object must be constructed before using most other library functions.
-   *
-   * \param flag Part of the library that should be initialized.
-   *
-   * \note Some flags may automatically initialize other.
-   *
-   * \upstream SDL_Init
-   */
-  explicit CoreApi(Flag flag);
-
-  /**
    * \brief Construct the CoreApi object that initializes the specified parts of the library.
    *
    * This object must be constructed before using most other library functions.
@@ -174,7 +154,7 @@ public:
    *
    * \upstream SDL_Init
    */
-  explicit CoreApi(const Flags& flags = {});
+  explicit CoreApi(BitMask<Flag> flags);
 
   /**
    * \brief Destroy the CoreApi object cleaning up all initialized parts of the library.
@@ -182,18 +162,6 @@ public:
    * \upstream SDL_Quit
    */
   ~CoreApi();
-
-  /**
-   * \brief Initialize specific SDL subsystem.
-   *
-   * Flag initialization is ref-counted, you must call CoreApi::QuitSubSystem() for each
-   * CoreApi::InitSubSystem() to correctly shutdown a subsystem manually (or destroy CoreApi object
-   * to force shutdown). If a subsystem is already loaded then this call will increase the ref-count
-   * and return.
-   *
-   * \upstream SDL_InitSubSystem
-   */
-  void InitSubSystem(Flag flag);
 
   /**
    * \brief Initialize specific SDL subsystems.
@@ -205,24 +173,7 @@ public:
    *
    * \upstream SDL_InitSubSystem
    */
-  void InitSubSystem(const Flags& flags);
-
-  /**
-   * \brief Clean up specific SDL subsystem
-   *
-   * Flag initialization is ref-counted, you must call CoreApi::QuitSubSystem() for each
-   * CoreApi::InitSubSystem() to correctly shutdown a subsystem manually (or destroy CoreApi object
-   * to force shutdown). If a subsystem is loaded multiple times then this call will decrease the
-   * ref-count and return.
-   *
-   * If you start a subsystem using a call to that subsystem's init function instead of constructing
-   * CoreApi object or calling CoreApi::InitSubSystem(), CoreApi::QuitSubSystem() and
-   * CoreApi::WasInit() will not work. You will need to use that subsystem's quit function directly
-   * instead.
-   *
-   * \upstream SDL_QuitSubSystem
-   */
-  void QuitSubSystem(Flag flag);
+  void InitSubSystem(BitMask<Flag> flags);
 
   /**
    * \brief Clean up specific SDL subsystems
@@ -239,7 +190,7 @@ public:
    *
    * \upstream SDL_QuitSubSystem
    */
-  void QuitSubSystem(const Flags& flags);
+  void QuitSubSystem(BitMask<Flag> flags);
 
   /**
    * \brief Get a set of subsystems which have previously been initialized.
@@ -253,7 +204,7 @@ public:
    *
    * \upstream SDL_WasInit
    */
-  Flags WasInit() const;
+  BitMask<Flag> WasInit() const;
 
   /**
    * \brief Return true if specified subsystem has previously been initialized.
@@ -306,7 +257,7 @@ public:
    * \brief Get a hint as a boolean value
    *
    * \param name The name of the hint
-   * \param
+   * \param default_value
    *
    * \return true if hint value is set to true
    * \return false if hint value is set to false
@@ -348,7 +299,7 @@ public:
    *
    * \upstream SDL_DelHintCallback
    */
-  void DelHintCallback(const std::string& name, HintCallback callback, void* userdata);
+  static void DelHintCallback(const std::string& name, HintCallback callback, void* userdata);
 
   /**
    * \brief Clear all hints
@@ -373,5 +324,7 @@ public:
 };
 
 }  // namespace sdlxx::core
+
+ENABLE_BITMASK_OPERATORS(sdlxx::core::CoreApi::Flag);
 
 #endif  // SDLXX_CORE_API_H

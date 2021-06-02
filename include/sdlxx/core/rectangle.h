@@ -24,8 +24,6 @@
  * \brief Header for the Rectangle structure that represents a 2D rectangle.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_RECTANGLE_H
 #define SDLXX_CORE_RECTANGLE_H
 
@@ -46,12 +44,18 @@ struct Rectangle {
   int height;  ///< Height of the rectangle
 
   /**
+   * \brief Construct a new rectangle of zero size at (0, 0)
+   */
+  constexpr Rectangle() : Rectangle(0, 0, 0, 0) {}
+
+  /**
    * \brief Construct a new rectangle of given size at the given point.
    *
    * \param x, y Coordinates of the upper left corner.
    * \param width, height Dimensions of the rectangle.
    */
-  Rectangle(int x, int y, int width, int height);
+  constexpr Rectangle(int x, int y, int width, int height)
+      : x(x), y(y), width(width), height(height) {}
 
   /**
    * \brief Construct a new rectangle of given size at the given point.
@@ -59,21 +63,22 @@ struct Rectangle {
    * \param origin Coordinates of the upper left corner.
    * \param dimensions Dimensions of the rectangle.
    */
-  Rectangle(Point origin, Dimensions dimensions);
+  constexpr Rectangle(Point origin, Dimensions dimensions)
+      : x(origin.x), y(origin.y), width(dimensions.width), height(dimensions.height) {}
 
   /**
    * \brief Get the upper left corner.
    *
    * \return Point The upper left corner of a rectangle.
    */
-  Point getOrigin() const;
+  constexpr Point GetOrigin() const;
 
   /**
    * \brief Get the dimensions of a rectangle.
    *
    * \return Dimensions The dimensions of a rectangle.
    */
-  Dimensions getDimensions() const;
+  constexpr Dimensions GetDimensions() const;
 };
 
 }  // namespace sdlxx::core

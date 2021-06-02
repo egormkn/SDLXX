@@ -24,8 +24,6 @@
  * \brief Header for the Font class that represents a TrueType font.
  */
 
-#pragma once
-
 #ifndef SDLXX_TTF_FONT_H
 #define SDLXX_TTF_FONT_H
 
@@ -36,21 +34,20 @@
 #include "sdlxx/core/dimensions.h"
 #include "sdlxx/core/exception.h"
 #include "sdlxx/core/surface.h"
+#include "sdlxx/core/utils/bitmask.h"
 
 // Declaration of the underlying type
-using TTF_Font =
-    struct _TTF_Font;  // NOLINT(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
+using TTF_Font = struct _TTF_Font;  // NOLINT
 
 namespace sdlxx::ttf {
 
 using Color = sdlxx::core::Color;
-using Exception = sdlxx::core::Exception;
 using Surface = sdlxx::core::Surface;
 
 /**
  * \brief A class for Surface-related exceptions.
  */
-class FontException : public Exception {
+class FontException : public sdlxx::core::Exception {
   using Exception::Exception;
 };
 
@@ -70,7 +67,13 @@ public:
    * \upstream TTF_STYLE_UNDERLINE
    * \upstream TTF_STYLE_STRIKETHROUGH
    */
-  enum Style { NORMAL = 0x00, BOLD = 0x01, ITALIC = 0x02, UNDERLINE = 0x04, STRIKETHROUGH = 0x08 };
+  enum class Style {
+    NORMAL = 0x00,
+    BOLD = 0x01,
+    ITALIC = 0x02,
+    UNDERLINE = 0x04,
+    STRIKETHROUGH = 0x08
+  };
 
   /**
    * \brief Enumeration of the FreeType hinter settings
@@ -124,7 +127,7 @@ public:
    *
    * \upstream TTF_GetFontStyle
    */
-  int GetStyle() const;
+  sdlxx::core::BitMask<Style> GetStyle() const;
 
   /**
    * \brief Set the rendering style of the font as a bitmask of Font::Style values.
@@ -133,7 +136,7 @@ public:
    *
    * \upstream TTF_SetFontStyle
    */
-  void SetStyle(int style);
+  void SetStyle(sdlxx::core::BitMask<Style> style);
 
   /**
    * \brief Get the outline size of the font.
@@ -300,5 +303,7 @@ private:
 };
 
 }  // namespace sdlxx::ttf
+
+ENABLE_BITMASK_OPERATORS(sdlxx::ttf::Font::Style);
 
 #endif  // SDLXX_TTF_FONT_H

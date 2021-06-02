@@ -14,9 +14,13 @@ Font::Font(TTF_Font* ptr) : font_ptr(ptr) {
 Font::Font(const std::string& path, int point_size, int index)
     : Font(TTF_OpenFontIndex(path.c_str(), point_size, index)) {}
 
-int Font::GetStyle() const { return TTF_GetFontStyle(font_ptr.get()); }
+BitMask<Font::Style> Font::GetStyle() const {
+  return BitMask<Font::Style>{TTF_GetFontStyle(font_ptr.get())};
+}
 
-void Font::SetStyle(int style) { TTF_SetFontStyle(font_ptr.get(), style); }
+void Font::SetStyle(sdlxx::core::BitMask<Style> style) {
+  TTF_SetFontStyle(font_ptr.get(), style.value);
+}
 
 int Font::GetOutline() const { return TTF_GetFontOutline(font_ptr.get()); }
 

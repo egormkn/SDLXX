@@ -24,26 +24,23 @@
  * \brief Header for the ImageApi class that initializes the image API.
  */
 
-#pragma once
-
 #ifndef SDLXX_IMAGE_IMAGE_API_H
 #define SDLXX_IMAGE_IMAGE_API_H
 
 #include <cstdint>
-#include <unordered_set>
 
 #include "sdlxx/core/exception.h"
+#include "sdlxx/core/utils/bitmask.h"
 #include "sdlxx/core/version.h"
 
 namespace sdlxx::image {
 
-using sdlxx::core::Exception;
-using sdlxx::core::Version;
+using sdlxx::core::BitMask;
 
 /**
  * \brief A class for ImageApi-related exceptions.
  */
-class ImageApiException : public Exception {
+class ImageApiException : public sdlxx::core::Exception {
   using Exception::Exception;
 };
 
@@ -57,16 +54,11 @@ public:
    * \upstream IMG_InitFlags
    */
   enum class Flag : uint32_t {
-    JPG = 0x00000001u,
-    PNG = 0x00000002u,
-    TIF = 0x00000004u,
-    WEBP = 0x00000008u
+    JPG = 0x00000001U,
+    PNG = 0x00000002U,
+    TIF = 0x00000004U,
+    WEBP = 0x00000008U
   };
-
-  /**
-   * \brief A type alias for a set of library flags.
-   */
-  using Flags = std::unordered_set<Flag>;
 
   /**
    * \brief Get the SDL_image version the library was compiled against.
@@ -86,7 +78,7 @@ public:
    * \upstream SDL_IMAGE_MINOR_VERSION
    * \upstream SDL_IMAGE_PATCHLEVEL
    */
-  static Version GetCompiledSdlImageVersion();
+  static sdlxx::core::Version GetCompiledSdlImageVersion();
 
   /**
    * \brief Get the SDL_image version the library was linked against.
@@ -100,7 +92,7 @@ public:
    *
    * \upstream IMG_Linked_Version
    */
-  static Version GetLinkedSdlImageVersion();
+  static sdlxx::core::Version GetLinkedSdlImageVersion();
 
   /**
    * \brief Construct the ImageApi object that initializes the specified parts of the library.
@@ -108,47 +100,38 @@ public:
    * \param flags Parts of the library that should be initialized.
    *
    * \throw ImageApiException on failure.
-   */
-  explicit ImageApi(Flag flag);
-
-  /**
-   * \brief Construct the ImageApi object that initializes the specified parts of the library.
    *
-   * \param flags Parts of the library that should be initialized.
-   *
-   * \throw ImageApiException on failure.
+   * \upstream IMG_Init
    */
-  explicit ImageApi(const Flags& flags = {});
+  explicit ImageApi(BitMask<Flag> flags);
 
   /**
    * \brief Destroy the ImageApi object cleaning up all initialized parts of the library.
+   *
+   * \upstream IMG_Quit
    */
   ~ImageApi();
-
-  /**
-   * \brief Initialize specific part of the library.
-   */
-  void Init(Flag flag);
-
-  /**
-   * \brief Initialize specific parts of the library.
-   */
-  void Init(const Flags& flags);
 
   /**
    * \brief Get a set of initialized library parts.
    *
    * \return Flags A set of initialized library parts.
+   *
+   * \upstream IMG_Init
    */
-  Flags WasInit() const;
+  static BitMask<Flag> WasInit();
 
   /**
    * \brief Check whether a specified library part has been initialized.
    *
    * \return true if a specified library part has been initialized.
    * \return false otherwise.
+   *
+   * \upstream IMG_Init
    */
-  bool WasInit(Flag flag) const;
+  static bool WasInit(Flag flag);
+
+  // TODO: IMG_isXXX
 
   // Deleted copy constructor
   ImageApi(const ImageApi& other) = delete;
@@ -164,5 +147,7 @@ public:
 };
 
 }  // namespace sdlxx::image
+
+ENABLE_BITMASK_OPERATORS(sdlxx::image::ImageApi::Flag);
 
 #endif  // SDLXX_IMAGE_IMAGE_API_H

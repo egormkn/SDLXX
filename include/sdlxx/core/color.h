@@ -24,8 +24,6 @@
  * \brief Header for the Color structure that represents a color.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_COLOR_H
 #define SDLXX_CORE_COLOR_H
 
@@ -54,7 +52,8 @@ struct Color {
    *
    * \param rgb Hexadecimal RGB value of a color.
    */
-  Color(uint32_t rgb = 0x000000); // NOLINT
+  constexpr Color(uint32_t rgb = 0x000000)  // NOLINT
+      : r((rgb >> 16U) & 0xFFU), g((rgb >> 8U) & 0xFFU), b(rgb & 0xFFU), a(0xFFU) {}
 
   /**
    * \brief Construct a color from its RGBA values.
@@ -64,7 +63,7 @@ struct Color {
    * \param b Blue component (0 is none, 255 is full).
    * \param a Alpha component (0 is transparent, 255 is opaque).
    */
-  Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+  constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) : r(r), g(g), b(b), a(a) {}
 
   // Predefined colors
   static const Color BLACK;        ///< Black color
@@ -75,7 +74,7 @@ struct Color {
   static const Color MAGENTA;      ///< Magenta color
   static const Color CYAN;         ///< Cyan color
   static const Color WHITE;        ///< White color
-  static const Color TRANSPARENT;  ///< White color
+  static const Color TRANSPARENT;  ///< Transparent color
 };
 
 }  // namespace sdlxx::core

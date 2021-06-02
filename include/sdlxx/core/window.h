@@ -24,8 +24,6 @@
  * \brief Header for the Window class that represents a graphical window.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_WINDOW_H
 #define SDLXX_CORE_WINDOW_H
 
@@ -38,6 +36,7 @@
 #include "sdlxx/core/gl.h"
 #include "sdlxx/core/point.h"
 #include "sdlxx/core/surface.h"
+#include "sdlxx/core/utils/bitmask.h"
 
 // Declaration of the underlying type
 struct SDL_Window;
@@ -69,36 +68,31 @@ public:
    * \upstream SDL_WindowFlags
    */
   enum class Flag : uint32_t {
-    FULLSCREEN = 0x00000001,    /**< fullscreen window */
-    OPENGL = 0x00000002,        /**< window usable with OpenGL context */
-    SHOWN = 0x00000004,         /**< window is visible */
-    HIDDEN = 0x00000008,        /**< window is not visible */
-    BORDERLESS = 0x00000010,    /**< no window decoration */
-    RESIZABLE = 0x00000020,     /**< window can be resized */
-    MINIMIZED = 0x00000040,     /**< window is minimized */
-    MAXIMIZED = 0x00000080,     /**< window is maximized */
-    INPUT_GRABBED = 0x00000100, /**< window has grabbed input focus */
-    INPUT_FOCUS = 0x00000200,   /**< window has input focus */
-    MOUSE_FOCUS = 0x00000400,   /**< window has mouse focus */
-    FULLSCREEN_DESKTOP = (FULLSCREEN | 0x00001000),
-    FOREIGN = 0x00000800,       /**< window not created by SDL */
-    ALLOW_HIGHDPI = 0x00002000, /**< window should be created in high-DPI mode if supported.
+    FULLSCREEN = 0x00000001U,    /**< fullscreen window */
+    OPENGL = 0x00000002U,        /**< window usable with OpenGL context */
+    SHOWN = 0x00000004U,         /**< window is visible */
+    HIDDEN = 0x00000008U,        /**< window is not visible */
+    BORDERLESS = 0x00000010U,    /**< no window decoration */
+    RESIZABLE = 0x00000020U,     /**< window can be resized */
+    MINIMIZED = 0x00000040U,     /**< window is minimized */
+    MAXIMIZED = 0x00000080U,     /**< window is maximized */
+    INPUT_GRABBED = 0x00000100U, /**< window has grabbed input focus */
+    INPUT_FOCUS = 0x00000200U,   /**< window has input focus */
+    MOUSE_FOCUS = 0x00000400U,   /**< window has mouse focus */
+    FULLSCREEN_DESKTOP = (FULLSCREEN | 0x00001000U),
+    FOREIGN = 0x00000800U,       /**< window not created by SDL */
+    ALLOW_HIGHDPI = 0x00002000U, /**< window should be created in high-DPI mode if supported.
                                      On macOS NSHighResolutionCapable must be set true in the
                                      application's Driver.plist for this to have any effect. */
-    MOUSE_CAPTURE = 0x00004000, /**< window has mouse captured (unrelated to INPUT_GRABBED) */
-    ALWAYS_ON_TOP = 0x00008000, /**< window should always be above others */
-    SKIP_TASKBAR = 0x00010000,  /**< window should not be added to the taskbar */
-    UTILITY = 0x00020000,       /**< window should be treated as a utility window */
-    TOOLTIP = 0x00040000,       /**< window should be treated as a tooltip */
-    POPUP_MENU = 0x00080000,    /**< window should be treated as a popup menu */
-    VULKAN = 0x10000000,        /**< window usable for Vulkan surface */
-    METAL = 0x20000000          /**< window usable for Metal view */
+    MOUSE_CAPTURE = 0x00004000U, /**< window has mouse captured (unrelated to INPUT_GRABBED) */
+    ALWAYS_ON_TOP = 0x00008000U, /**< window should always be above others */
+    SKIP_TASKBAR = 0x00010000U,  /**< window should not be added to the taskbar */
+    UTILITY = 0x00020000U,       /**< window should be treated as a utility window */
+    TOOLTIP = 0x00040000U,       /**< window should be treated as a tooltip */
+    POPUP_MENU = 0x00080000U,    /**< window should be treated as a popup menu */
+    VULKAN = 0x10000000U,        /**< window usable for Vulkan surface */
+    METAL = 0x20000000U          /**< window usable for Metal view */
   };
-
-  /**
-   * \brief A type alias for a set of window flags.
-   */
-  using Flags = std::unordered_set<Flag>;
 
   /**
    * \brief An enumeration of window events.
@@ -131,13 +125,13 @@ public:
    * \brief Window position that is a default position given by OS.
    * \upstream SDL_WINDOWPOS_UNDEFINED
    */
-  static const int WINDOW_POS_UNDEFINED = 0x1FFF0000u;
+  static const int WINDOW_POS_UNDEFINED = 0x1FFF0000U;
 
   /**
    * \brief Window position that specifies the center of the screen.
    * \upstream SDL_WINDOWPOS_CENTERED
    */
-  static const int WINDOW_POS_CENTERED = 0x2FFF0000u;
+  static const int WINDOW_POS_CENTERED = 0x2FFF0000U;
 
   /**
    * \brief Create a window with the specified position, dimensions, and flags.
@@ -174,7 +168,7 @@ public:
    *
    * \upstream SDL_CreateWindow
    */
-  Window(const std::string& title, int width, int height, const Flags& flags = {},
+  Window(const std::string& title, int width, int height, BitMask<Flag> flags = Flag::SHOWN,
          int position_x = WINDOW_POS_CENTERED, int position_y = WINDOW_POS_CENTERED);
 
   /**
@@ -223,7 +217,7 @@ public:
    *
    * \upstream SDL_GetWindowFlags
    */
-  Flags GetFlags() const;
+  BitMask<Flag> GetFlags() const;
 
   /**
    * \brief Get the display associated with a window.
@@ -711,5 +705,7 @@ protected:
 };
 
 }  // namespace sdlxx::core
+
+ENABLE_BITMASK_OPERATORS(sdlxx::core::Window::Flag);
 
 #endif  // SDLXX_CORE_WINDOW_H

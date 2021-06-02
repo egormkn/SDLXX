@@ -21,35 +21,26 @@
 
 /**
  * \file
- * \brief Header for the Dimensions structure that represents the dimensions of a 2D object.
+ * \brief Header for the GridLayout class that represents a 2D grid layout.
  */
 
-#ifndef SDLXX_CORE_DIMENSIONS_H
-#define SDLXX_CORE_DIMENSIONS_H
+#ifndef SDLXX_GUI_GRID_LAYOUT_H
+#define SDLXX_GUI_GRID_LAYOUT_H
 
-namespace sdlxx::core {
+#include "sdlxx/gui/layout.h"
+
+namespace sdlxx::gui {
 
 /**
- * \brief A structure that represents the dimensions of a 2D object.
+ * \brief A class that represents a 2D grid layout.
  */
-struct Dimensions {
-  int width;   ///< Width of a 2D object
-  int height;  ///< Height of a 2D object
+class GridLayout : public Layout {
+public:
+  GridLayout(int rows, int columns);
 
-  /**
-   * \brief Construct a new dimensions object with width = height = 0.
-   */
-  constexpr Dimensions() : width(0), height(0) {}
-
-  /**
-   * \brief Construct a new dimensions object with given width and height.
-   *
-   * \param width Width of a 2D object.
-   * \param height Height of a 2D object.
-   */
-  constexpr Dimensions(int width, int height) : width(width), height(height) {}
+  void AddChild(int row, int column, Object& object);
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx::gui
 
-#endif  // SDLXX_CORE_DIMENSIONS_H
+#endif  // SDLXX_GUI_GRID_LAYOUT_H

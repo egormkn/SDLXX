@@ -24,8 +24,6 @@
  * \brief Header for the Display class that represents a display.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_DISPLAY_H
 #define SDLXX_CORE_DISPLAY_H
 

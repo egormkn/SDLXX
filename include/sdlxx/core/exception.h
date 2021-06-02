@@ -24,8 +24,6 @@
  * \brief Header for the Exception class.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_EXCEPTION_H
 #define SDLXX_CORE_EXCEPTION_H
 

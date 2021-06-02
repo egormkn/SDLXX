@@ -24,8 +24,6 @@
  * \brief Header for the Version structure that contains information about the library version.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_VERSION_H
 #define SDLXX_CORE_VERSION_H
 

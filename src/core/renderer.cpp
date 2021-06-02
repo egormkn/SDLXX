@@ -1,6 +1,7 @@
 #include "sdlxx/core/renderer.h"
 
 #include <SDL_render.h>
+#include <math.h>
 
 #include "sdlxx/core/rectangle.h"
 #include "sdlxx/core/surface.h"
@@ -19,21 +20,13 @@ std::string Renderer::Driver::GetName() const {
   return info.name;
 }
 
-Renderer::Flags Renderer::Driver::GetFlags() const {
+BitMask<Renderer::Flag> Renderer::Driver::GetFlags() const {
   SDL_RendererInfo info;
   int return_code = SDL_GetRenderDriverInfo(index, &info);
   if (return_code != 0) {
     throw RendererException("Failed to get flags for a driver " + std::to_string(index));
   }
-  Flags result;
-  Uint32 flags_mask = info.flags;
-  for (Flag flag : {Flag::SOFTWARE, Flag::ACCELERATED, Flag::PRESENTVSYNC, Flag::TARGETTEXTURE}) {
-    Uint32 flag_mask = static_cast<Uint32>(flag);
-    if ((flags_mask & flag_mask) == flag_mask) {
-      result.insert(flag);
-    }
-  }
-  return result;
+  return BitMask<Flag>{info.flags};
 }
 
 std::vector<uint32_t> Renderer::Driver::GetTextureFormats() const {
@@ -68,24 +61,17 @@ std::vector<Renderer::Driver> Renderer::GetDrivers() {
   return result;
 }
 
-Uint32 GetFlagsMask(const Renderer::Flags& flags) {
-  Uint32 flags_mask = 0;
-  for (Renderer::Flag flag : flags) {
-    flags_mask |= static_cast<Uint32>(flag);
-  }
-  return flags_mask;
-}
-
-Renderer::Renderer(Window& window, const Renderer::Flags& flags)
-    : renderer_ptr(SDL_CreateRenderer(window.window_ptr.get(), -1, GetFlagsMask(flags))) {
-  if (renderer_ptr == NULL) {
+Renderer::Renderer(Window& window, BitMask<Flag> flags)
+    : renderer_ptr(
+          SDL_CreateRenderer(window.window_ptr.get(), -1, static_cast<Uint32>(flags.value))) {
+  if (renderer_ptr == nullptr) {
     throw RendererException("Failed to create a 2D rendering context for a window");
   }
 }
 
-Renderer::Renderer(Window& window, Renderer::Driver driver, const Renderer::Flags& flags)
-    : renderer_ptr(
-          SDL_CreateRenderer(window.window_ptr.get(), driver.GetIndex(), GetFlagsMask(flags))) {
+Renderer::Renderer(Window& window, Renderer::Driver driver, BitMask<Flag> flags)
+    : renderer_ptr(SDL_CreateRenderer(window.window_ptr.get(), driver.GetIndex(),
+                                      static_cast<Uint32>(flags.value))) {
   if (renderer_ptr == NULL) {
     throw RendererException("Failed to create a 2D rendering context for a window");
   }
@@ -198,17 +184,17 @@ bool Renderer::IsClipEnabled() const {
   return SDL_RenderIsClipEnabled(renderer_ptr.get()) == SDL_TRUE;
 }
 
-void Renderer::SetScale(float scaleX, float scaleY) {
-  int return_code = SDL_RenderSetScale(renderer_ptr.get(), scaleX, scaleY);
+void Renderer::SetScale(float scale_x, float scale_y) {
+  int return_code = SDL_RenderSetScale(renderer_ptr.get(), scale_x, scale_y);
   if (return_code != 0) {
     throw RendererException("Failed to set scaling for the renderer");
   }
 }
 
 std::tuple<float, float> Renderer::GetScale() const {
-  float scaleX, scaleY;
-  SDL_RenderGetScale(renderer_ptr.get(), &scaleX, &scaleY);
-  return {scaleX, scaleY};
+  float scale_x = NAN, scale_y = NAN;
+  SDL_RenderGetScale(renderer_ptr.get(), &scale_x, &scale_y);
+  return {scale_x, scale_y};
 }
 
 void Renderer::SetDrawColor(Color color) {
@@ -428,7 +414,7 @@ void Renderer::Render() { SDL_RenderPresent(renderer_ptr.get()); }
 SDL_Renderer* Renderer::Release() { return renderer_ptr.release(); }
 
 void Renderer::Deleter::operator()(SDL_Renderer* ptr) const {
-  if (ptr) {
+  if (ptr != nullptr) {
     SDL_DestroyRenderer(ptr);
   }
 }

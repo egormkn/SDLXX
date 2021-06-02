@@ -24,8 +24,6 @@
  * \brief Header for the TtfApi class that initializes the fonts API.
  */
 
-#pragma once
-
 #ifndef SDLXX_TTF_TTF_API_H
 #define SDLXX_TTF_TTF_API_H
 
@@ -34,13 +32,10 @@
 
 namespace sdlxx::ttf {
 
-using sdlxx::core::Exception;
-using sdlxx::core::Version;
-
 /**
  * \brief A class for TtfApi-related exceptions.
  */
-class TtfApiException : public Exception {
+class TtfApiException : public sdlxx::core::Exception {
   using Exception::Exception;
 };
 
@@ -67,7 +62,7 @@ public:
    * \upstream SDL_TTF_VERSION
    * \upstream SDL_TTF_COMPILEDVERSION
    */
-  static Version GetCompiledSdlTtfVersion();
+  static sdlxx::core::Version GetCompiledSdlTtfVersion();
 
   /**
    * \brief Get the SDL_ttf version the library was linked against.
@@ -81,7 +76,7 @@ public:
    *
    * \upstream TTF_Linked_Version
    */
-  static Version GetLinkedSdlTtfVersion();
+  static sdlxx::core::Version GetLinkedSdlTtfVersion();
 
   /**
    * \brief Construct the TtfApi object that initializes the fonts API.

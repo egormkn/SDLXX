@@ -24,8 +24,6 @@
  * \brief Header for the Timer class and time management routines.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_TIMER_H
 #define SDLXX_CORE_TIMER_H
 

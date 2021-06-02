@@ -21,46 +21,53 @@
 
 /**
  * \file
- * \brief Header for the Log class that represents the logger.
+ * \brief Header for the Button class that represents a button.
  */
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
+#pragma once
 
-#include <iostream>
-#include <string>
+#ifndef SDLXX_GUI_BUTTON_H
+#define SDLXX_GUI_BUTTON_H
 
-namespace sdlxx::core {
+#include "sdlxx/core/events.h"
+#include "sdlxx/core/point.h"
+#include "sdlxx/core/texture.h"
+#include "sdlxx/core/window.h"
+#include "sdlxx/gui/node.h"
+
+namespace sdlxx::gui {
 
 /**
- * \brief A class that represents the logger.
+ * \brief A class that represents a button.
  */
-class Log {
+class Button : public Node {
 public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
+  enum class State { DEFAULT, HOVER, PRESSED, RELEASED };
 
-  static void Trace(const std::string& message);
+  Button(int x = 0, int y = 0, int width = 0, int height = 0);
 
-  static void Debug(const std::string& message);
+  ~Button();
 
-  static void Info(const std::string& message);
+  void setRelativePosition(int x, int y);
 
-  static void Warning(const std::string& message);
+  void setRelativeSize(int x, int y);
 
-  static void Error(const std::string& message);
+  void Update(uint32_t t, uint32_t dt) override;
 
-  static void Fatal(const std::string& message);
+  void Render() override;
 
-  static void SetVerbosity(Verbosity new_verbosity);
+  bool HandleEvent(const sdlxx::core::Event& e) override;
+
+  void setText(const std::string& text);
 
 private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
+  std::string text;
+  sdlxx::core::Point absPos, relPos;
+  sdlxx::core::Point absDim, relDim, windowDim;
+  sdlxx::core::Texture* textTexture = nullptr;
+  bool mouseOver = false;
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx::gui
 
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_GUI_BUTTON_H

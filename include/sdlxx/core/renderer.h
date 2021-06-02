@@ -24,8 +24,6 @@
  * \brief Header for the Renderer class that represents a 2D rendering context.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_RENDERER_H
 #define SDLXX_CORE_RENDERER_H
 
@@ -37,6 +35,7 @@
 #include "sdlxx/core/exception.h"
 #include "sdlxx/core/point.h"
 #include "sdlxx/core/rectangle.h"
+#include "sdlxx/core/utils/bitmask.h"
 #include "sdlxx/core/window.h"
 
 // Declaration of the underlying type
@@ -63,7 +62,7 @@ public:
    * \brief Flags used when creating a rendering context
    * \upstream SDL_RendererFlags
    */
-  enum class Flag {
+  enum class Flag : uint32_t {
     SOFTWARE = 0x00000001,     /**< The renderer is a software fallback */
     ACCELERATED = 0x00000002,  /**< The renderer uses hardware acceleration */
     PRESENTVSYNC = 0x00000004, /**< Present is synchronized with the refresh rate */
@@ -71,12 +70,7 @@ public:
   };
 
   /**
-   * \brief A type alias for a set of renderer flags
-   */
-  using Flags = std::unordered_set<Flag>;
-
-  /**
-   * \brief A class that holds an information on the capabilities of a render driver or context.
+   * \brief A class that holds an information on the capabilities of a Render driver or context.
    * \upstream SDL_RendererInfo
    */
   class Driver {
@@ -95,7 +89,7 @@ public:
     /**
      * \brief Get supported flags
      */
-    Flags GetFlags() const;
+    BitMask<Flag> GetFlags() const;
 
     /**
      * \brief Get available texture formats
@@ -158,7 +152,7 @@ public:
    *
    * \upstream SDL_CreateRenderer
    */
-  Renderer(Window& window, const Flags& flags);
+  Renderer(Window& window, BitMask<Flag> flags);
 
   /**
    * \brief Create a 2D rendering context for a window.
@@ -171,7 +165,7 @@ public:
    *
    * \upstream SDL_CreateRenderer
    */
-  Renderer(Window& window, Driver driver, const Flags& flags);
+  Renderer(Window& window, Driver driver, BitMask<Flag> flags);
 
   /**
    * \brief Create a 2D software rendering context for a surface.
@@ -182,7 +176,7 @@ public:
    *
    * \upstream SDL_CreateSoftwareRenderer
    */
-  Renderer(Surface& surface);
+  explicit Renderer(Surface& surface);
 
   /**
    * \brief Create an empty renderer
@@ -359,8 +353,8 @@ public:
   /**
    * \brief Set the drawing scale for rendering on the target.
    *
-   * \param scaleX The horizontal scaling factor
-   * \param scaleY The vertical scaling factor
+   * \param scale_x The horizontal scaling factor
+   * \param scale_y The vertical scaling factor
    *
    * The drawing coordinates are scaled by the x/y scaling factors before they
    * are used by the renderer. This allows resolution independent drawing with a
@@ -374,7 +368,7 @@ public:
    *
    * \upstream SDL_RenderSetScale
    */
-  void SetScale(float scaleX, float scaleY);
+  void SetScale(float scale_x, float scale_y);
 
   /**
    * \brief Get the drawing scale for the current target.
@@ -715,5 +709,7 @@ protected:
 };
 
 }  // namespace sdlxx::core
+
+ENABLE_BITMASK_OPERATORS(sdlxx::core::Renderer::Flag);
 
 #endif  // SDLXX_CORE_RENDERER_H

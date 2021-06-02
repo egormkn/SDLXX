@@ -21,35 +21,53 @@
 
 /**
  * \file
- * \brief Header for the Dimensions structure that represents the dimensions of a 2D object.
+ * \brief Header for the Scene class that represents a 2D scene.
  */
 
-#ifndef SDLXX_CORE_DIMENSIONS_H
-#define SDLXX_CORE_DIMENSIONS_H
+#pragma once
 
-namespace sdlxx::core {
+#ifndef SDLXX_GUI_SCENE_H
+#define SDLXX_GUI_SCENE_H
 
-/**
- * \brief A structure that represents the dimensions of a 2D object.
- */
-struct Dimensions {
-  int width;   ///< Width of a 2D object
-  int height;  ///< Height of a 2D object
+#include <cstdint>
 
-  /**
-   * \brief Construct a new dimensions object with width = height = 0.
-   */
-  constexpr Dimensions() : width(0), height(0) {}
+#include "sdlxx/core/events.h"
+#include "sdlxx/core/renderer.h"
+#include "sdlxx/core/window.h"
+#include "sdlxx/gui/parent_node.h"
+#include "sdlxx/gui/scene_manager.h"
 
-  /**
-   * \brief Construct a new dimensions object with given width and height.
-   *
-   * \param width Width of a 2D object.
-   * \param height Height of a 2D object.
-   */
-  constexpr Dimensions(int width, int height) : width(width), height(height) {}
+namespace sdlxx::gui {
+
+class Scene : public Node {
+public:
+  enum class State { CREATED, STARTED, RUNNING, PAUSED, STOPPED, DESTROYED };
+
+  State GetState() const;
+
+  void Finish();
+
+  friend class SceneManager;
+
+protected:
+  virtual void OnCreate();
+
+  virtual void OnStart();
+
+  virtual void OnPause();
+
+  virtual void OnResume();
+
+  virtual void OnStop();
+
+  virtual void OnDestroy();
+
+private:
+  State state = State::DESTROYED;
+  std::unique_ptr<Scene> intent;
+  std::unique_ptr<Node> root;
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx::gui
 
-#endif  // SDLXX_CORE_DIMENSIONS_H
+#endif  // SDLXX_GUI_SCENE_H

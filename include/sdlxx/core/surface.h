@@ -24,8 +24,6 @@
  * \brief Header for the Surface class that represents a collection of pixels.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_SURFACE_H
 #define SDLXX_CORE_SURFACE_H
 

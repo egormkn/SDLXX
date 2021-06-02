@@ -65,15 +65,15 @@ uint8_t Texture::GetAlphaModulation() const {
   return alpha;
 }
 
-void Texture::SetBlendMode(BlendMode blend_mode) {
+void Texture::SetBlendMode(BitMask<BlendMode> blend_mode) {
   int return_code =
-      SDL_SetTextureBlendMode(texture_ptr.get(), static_cast<SDL_BlendMode>(blend_mode));
+      SDL_SetTextureBlendMode(texture_ptr.get(), static_cast<SDL_BlendMode>(blend_mode.value));
   if (return_code != 0) {
     throw TextureException("Failed to set blend mode for the texture");
   }
 }
 
-BlendMode Texture::GetBlendMode() const {
+BitMask<BlendMode> Texture::GetBlendMode() const {
   SDL_BlendMode blend_mode;
   int return_code = SDL_GetTextureBlendMode(texture_ptr.get(), &blend_mode);
   if (return_code != 0) {

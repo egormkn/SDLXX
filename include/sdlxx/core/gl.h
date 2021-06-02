@@ -24,8 +24,6 @@
  * \brief Header for the OpenGL support functions.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_GL_H
 #define SDLXX_CORE_GL_H
 

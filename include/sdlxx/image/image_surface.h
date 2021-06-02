@@ -24,35 +24,29 @@
  * \brief Header for the ImageSurface class that represents a surface loaded from an image file.
  */
 
-#pragma once
-
 #ifndef SDLXX_IMAGE_IMAGE_SURFACE_H
 #define SDLXX_IMAGE_IMAGE_SURFACE_H
 
 #include <string>
 
+#include "sdlxx/core/exception.h"
 #include "sdlxx/core/surface.h"
 
 namespace sdlxx::image {
 
-using sdlxx::core::Exception;
-using sdlxx::core::Surface;
-
 /**
  * \brief A class for ImageSurface-related exceptions.
  */
-class ImageSurfaceException : public Exception {
+class ImageSurfaceException : public sdlxx::core::Exception {
   using Exception::Exception;
 };
 
 /**
  * \brief A class that represents a surface loaded from an image file.
  */
-class ImageSurface : public Surface {
+class ImageSurface : public sdlxx::core::Surface {
 public:
   explicit ImageSurface(const std::string& path);
-
-  // TODO: IMG_isXXX
 };
 
 }  // namespace sdlxx::image

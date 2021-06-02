@@ -2,6 +2,7 @@
 
 #include <SDL_image.h>
 
+using namespace sdlxx::core;
 using namespace sdlxx::image;
 
 ImageTexture::ImageTexture(Renderer& renderer, const std::string& path)

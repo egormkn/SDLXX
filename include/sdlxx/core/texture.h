@@ -24,8 +24,6 @@
  * \brief Header for the Texture class that represents a texture.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_TEXTURE_H
 #define SDLXX_CORE_TEXTURE_H
 
@@ -198,7 +196,7 @@ public:
    *
    * \upstream SDL_SetTextureBlendMode
    */
-  void SetBlendMode(BlendMode blend_mode);
+  void SetBlendMode(BitMask<BlendMode> blend_mode);
 
   /**
    * \brief Get the blend mode used for texture copy operations.
@@ -209,7 +207,7 @@ public:
    *
    * \upstream SDL_GetTextureBlendMode
    */
-  BlendMode GetBlendMode() const;
+  BitMask<BlendMode> GetBlendMode() const;
 
   /**
    * \brief Set the scale mode used for texture scale operations.
@@ -257,7 +255,7 @@ protected:
 
   std::unique_ptr<SDL_Texture, Deleter> texture_ptr;
 
-  SDL_Renderer* GetRendererPtr(Renderer& renderer);
+  static SDL_Renderer* GetRendererPtr(Renderer& renderer);
 };
 
 }  // namespace sdlxx::core

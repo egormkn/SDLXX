@@ -24,35 +24,30 @@
  * \brief Header for the ImageTexture class that represents a texture loaded from an image file.
  */
 
-#pragma once
-
 #ifndef SDLXX_IMAGE_IMAGE_TEXTURE_H
 #define SDLXX_IMAGE_IMAGE_TEXTURE_H
 
 #include <string>
 
+#include "sdlxx/core/exception.h"
 #include "sdlxx/core/renderer.h"
 #include "sdlxx/core/texture.h"
 
 namespace sdlxx::image {
 
-using sdlxx::core::Exception;
-using sdlxx::core::Renderer;
-using sdlxx::core::Texture;
-
 /**
  * \brief A class for ImageTexture-related exceptions.
  */
-class ImageTextureException : public Exception {
+class ImageTextureException : public sdlxx::core::Exception {
   using Exception::Exception;
 };
 
 /**
  * \brief A class that represents a texture loaded from an image file.
  */
-class ImageTexture : public Texture {
+class ImageTexture : public sdlxx::core::Texture {
 public:
-  explicit ImageTexture(Renderer& renderer, const std::string& path);
+  explicit ImageTexture(sdlxx::core::Renderer& renderer, const std::string& path);
 };
 
 }  // namespace sdlxx::image

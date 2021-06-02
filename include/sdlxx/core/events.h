@@ -24,8 +24,6 @@
  * \brief Header for the Events class that handles events.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_EVENTS_H
 #define SDLXX_CORE_EVENTS_H
 
@@ -224,7 +222,7 @@ public:
    * This function is thread-safe.
    *
    * \param numevents Maximum number of events to peek.
-   * \param minType, maxType Range of event types.
+   * \param min_type, max_type Range of event types.
    *
    * \return std::vector<Event> Events from the front of event queue.
    *
@@ -232,8 +230,8 @@ public:
    *
    * \upstream SDL_PeepEvents
    */
-  static std::vector<Event> Peek(int numevents, Type minType = Type::FIRSTEVENT,
-                                 Type maxType = Type::LASTEVENT);
+  static std::vector<Event> Peek(int numevents, Type min_type = Type::FIRSTEVENT,
+                                 Type max_type = Type::LASTEVENT);
 
   /**
    * \brief Get up to \c numevents events at the front of the event queue,
@@ -243,7 +241,7 @@ public:
    * This function is thread-safe.
    *
    * \param numevents Maximum number of events to Get
-   * \param minType, maxType Range of event types
+   * \param min_type, max_type Range of event types
    *
    * \return std::vector<Event> Events removed from the event queue.
    *
@@ -251,8 +249,8 @@ public:
    *
    * \upstream SDL_PeepEvents
    */
-  static std::vector<Event> Get(int numevents, Type minType = Type::FIRSTEVENT,
-                                Type maxType = Type::LASTEVENT);
+  static std::vector<Event> Get(int numevents, Type min_type = Type::FIRSTEVENT,
+                                Type max_type = Type::LASTEVENT);
 
   /**
    * \brief Checks to see if certain event type is in the event queue.
@@ -268,13 +266,13 @@ public:
   /**
    * \brief Checks to see if certain event types are in the event queue.
    *
-   * \param minType, maxType Range of event types.
+   * \param min_type, max_type Range of event types.
    * \return true if queue contains events within specified type range.
    * \return false otherwise.
    *
    * \upstream SDL_HasEvents
    */
-  static bool InQueue(Type minType, Type maxType);
+  static bool InQueue(Type min_type, Type max_type);
 
   /**
    * \brief Checks to see if event queue is empty.
@@ -306,11 +304,11 @@ public:
    * sure that all pending OS events are flushed, you can call Events::Pump()
    * on the main thread immediately before the Flush call.
    *
-   * \param minType, maxType Range of event types
+   * \param min_type, max_type Range of event types
    *
    * \upstream SDL_FlushEvents
    */
-  static void Flush(Type minType, Type maxType);
+  static void Flush(Type min_type, Type max_type);
 
   /**
    * \brief Poll for currently pending events.

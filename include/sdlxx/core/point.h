@@ -24,8 +24,6 @@
  * \brief Header for the Point structure that represents a 2D point.
  */
 
-#pragma once
-
 #ifndef SDLXX_CORE_POINT_H
 #define SDLXX_CORE_POINT_H
 
@@ -43,14 +41,14 @@ struct Point {
   /**
    * \brief Construct a new point at (0, 0).
    */
-  Point();
+  constexpr Point() : x(0), y(0) {}
 
   /**
    * \brief Construct a new point with given coordinates.
    *
    * \param x, y Coordinates of a point
    */
-  Point(int x, int y);
+  constexpr Point(int x, int y) : x(x), y(y) {}
 };
 
 }  // namespace sdlxx::core

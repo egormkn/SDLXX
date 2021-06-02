@@ -20,10 +20,10 @@ int Events::Add(std::vector<Event> events) {
   return num_added;
 }
 
-std::vector<Event> Events::Peek(int numevents, Type minType, Type maxType) {
+std::vector<Event> Events::Peek(int numevents, Type min_type, Type max_type) {
   std::vector<Event> events(numevents);
   int num_peeked = SDL_PeepEvents(events.data(), events.size(), SDL_PEEKEVENT,
-                                  static_cast<Uint32>(minType), static_cast<Uint32>(maxType));
+                                  static_cast<Uint32>(min_type), static_cast<Uint32>(max_type));
   if (num_peeked < 0) {
     throw EventException("Failed to peek events from the event queue");
   }
@@ -31,10 +31,10 @@ std::vector<Event> Events::Peek(int numevents, Type minType, Type maxType) {
   return events;
 }
 
-std::vector<Event> Events::Get(int numevents, Type minType, Type maxType) {
+std::vector<Event> Events::Get(int numevents, Type min_type, Type max_type) {
   std::vector<Event> events(numevents);
   int num_got = SDL_PeepEvents(events.data(), events.size(), SDL_GETEVENT,
-                               static_cast<Uint32>(minType), static_cast<Uint32>(maxType));
+                               static_cast<Uint32>(min_type), static_cast<Uint32>(max_type));
   if (num_got < 0) {
     throw EventException("Failed to geek events from the event queue");
   }
@@ -44,8 +44,8 @@ std::vector<Event> Events::Get(int numevents, Type minType, Type maxType) {
 
 bool Events::InQueue(Type type) { return SDL_HasEvent(static_cast<Uint32>(type)) == SDL_TRUE; }
 
-bool Events::InQueue(Type minType, Type maxType) {
-  return SDL_HasEvents(static_cast<Uint32>(minType), static_cast<Uint32>(maxType)) == SDL_TRUE;
+bool Events::InQueue(Type min_type, Type max_type) {
+  return SDL_HasEvents(static_cast<Uint32>(min_type), static_cast<Uint32>(max_type)) == SDL_TRUE;
 }
 
 bool Events::IsEmpty() { return SDL_PollEvent(NULL) == 0; }
@@ -77,7 +77,7 @@ bool Events::WaitTimeout(Event* event, int timeout) {
 bool Events::Push(SDL_Event* event) {
   int return_code = SDL_PushEvent(event);
   if (return_code < 0) {
-    throw EventException("Failed to push event to the event queue");
+    throw EventException("Failed to Push event to the event queue");
   }
   return return_code != 0;
 }
