@@ -1,6 +1,39 @@
 ---
-Checks:          '-*'
+Checks: >
+  *,
+  -altera-struct-pack-align,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -fuchsia-default-arguments-calls,
+  -fuchsia-default-arguments-declarations,
+  -fuchsia-overloaded-operator,
+  -google-build-using-namespace,
+  -llvmlibc-*,
+  -misc-non-private-member-variables-in-classes,
+  -misc-unused-parameters,
+  -modernize-use-nodiscard,
+  -modernize-use-trailing-return-type,
+  -readability-isolate-declaration,
+  -readability-magic-numbers,
+
 WarningsAsErrors: '-*'
 FormatStyle:     none
 InheritParentConfig: false
+
+CheckOptions:
+  - { key: readability-identifier-naming.ClassCase,             value: CamelCase  }
+  - { key: readability-identifier-naming.ClassConstantCase,     value: UPPER_CASE }
+  - { key: readability-identifier-naming.EnumCase,              value: CamelCase  }
+  - { key: readability-identifier-naming.EnumConstantCase,      value: UPPER_CASE }
+  - { key: readability-identifier-naming.FunctionCase,          value: CamelCase  }
+  - { key: readability-identifier-naming.GlobalConstantCase,    value: UPPER_CASE }
+  - { key: readability-identifier-naming.MacroDefinitionCase,   value: UPPER_CASE }
+  - { key: readability-identifier-naming.MemberCase,            value: lower_case }
+  - { key: readability-identifier-naming.MethodCase,            value: CamelCase  }
+  - { key: readability-identifier-naming.NamespaceCase,         value: lower_case }
+  - { key: readability-identifier-naming.ParameterCase,         value: lower_case }
+  - { key: readability-identifier-naming.StructCase,            value: CamelCase  }
+  - { key: readability-identifier-naming.TemplateParameterCase, value: CamelCase  }
+  - { key: readability-identifier-naming.VariableCase,          value: lower_case }
 ...

@@ -1,5 +1,5 @@
 # Configuration file for EditorConfig
-# More information is available at http://EditorConfig.org
+# More information is available at https://EditorConfig.org
 
 # Ignore any other EditorConfig files further up in the file system
 root = true
@@ -8,17 +8,20 @@ root = true
 [*]
 end_of_line = lf
 insert_final_newline = true
+indent_size = 2
 indent_style = space
 trim_trailing_whitespace = true
 charset = utf-8
 
+[*.md]
+trim_trailing_whitespace = false
+
 # Configuration for C/C++ files
-[*.{c, cc, cpp, cxx, h, hh, hpp, hxx}]
-indent_size = 2
+[*.{c,cc,cpp,cxx,h,hh,hpp,hxx}]
 max_line_length = 100
 
 # Configuration for CMake files
-[{CMakeLists.txt, *.cmake}]
+[{CMakeLists.txt,*.cmake}]
 indent_size = 2
 max_line_length = 100
 ij_any_align_multiline_parameters_in_calls = true

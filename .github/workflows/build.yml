@@ -1,15 +1,10 @@
 name: Build
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 env:
-  BUILD_TYPE: Release
-  BUILD_PATH: '${{ github.workspace }}/build'
-  VCPKG_BINARY_SOURCES: 'clear;files,${{ github.workspace }}/build/vcpkg_binary_cache,readwrite'
+  BUILD_PATH: "${{ github.workspace }}/build"
+  VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}/build/vcpkg_binary_cache,readwrite"
 
 jobs:
   build:
@@ -18,6 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        type: [Debug, Release]
         include:
           - { os: ubuntu-latest, cc: gcc, cxx: g++ }
           - { os: ubuntu-latest, cc: clang, cxx: clang++ }
@@ -35,18 +31,25 @@ jobs:
       - name: Restore cached dependencies
         uses: actions/cache@v2
         with:
-          path: ${{ env.BUILD_PATH }}/vcpkg_binary_cache
+          path: ${{ github.workspace }}/build/vcpkg_binary_cache
           key: ${{ matrix.os }}-${{ matrix.cc }}-${{ matrix.cxx }}
 
       - name: Configure CMake
-        run: cmake -S . -B ${{ env.BUILD_PATH }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        run: cmake -S . -B ${{ env.BUILD_PATH }} -D CMAKE_BUILD_TYPE=${{ matrix.type }}
         env:
           CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
 
       - name: Build
-        run: cmake --build ${{ env.BUILD_PATH }} --config ${{ env.BUILD_TYPE }}
+        run: cmake --build ${{ env.BUILD_PATH }} --config ${{ matrix.type }}
 
       - name: Test
         working-directory: ${{ env.BUILD_PATH }}
         run: ctest -C ${{ env.BUILD_TYPE }}
+
+  docs:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo "Building docs"
