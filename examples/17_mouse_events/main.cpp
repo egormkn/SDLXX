@@ -11,6 +11,8 @@
 #include <sdlxx/ttf/font.h>
 #include <sdlxx/ttf/ttf_api.h>
 
+#include "./button.h"
+
 using namespace std;
 using namespace sdlxx::core;
 using namespace sdlxx::image;
@@ -34,16 +36,26 @@ int main(int argc, char* args[]) {
     Renderer renderer(window, Renderer::Flag::ACCELERATED | Renderer::Flag::PRESENTVSYNC);
     renderer.SetDrawColor(Color::WHITE);
 
-    Font font("xkcd-script.ttf", 28);
+    const int BUTTON_WIDTH = 300;
+    const int BUTTON_HEIGHT = 200;
+    const int TOTAL_BUTTONS = 4;
 
-    Texture texture;
-    Dimensions texture_size;
+    std::array<Rectangle, Button::Sprite::TOTAL> clips;
+    Texture texture = ImageTexture(renderer, "button.png");
+    std::array<Button, TOTAL_BUTTONS> buttons;
 
-    {
-      Surface text = font.RenderSolid("The quick brown fox jumps over the lazy dog", Color::BLACK);
-      texture = Texture(renderer, text);
-      texture_size = text.GetSize();
+    for (int i = 0; i < clips.size(); ++i) {
+      clips[i].x = 0;
+      clips[i].y = i * 200;
+      clips[i].width = BUTTON_WIDTH;
+      clips[i].height = BUTTON_HEIGHT;
     }
+
+    // Set buttons in corners
+    buttons[0].SetPosition(0, 0);
+    buttons[1].SetPosition(SCREEN_WIDTH - BUTTON_WIDTH, 0);
+    buttons[2].SetPosition(0, SCREEN_HEIGHT - BUTTON_HEIGHT);
+    buttons[3].SetPosition(SCREEN_WIDTH - BUTTON_WIDTH, SCREEN_HEIGHT - BUTTON_HEIGHT);
 
     Event e;
     bool quit = false;
@@ -53,15 +65,21 @@ int main(int argc, char* args[]) {
         if (e.type == SDL_QUIT) {
           quit = true;
         }
+
+        for (int i = 0; i < TOTAL_BUTTONS; ++i) {
+          buttons.at(i).HandleEvent(e);
+        }
       }
 
       renderer.SetDrawColor(Color::WHITE);
       renderer.Clear();
 
-      Rectangle dest = {(SCREEN_WIDTH - texture_size.width) / 2,
-                        (SCREEN_HEIGHT - texture_size.height) / 2, texture_size.width,
-                        texture_size.height};
-      renderer.Copy(texture, dest);
+      for (int i = 0; i < TOTAL_BUTTONS; ++i) {
+        // buttons[i].Render();
+        Point position = buttons.at(i).GetPosition();
+        renderer.Copy(texture, clips.at(buttons.at(i).GetSprite()),
+                      {position.x, position.y, BUTTON_WIDTH, BUTTON_HEIGHT});
+      }
 
       renderer.Render();
     }

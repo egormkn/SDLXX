@@ -15,18 +15,18 @@ using namespace sdlxx::image;
 
 int main(int argc, char* args[]) {
   try {
-    CoreApi core_api({CoreApi::Flag::VIDEO});
+    CoreApi core_api(CoreApi::Flag::VIDEO);
     if (!CoreApi::SetHint("SDL_RENDER_SCALE_QUALITY", "1")) {
       Log::Warning("Linear texture filtering is not enabled");
     }
 
-    ImageApi image_api({ImageApi::Flag::PNG});
+    ImageApi image_api(ImageApi::Flag::PNG);
 
     const int SCREEN_WIDTH = 640;
     const int SCREEN_HEIGHT = 480;
-    Window window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT, {Window::Flag::SHOWN});
+    Window window("SDL Tutorial", SCREEN_WIDTH, SCREEN_HEIGHT, Window::Flag::SHOWN);
 
-    Renderer renderer(window, {Renderer::Flag::ACCELERATED});
+    Renderer renderer(window, Renderer::Flag::ACCELERATED);
     renderer.SetDrawColor(Color::WHITE);
 
     Texture dots;

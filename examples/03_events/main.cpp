@@ -10,8 +10,8 @@ using namespace sdlxx::core;
 
 int main(int argc, char* args[]) {
   try {
-    CoreApi subsystem({CoreApi::Flag::VIDEO});
-    Window window("SDL Tutorial", 640, 480, {Window::Flag::SHOWN});
+    CoreApi subsystem(CoreApi::Flag::VIDEO);
+    Window window("SDL Tutorial", 640, 480, Window::Flag::SHOWN);
     Surface window_surface = window.GetSurface();
     Surface image_surface = Surface::LoadBMP("x.bmp");
 

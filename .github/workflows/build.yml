@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        type: [Debug, Release]
+        build-type: [Debug, Release]
         include:
           - { os: ubuntu-latest, cc: gcc, cxx: g++ }
           - { os: ubuntu-latest, cc: clang, cxx: clang++ }
@@ -35,17 +35,17 @@ jobs:
           key: ${{ matrix.os }}-${{ matrix.cc }}-${{ matrix.cxx }}
 
       - name: Configure CMake
-        run: cmake -S . -B ${{ env.BUILD_PATH }} -D CMAKE_BUILD_TYPE=${{ matrix.type }}
+        run: cmake -S . -B ${{ env.BUILD_PATH }} -D CMAKE_BUILD_TYPE=${{ matrix.build-type }} -D BUILD_EXAMPLES=ON
         env:
           CC: ${{ matrix.cc }}
           CXX: ${{ matrix.cxx }}
 
       - name: Build
-        run: cmake --build ${{ env.BUILD_PATH }} --config ${{ matrix.type }}
+        run: cmake --build ${{ env.BUILD_PATH }} --config ${{ matrix.build-type }}
 
       - name: Test
         working-directory: ${{ env.BUILD_PATH }}
-        run: ctest -C ${{ env.BUILD_TYPE }}
+        run: ctest -C ${{ matrix.build-type }}
 
   docs:
     needs: build

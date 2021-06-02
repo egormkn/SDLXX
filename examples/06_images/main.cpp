@@ -13,9 +13,9 @@ using namespace sdlxx::image;
 
 int main(int argc, char* args[]) {
   try {
-    CoreApi core_api({CoreApi::Flag::VIDEO});
-    ImageApi image_api({ImageApi::Flag::PNG});
-    Window window("SDL Tutorial", 640, 480, {Window::Flag::SHOWN});
+    CoreApi core_api(CoreApi::Flag::VIDEO);
+    ImageApi image_api(ImageApi::Flag::PNG);
+    Window window("SDL Tutorial", 640, 480, Window::Flag::SHOWN);
     Surface window_surface = window.GetSurface();
 
     Surface image_surface = ImageSurface("loaded.png");
