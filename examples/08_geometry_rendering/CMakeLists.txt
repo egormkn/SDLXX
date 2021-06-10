@@ -1,5 +1,5 @@
-# Note that headers are optional, and do not affect add_library, but they
-# will not show up in IDEs unless they are listed in add_library.
+# Note that headers are optional, and do not affect add_library,
+# but they will not show up in IDEs unless they are listed in add_library.
 
 # Add header files
 set(HEADERS_LIST "")
@@ -11,7 +11,7 @@ set(SOURCES_LIST main.cpp)
 add_executable(geometry_rendering ${HEADERS_LIST} ${SOURCES_LIST})
 
 # Add dependencies
-target_link_libraries(geometry_rendering PRIVATE SDLXX::Core)
+target_link_libraries(geometry_rendering PRIVATE sdlxx::core)
 
 # Set C++ standard to C++17
 target_compile_features(geometry_rendering PRIVATE cxx_std_17)

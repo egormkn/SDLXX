@@ -1,5 +1,5 @@
-# Note that headers are optional, and do not affect add_library, but they
-# will not show up in IDEs unless they are listed in add_library.
+# Note that headers are optional, and do not affect add_library,
+# but they will not show up in IDEs unless they are listed in add_library.
 
 # Add header files
 set(HEADERS_LIST button.h)
@@ -11,13 +11,13 @@ set(SOURCES_LIST button.cpp main.cpp)
 add_executable(mouse_events ${HEADERS_LIST} ${SOURCES_LIST})
 
 # Add dependencies
-target_link_libraries(mouse_events PRIVATE SDLXX::Core SDLXX::Image SDLXX::TTF)
+target_link_libraries(mouse_events PRIVATE sdlxx::core sdlxx::image)
 
 # Set C++ standard to C++17
 target_compile_features(mouse_events PRIVATE cxx_std_17)
 
 # Copy assets
-file(COPY button.png DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # IDEs should put the headers in a nice place
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"

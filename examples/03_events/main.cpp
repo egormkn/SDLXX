@@ -1,19 +1,18 @@
 #include <SDL_events.h>
-#include <sdlxx/core/core_api.h>
-#include <sdlxx/core/events.h>
-#include <sdlxx/core/log.h>
-#include <sdlxx/core/surface.h>
-#include <sdlxx/core/window.h>
+#include <sdlxx/core.h>
 
 using namespace std;
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 int main(int argc, char* args[]) {
   try {
-    CoreApi subsystem(CoreApi::Flag::VIDEO);
-    Window window("SDL Tutorial", 640, 480, Window::Flag::SHOWN);
+    const string window_title = "Example 03: Events";
+    const Dimensions window_size = {640, 480};
+
+    CoreApi core_api(CoreApi::Flag::VIDEO);
+    Window window(window_title, window_size);
     Surface window_surface = window.GetSurface();
-    Surface image_surface = Surface::LoadBMP("x.bmp");
+    Surface image_surface = Surface::LoadBMP("assets/x.bmp");
 
     Event e;
     bool quit = false;

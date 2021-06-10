@@ -1,54 +1,81 @@
-#include <sdlxx/core/log.h>
-#include <sdlxx/core/renderer.h>
-#include <sdlxx/core/sdlxx_core.h>
-#include <sdlxx/core/window.h>
-#include <sdlxx/gui/SceneManager.h>
-#include <sdlxx/image/SDLXX_image.h>
-#include <sdlxx/mixer/SDLXX_mixer.h>
-#include <sdlxx/net/SDLXX_net.h>
-#include <sdlxx/ttf/SDLXX_ttf.h>
-
-#include "Menu.h"
+#include <SDL_events.h>
+#include <sdlxx/core.h>
+#include <sdlxx/gui.h>
+#include <sdlxx/image.h>
+#include <sdlxx/ttf.h>
 
 using namespace std;
-using namespace sdlxx::core;
-using namespace sdlxx::gui;
-using namespace sdlxx::image;
-using namespace sdlxx::net;
-using namespace sdlxx::mixer;
-using namespace sdlxx::ttf;
+using namespace sdlxx;
+
+class Menu : public Scene {
+public:
+  explicit Menu(int index) : Scene("Menu" + to_string(index)), index(index) {
+    auto layout = std::make_unique<ManualLayout>();
+    layout->AddChild(
+        std::make_unique<Button>(
+            "Run the game", [this, index] { this->SetIntent(std::make_unique<Menu>(index + 1)); }),
+        {30, 30, 200, 70});
+    layout->AddChild(std::make_unique<Button>("Exit", [this] { this->Finish(); }),
+                     {30, 110, 200, 70});
+    AddChild(std::move(layout));
+  }
+
+  void Render(Renderer& renderer) const override {
+    renderer.Copy(*background);
+    renderer.Copy(*text, {{200, 200}, text_size});
+    ParentNode::Render(renderer);
+  }
+
+protected:
+  void OnActivate() override {
+    Scene::OnActivate();
+    Font font("assets/xkcd-script.ttf", 100);
+    Surface text_surface = font.RenderBlended(std::to_string(index), Color::YELLOW);
+    text_size = text_surface.GetSize();
+    text = std::make_unique<Texture>(GetContext()->renderer, text_surface);
+    background = std::make_unique<ImageTexture>(GetContext()->renderer, "assets/menu.png");
+  }
+  void OnDeactivate() override {
+    background = nullptr;
+    text = nullptr;
+    Scene::OnDeactivate();
+  }
+
+private:
+  int index;
+  std::unique_ptr<Texture> background;
+  std::unique_ptr<Texture> text;
+  Dimensions text_size;
+};
 
 int main(int argc, char* args[]) {
   try {
-    SDLXX_core::setHint("SDL_RENDER_SCALE_QUALITY", "1");
+    const string window_title = "Game menu";
+    const Dimensions window_size = {640, 480};
 
-    SDLXX_core sdlxx_core(
-        {SDLXX_core::Subsystem::VIDEO, SDLXX_core::Subsystem::EVENTS});
-    SDLXX_image sdlxx_image(
-        {SDLXX_image::Subsystem::PNG, SDLXX_image::Subsystem::JPG});
-    SDLXX_mixer sdlxx_mixer();
-    SDLXX_net sdlxx_net;
-    SDLXX_ttf sdlxx_ttf;
+    if (!CoreApi::SetHint("SDL_RENDER_SCALE_QUALITY", "1")) {
+      Log::Warning("Linear texture filtering is not enabled");
+    }
 
-    using Flag = Window::Flag;
+    CoreApi core_api(CoreApi::Flag::VIDEO | CoreApi::Flag::EVENTS);
+    ImageApi image_api(ImageApi::Flag::PNG);
+    TtfApi ttf_api;
 
-    shared_ptr<Window> window = std::make_shared<Window>(
-        "The Game", 800, 600, Flag::SHOWN | Flag::RESIZABLE | Flag::ALLOW_HIGHDPI);
+    using WFlag = Window::Flag;
+    Window window(window_title, window_size,
+                  WFlag::SHOWN | WFlag::RESIZABLE | WFlag::ALLOW_HIGHDPI);
 
-    using ROption = Renderer::Option;
-    shared_ptr<Renderer> renderer =
-        window->getRenderer(-1, ROption::ACCELERATED | ROption::PRESENTVSYNC);
+    using RFlag = Renderer::Flag;
+    Renderer renderer(window, RFlag::ACCELERATED | RFlag::PRESENTVSYNC);
+    // renderer.SetLogicalSize(window_size);
+    renderer.SetDrawColor(Color::WHITE);
 
-    renderer->setLogicalSize(800, 600);
-    renderer->setColor(0xFFFFFF);
+    SceneManager manager({window, renderer});
 
-    SceneManager manager;
-    std::shared_ptr<Menu> menu = std::make_shared<Menu>("MENU");
-    manager.push(menu);
-    manager.run(window);
+    manager.Push(std::make_unique<Menu>(1));
+    manager.Run();
   } catch (std::exception& e) {
-    Log::error("[ERROR] " + std::string(e.what()));
+    Log::Error(e.what());
   }
-
   return 0;
 }

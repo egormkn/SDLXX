@@ -1,25 +1,21 @@
 #include <SDL_events.h>
-#include <sdlxx/core/core_api.h>
-#include <sdlxx/core/events.h>
-#include <sdlxx/core/log.h>
-#include <sdlxx/core/surface.h>
-#include <sdlxx/core/window.h>
-#include <sdlxx/image/image_api.h>
-#include <sdlxx/image/image_surface.h>
+#include <sdlxx/core.h>
+#include <sdlxx/image.h>
 
 using namespace std;
-using namespace sdlxx::core;
-using namespace sdlxx::image;
+using namespace sdlxx;
 
 int main(int argc, char* args[]) {
   try {
+    const string window_title = "Example 06: Images";
+    const Dimensions window_size = {640, 480};
+
     CoreApi core_api(CoreApi::Flag::VIDEO);
-    ImageApi image_api(ImageApi::Flag::PNG);
-    Window window("SDL Tutorial", 640, 480, Window::Flag::SHOWN);
+    Window window(window_title, window_size);
     Surface window_surface = window.GetSurface();
 
-    Surface image_surface = ImageSurface("loaded.png");
-    image_surface = image_surface.Convert(window_surface.GetFormat(), 0).value_or(image_surface);
+    Surface image_surface = ImageSurface("assets/loaded.png");
+    image_surface = image_surface.Convert(window_surface.GetFormat()).value_or(image_surface);
 
     Event e;
     bool quit = false;

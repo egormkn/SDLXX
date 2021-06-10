@@ -1,7 +1,3 @@
-//
-// Created by egor on 01.06.2021.
-//
-
 #ifndef BUTTON_H
 #define BUTTON_H
 
@@ -19,18 +15,18 @@ public:
   void SetPosition(int x, int y);
 
   // Handles mouse event
-  void HandleEvent(const sdlxx::core::Event& e);
+  void HandleEvent(const sdlxx::Event& e);
 
   // Shows button sprite
   void Render();
 
-  sdlxx::core::Point GetPosition() const;
+  sdlxx::Point GetPosition() const;
 
   Sprite GetSprite() const;
 
 private:
   // Top left position
-  sdlxx::core::Point mPosition = {0, 0};
+  sdlxx::Point mPosition = {0, 0};
 
   // Currently used global sprite
   Sprite mCurrentSprite = Sprite::MOUSE_OUT;

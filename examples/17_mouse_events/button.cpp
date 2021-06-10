@@ -10,7 +10,7 @@ void Button::SetPosition(int x, int y) {
   mPosition.y = y;
 }
 
-void Button::HandleEvent(const sdlxx::core::Event& e) {
+void Button::HandleEvent(const sdlxx::Event& e) {
   if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN ||
       e.type == SDL_MOUSEBUTTONUP) {
     // Get mouse position
@@ -65,4 +65,4 @@ void Button::Render() {}
 
 Button::Sprite Button::GetSprite() const { return mCurrentSprite; }
 
-sdlxx::core::Point Button::GetPosition() const { return mPosition; }
+sdlxx::Point Button::GetPosition() const { return mPosition; }

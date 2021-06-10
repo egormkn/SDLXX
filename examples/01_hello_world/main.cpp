@@ -1,16 +1,15 @@
-#include <sdlxx/core/core_api.h>
-#include <sdlxx/core/log.h>
-#include <sdlxx/core/surface.h>
-#include <sdlxx/core/timer.h>
-#include <sdlxx/core/window.h>
+#include <sdlxx/core.h>
 
 using namespace std;
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 int main(int argc, char* args[]) {
   try {
-    CoreApi subsystem(CoreApi::Flag::VIDEO);
-    Window window("SDL Tutorial", 640, 480, Window::Flag::SHOWN);
+    const string window_title = "Example 01: Hello World";
+    const Dimensions window_size = {640, 480};
+
+    CoreApi core_api(CoreApi::Flag::VIDEO);
+    Window window(window_title, window_size);
     window.GetSurface().Fill(Color::WHITE);
     window.UpdateSurface();
     Timer::Delay(2000);
