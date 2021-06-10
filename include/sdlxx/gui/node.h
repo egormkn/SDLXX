@@ -29,6 +29,7 @@
 #define SDLXX_GUI_NODE_H
 
 #include <limits>
+#include <stdexcept>
 
 #include "sdlxx/core/events.h"
 #include "sdlxx/core/object.h"
