@@ -84,7 +84,7 @@ void Window::SetDisplayMode(const Display::Mode& mode) {
 }
 
 void Window::SetDefaultDisplayMode() {
-  int return_code = SDL_SetWindowDisplayMode(window_ptr.get(), NULL);
+  int return_code = SDL_SetWindowDisplayMode(window_ptr.get(), nullptr);
   if (return_code != 0) {
     throw WindowException("Failed to set display mode for the window");
   }
@@ -189,7 +189,7 @@ void Window::Minimize() { SDL_MinimizeWindow(window_ptr.get()); }
 void Window::Restore() { SDL_RestoreWindow(window_ptr.get()); }
 
 void Window::SetFullscreen() {
-  Uint32 flags_mask = static_cast<Uint32>(Flag::FULLSCREEN);
+  auto flags_mask = static_cast<Uint32>(Flag::FULLSCREEN);
   int return_code = SDL_SetWindowFullscreen(window_ptr.get(), flags_mask);
   if (return_code != 0) {
     throw WindowException("Failed to set fullscreen mode");
@@ -197,7 +197,7 @@ void Window::SetFullscreen() {
 }
 
 void Window::SetFullscreenDesktop() {
-  Uint32 flags_mask = static_cast<Uint32>(Flag::FULLSCREEN_DESKTOP);
+  auto flags_mask = static_cast<Uint32>(Flag::FULLSCREEN_DESKTOP);
   int return_code = SDL_SetWindowFullscreen(window_ptr.get(), flags_mask);
   if (return_code != 0) {
     throw WindowException("Failed to set fullscreen desktop mode");
@@ -214,7 +214,7 @@ void Window::SetWindowed() {
 
 Surface Window::GetSurface() const {
   SDL_Surface* surface_ptr = SDL_GetWindowSurface(window_ptr.get());
-  if (surface_ptr == NULL) {
+  if (surface_ptr == nullptr) {
     throw WindowException("Failed to get the surface for the window");
   }
   return Surface{surface_ptr};

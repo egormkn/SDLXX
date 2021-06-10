@@ -7,7 +7,7 @@ using namespace sdlxx;
 
 uint32_t Timer::GetTicks() { return SDL_GetTicks(); }
 
-bool Timer::TicksPassed(uint32_t lhs, uint32_t rhs) { return (int32_t)(lhs - rhs) <= 0; }
+bool Timer::TicksPassed(uint32_t lhs, uint32_t rhs) { return static_cast<int32_t>(lhs - rhs) <= 0; }
 
 uint64_t Timer::GetPerformanceCounter() { return SDL_GetPerformanceCounter(); }
 

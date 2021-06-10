@@ -3,7 +3,7 @@
 #include <SDL_events.h>
 #include <SDL_mouse.h>
 
-Button::Button() {}
+Button::Button() = default;
 
 void Button::SetPosition(int x, int y) {
   mPosition.x = x;
@@ -11,31 +11,14 @@ void Button::SetPosition(int x, int y) {
 }
 
 void Button::HandleEvent(const sdlxx::Event& e) {
-  if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN ||
-      e.type == SDL_MOUSEBUTTONUP) {
+  if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
     // Get mouse position
     int x, y;
     SDL_GetMouseState(&x, &y);
 
     // Check if mouse is in button
-    bool inside = true;
-
-    // Mouse is left of the button
-    if (x < mPosition.x) {
-      inside = false;
-    }
-    // Mouse is right of the button
-    else if (x > mPosition.x + 300) {
-      inside = false;
-    }
-    // Mouse above the button
-    else if (y < mPosition.y) {
-      inside = false;
-    }
-    // Mouse below the button
-    else if (y > mPosition.y + 200) {
-      inside = false;
-    }
+    bool inside =
+        !(x < mPosition.x || x > mPosition.x + 300 || y < mPosition.y || y > mPosition.y + 200);
 
     // Mouse is outside button
     if (!inside) {

@@ -42,7 +42,7 @@ std::vector<uint32_t> Renderer::Driver::GetTextureFormats() const {
   if (return_code != 0) {
     throw RendererException("Failed to get texture formats for a driver " + std::to_string(index));
   }
-  Uint32* data = info.texture_formats;
+  auto* data = static_cast<Uint32*>(info.texture_formats);
   Uint32 size = info.num_texture_formats;
   return std::vector<uint32_t>(data, data + size);
 }
@@ -288,7 +288,7 @@ void Renderer::DrawRectangles(const std::vector<Rectangle>& rectangles) {
 }
 
 void Renderer::Fill() {
-  int return_code = SDL_RenderFillRect(renderer_ptr.get(), NULL);
+  int return_code = SDL_RenderFillRect(renderer_ptr.get(), nullptr);
   if (return_code != 0) {
     throw RendererException("Failed to fill the rectangle");
   }
@@ -341,7 +341,7 @@ void Renderer::Copy(const Texture& texture, const Rectangle& source, const Recta
 }
 
 void Renderer::Copy(const Texture& texture, double angle, Renderer::Flip flip) {
-  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  auto flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
                                      nullptr, angle, nullptr, flip_value);
   if (return_code != 0) {
@@ -351,7 +351,7 @@ void Renderer::Copy(const Texture& texture, double angle, Renderer::Flip flip) {
 
 void Renderer::Copy(const Texture& texture, double angle, Point center, Renderer::Flip flip) {
   SDL_Point center_value{center.x, center.y};
-  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  auto flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
                                      nullptr, angle, &center_value, flip_value);
   if (return_code != 0) {
@@ -362,7 +362,7 @@ void Renderer::Copy(const Texture& texture, double angle, Point center, Renderer
 void Renderer::Copy(const Texture& texture, const Rectangle& dest, double angle,
                     Renderer::Flip flip) {
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
-  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  auto flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
                                      &dstrect, angle, nullptr, flip_value);
   if (return_code != 0) {
@@ -374,7 +374,7 @@ void Renderer::Copy(const Texture& texture, const Rectangle& source, const Recta
                     double angle, Renderer::Flip flip) {
   SDL_Rect srcrect{source.x, source.y, source.width, source.height};
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
-  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  auto flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), &srcrect,
                                      &dstrect, angle, nullptr, flip_value);
   if (return_code != 0) {
@@ -386,7 +386,7 @@ void Renderer::Copy(const Texture& texture, const Rectangle& dest, double angle,
                     Renderer::Flip flip) {
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
   SDL_Point center_value{center.x, center.y};
-  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  auto flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
                                      &dstrect, angle, &center_value, flip_value);
   if (return_code != 0) {
@@ -399,7 +399,7 @@ void Renderer::Copy(const Texture& texture, const Rectangle& source, const Recta
   SDL_Rect srcrect{source.x, source.y, source.width, source.height};
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
   SDL_Point center_value{center.x, center.y};
-  SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
+  auto flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), &srcrect,
                                      &dstrect, angle, &center_value, flip_value);
   if (return_code != 0) {

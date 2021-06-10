@@ -193,7 +193,7 @@ public:
    *
    * \throw WindowException on error.
    */
-  explicit Window(SDL_Window* data);
+  explicit Window(SDL_Window* ptr);
 
   /**
    * \brief Create an empty window

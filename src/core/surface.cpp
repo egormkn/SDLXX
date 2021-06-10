@@ -6,8 +6,8 @@
 
 using namespace sdlxx;
 
-Surface::Surface(int width, int height, int depth, uint32_t r_mask, uint32_t g_mask, uint32_t b_mask,
-                 uint32_t a_mask)
+Surface::Surface(int width, int height, int depth, uint32_t r_mask, uint32_t g_mask,
+                 uint32_t b_mask, uint32_t a_mask)
     : Surface(SDL_CreateRGBSurface(0, width, height, depth, r_mask, g_mask, b_mask, a_mask)) {}
 
 Surface::Surface(int width, int height, int depth, uint32_t format)
@@ -69,16 +69,14 @@ void Surface::ResetColorKey() {
   }
 }
 
-bool Surface::HasColorKey() const {
-  return SDL_HasColorKey(surface_ptr.get()) == SDL_TRUE;
-}
+bool Surface::HasColorKey() const { return SDL_HasColorKey(surface_ptr.get()) == SDL_TRUE; }
 
 bool Surface::SetClipRectangle(const Rectangle& rectangle) {
   SDL_Rect rect{rectangle.x, rectangle.y, rectangle.width, rectangle.height};
   return SDL_SetClipRect(surface_ptr.get(), &rect) == SDL_TRUE;
 }
 
-void Surface::DisableClipRectangle() { SDL_SetClipRect(surface_ptr.get(), NULL); }
+void Surface::DisableClipRectangle() { SDL_SetClipRect(surface_ptr.get(), nullptr); }
 
 Rectangle Surface::GetClipRectangle() const {
   SDL_Rect rect;
@@ -88,20 +86,18 @@ Rectangle Surface::GetClipRectangle() const {
 
 std::optional<Surface> Surface::Convert(const SDL_PixelFormat* fmt, uint32_t flags) {
   SDL_Surface* result = SDL_ConvertSurface(surface_ptr.get(), fmt, flags);
-  if (result) {
+  if (result != nullptr) {
     return Surface(result);
-  } else {
-    return std::nullopt;
   }
+  return std::nullopt;
 }
 
 std::optional<Surface> Surface::ConvertFormat(uint32_t pixel_format, uint32_t flags) {
   SDL_Surface* result = SDL_ConvertSurfaceFormat(surface_ptr.get(), pixel_format, flags);
-  if (result) {
+  if (result != nullptr) {
     return Surface(result);
-  } else {
-    return std::nullopt;
   }
+  return std::nullopt;
 }
 
 void Surface::ConvertPixels(int width, int height, uint32_t src_format, const void* src,
@@ -144,7 +140,7 @@ void Surface::FillRectangles(const std::vector<Rectangle>& rectangles, const Col
 }
 
 void Surface::Blit(const Surface& source) {
-  int return_code = SDL_BlitSurface(source.surface_ptr.get(), NULL, surface_ptr.get(), NULL);
+  int return_code = SDL_BlitSurface(source.surface_ptr.get(), nullptr, surface_ptr.get(), nullptr);
   if (return_code != 0) {
     throw SurfaceException("Failed to perform a blit of a surface");
   }
@@ -162,7 +158,7 @@ void Surface::Blit(const Surface& source, const Rectangle& source_rect,
 }
 
 void Surface::BlitScaled(const Surface& source) {
-  int return_code = SDL_BlitScaled(source.surface_ptr.get(), NULL, surface_ptr.get(), NULL);
+  int return_code = SDL_BlitScaled(source.surface_ptr.get(), nullptr, surface_ptr.get(), nullptr);
   if (return_code == -1) {
     throw SurfaceException("Failed to perform scaled blit of a surface");
   }
@@ -187,7 +183,7 @@ SDL_PixelFormat* Surface::GetFormat() const { return surface_ptr->format; }
 SDL_Surface* Surface::Release() { return surface_ptr.release(); }
 
 void Surface::Deleter::operator()(SDL_Surface* ptr) const {
-  if (ptr && (ptr->flags & SDL_DONTFREE) == 0) {
+  if (ptr != nullptr && (ptr->flags & static_cast<Uint32>(SDL_DONTFREE)) == 0) {
     SDL_FreeSurface(ptr);
   }
 }
