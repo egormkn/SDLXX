@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -41,7 +42,7 @@
 // Declaration of the underlying type
 struct SDL_Window;
 
-namespace sdlxx::core {
+namespace sdlxx {
 
 /**
  * \brief A class for Window exceptions.
@@ -170,6 +171,8 @@ public:
    */
   Window(const std::string& title, int width, int height, BitMask<Flag> flags = Flag::SHOWN,
          int position_x = WINDOW_POS_CENTERED, int position_y = WINDOW_POS_CENTERED);
+  Window(const std::string& title, Dimensions size, BitMask<Flag> flags = Flag::SHOWN,
+         int position_x = WINDOW_POS_CENTERED, int position_y = WINDOW_POS_CENTERED);
 
   /**
    * \brief Create a new window from an existing native window.
@@ -182,6 +185,15 @@ public:
    * \upstream SDL_CreateWindowFrom
    */
   explicit Window(const void* data);
+
+  /**
+   * \brief Construct a window from a raw pointer to SDL_Window
+   *
+   * \param ptr A pointer to SDL_Window
+   *
+   * \throw WindowException on error.
+   */
+  explicit Window(SDL_Window* data);
 
   /**
    * \brief Create an empty window
@@ -696,16 +708,18 @@ public:
   friend class Renderer;
   friend class GL::Context;
 
-protected:
+private:
   struct Deleter {
     void operator()(SDL_Window* ptr) const;
   };
 
   std::unique_ptr<SDL_Window, Deleter> window_ptr;
+
+  static std::unordered_map<SDL_Window*, Window&> windows;
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx
 
-ENABLE_BITMASK_OPERATORS(sdlxx::core::Window::Flag);
+ENABLE_BITMASK_OPERATORS(sdlxx::Window::Flag);
 
 #endif  // SDLXX_CORE_WINDOW_H

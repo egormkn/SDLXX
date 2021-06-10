@@ -5,21 +5,20 @@ Checks: >
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-pro-type-reinterpret-cast,
-  -fuchsia-default-arguments-calls,
-  -fuchsia-default-arguments-declarations,
-  -fuchsia-overloaded-operator,
+  -fuchsia-*,
   -google-build-using-namespace,
   -llvmlibc-*,
   -misc-non-private-member-variables-in-classes,
   -misc-unused-parameters,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
+  -readability-convert-member-functions-to-static,
   -readability-isolate-declaration,
   -readability-magic-numbers,
+  -*-deprecated-headers,
 
-WarningsAsErrors: '-*'
-FormatStyle:     none
-InheritParentConfig: false
+WarningsAsErrors: -*
+FormatStyle: file
 
 CheckOptions:
   - { key: readability-identifier-naming.ClassCase,             value: CamelCase  }
@@ -36,4 +35,5 @@ CheckOptions:
   - { key: readability-identifier-naming.StructCase,            value: CamelCase  }
   - { key: readability-identifier-naming.TemplateParameterCase, value: CamelCase  }
   - { key: readability-identifier-naming.VariableCase,          value: lower_case }
+  - { key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor, value: true }
 ...

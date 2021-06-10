@@ -22,46 +22,13 @@
 
 /**
  * \file
- * \brief Header for the Log class that represents the logger.
+ * \brief Header that includes all other headers from sdlxx/ttf.
  */
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
+#ifndef SDLXX_TTF_H
+#define SDLXX_TTF_H
 
-#include <iostream>
-#include <string>
+#include "sdlxx/ttf/font.h"
+#include "sdlxx/ttf/ttf_api.h"
 
-namespace sdlxx {
-
-/**
- * \brief A class that represents the logger.
- */
-class Log {
-public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
-
-  static void Trace(const std::string& message);
-
-  static void Debug(const std::string& message);
-
-  static void Info(const std::string& message);
-
-  static void Warning(const std::string& message);
-
-  static void Error(const std::string& message);
-
-  static void Fatal(const std::string& message);
-
-  static void SetVerbosity(Verbosity new_verbosity);
-
-private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
-};
-
-}  // namespace sdlxx
-
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_TTF_H

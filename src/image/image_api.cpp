@@ -1,16 +1,15 @@
 #include "sdlxx/image/image_api.h"
 
 #include <sstream>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
 
-#include <SDL_version.h>
 #include <SDL_image.h>
+#include <SDL_version.h>
 
 using namespace std;
-using namespace sdlxx::core;
-using namespace sdlxx::image;
+using namespace sdlxx;
 
 Version ImageApi::GetCompiledSdlImageVersion() {
   SDL_version compiled;

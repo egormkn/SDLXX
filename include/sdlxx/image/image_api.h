@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -33,14 +34,12 @@
 #include "sdlxx/core/utils/bitmask.h"
 #include "sdlxx/core/version.h"
 
-namespace sdlxx::image {
-
-using sdlxx::core::BitMask;
+namespace sdlxx {
 
 /**
  * \brief A class for ImageApi-related exceptions.
  */
-class ImageApiException : public sdlxx::core::Exception {
+class ImageApiException : public Exception {
   using Exception::Exception;
 };
 
@@ -78,7 +77,7 @@ public:
    * \upstream SDL_IMAGE_MINOR_VERSION
    * \upstream SDL_IMAGE_PATCHLEVEL
    */
-  static sdlxx::core::Version GetCompiledSdlImageVersion();
+  static Version GetCompiledSdlImageVersion();
 
   /**
    * \brief Get the SDL_image version the library was linked against.
@@ -92,7 +91,7 @@ public:
    *
    * \upstream IMG_Linked_Version
    */
-  static sdlxx::core::Version GetLinkedSdlImageVersion();
+  static Version GetLinkedSdlImageVersion();
 
   /**
    * \brief Construct the ImageApi object that initializes the specified parts of the library.
@@ -146,8 +145,8 @@ public:
   ImageApi& operator=(ImageApi&& other) = delete;
 };
 
-}  // namespace sdlxx::image
+}  // namespace sdlxx
 
-ENABLE_BITMASK_OPERATORS(sdlxx::image::ImageApi::Flag);
+ENABLE_BITMASK_OPERATORS(sdlxx::ImageApi::Flag);
 
 #endif  // SDLXX_IMAGE_IMAGE_API_H

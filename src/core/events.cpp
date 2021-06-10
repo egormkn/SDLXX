@@ -1,9 +1,12 @@
 #include "sdlxx/core/events.h"
 
+#include <cstddef>
+
 #include <SDL_events.h>
+#include <SDL_stdinc.h>
 
 using namespace std;
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 void Events::Pump() { SDL_PumpEvents(); }
 
@@ -48,12 +51,12 @@ bool Events::InQueue(Type min_type, Type max_type) {
   return SDL_HasEvents(static_cast<Uint32>(min_type), static_cast<Uint32>(max_type)) == SDL_TRUE;
 }
 
-bool Events::IsEmpty() { return SDL_PollEvent(NULL) == 0; }
+bool Events::IsEmpty() { return SDL_PollEvent(nullptr) == 0; }
 
 void Events::Flush(Type type) { SDL_FlushEvent(static_cast<Uint32>(type)); }
 
-void Events::Flush(Type minType, Type maxType) {
-  SDL_FlushEvents(static_cast<Uint32>(minType), static_cast<Uint32>(maxType));
+void Events::Flush(Type min_type, Type max_type) {
+  SDL_FlushEvents(static_cast<Uint32>(min_type), static_cast<Uint32>(max_type));
 }
 
 bool Events::Poll(Event* event) {

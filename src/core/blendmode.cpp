@@ -2,7 +2,9 @@
 
 #include <SDL_blendmode.h>
 
-using namespace sdlxx::core;
+#include "sdlxx/core/utils/bitmask.h"
+
+using namespace sdlxx;
 
 #define ASSERT_BLENDMODE(x) \
   static_assert(static_cast<SDL_BlendMode>(BlendMode::x) == SDL_BLENDMODE_##x);

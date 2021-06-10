@@ -2,8 +2,10 @@
 
 #include <SDL.h>
 #include <SDL_hints.h>
+#include <SDL_stdinc.h>
+#include <SDL_version.h>
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 #define ASSERT_INIT(x) static_assert(static_cast<uint32_t>(CoreApi::Flag::x) == SDL_INIT_##x);
 

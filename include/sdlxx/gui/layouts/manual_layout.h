@@ -22,46 +22,30 @@
 
 /**
  * \file
- * \brief Header for the Log class that represents the logger.
+ * \brief Header for the ManualLayout class that represents a layout with manually set dimensions.
  */
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
+#ifndef SDLXX_GUI_LAYOUTS_MANUAL_LAYOUT_H
+#define SDLXX_GUI_LAYOUTS_MANUAL_LAYOUT_H
 
-#include <iostream>
-#include <string>
+#include "sdlxx/gui/layout.h"
 
 namespace sdlxx {
 
 /**
- * \brief A class that represents the logger.
+ * \brief A class that represents a 2D layout.
  */
-class Log {
+class ManualLayout : public Layout {
 public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
+  explicit ManualLayout(std::vector<std::unique_ptr<Node>> children = {},
+                        std::vector<Rectangle> positions = {})
+      : Layout("manual-layout", std::move(children), std::move(positions)) {}
 
-  static void Trace(const std::string& message);
-
-  static void Debug(const std::string& message);
-
-  static void Info(const std::string& message);
-
-  static void Warning(const std::string& message);
-
-  static void Error(const std::string& message);
-
-  static void Fatal(const std::string& message);
-
-  static void SetVerbosity(Verbosity new_verbosity);
-
-private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
+  Node& AddChild(std::unique_ptr<Node> node, Rectangle position) override {
+    return Layout::AddChild(std::move(node), position);
+  }
 };
 
 }  // namespace sdlxx
 
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_GUI_LAYOUTS_MANUAL_LAYOUT_H

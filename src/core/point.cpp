@@ -1,3 +1,3 @@
 #include "sdlxx/core/point.h"
 
-using namespace sdlxx::core;
+using namespace sdlxx;

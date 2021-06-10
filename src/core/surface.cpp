@@ -2,19 +2,21 @@
 
 #include <SDL_surface.h>
 
-using namespace sdlxx::core;
+#include "sdlxx/core/color.h"
 
-Surface::Surface(int width, int height, int depth, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask,
-                 uint32_t Amask)
-    : Surface(SDL_CreateRGBSurface(0, width, height, depth, Rmask, Gmask, Bmask, Amask)) {}
+using namespace sdlxx;
+
+Surface::Surface(int width, int height, int depth, uint32_t r_mask, uint32_t g_mask, uint32_t b_mask,
+                 uint32_t a_mask)
+    : Surface(SDL_CreateRGBSurface(0, width, height, depth, r_mask, g_mask, b_mask, a_mask)) {}
 
 Surface::Surface(int width, int height, int depth, uint32_t format)
     : Surface(SDL_CreateRGBSurfaceWithFormat(0, width, height, depth, format)) {}
 
-Surface::Surface(void* pixels, int width, int height, int depth, int pitch, uint32_t Rmask,
-                 uint32_t Gmask, uint32_t Bmask, uint32_t Amask)
-    : Surface(SDL_CreateRGBSurfaceFrom(pixels, width, height, depth, pitch, Rmask, Gmask, Bmask,
-                                       Amask)) {}
+Surface::Surface(void* pixels, int width, int height, int depth, int pitch, uint32_t r_mask,
+                 uint32_t g_mask, uint32_t b_mask, uint32_t a_mask)
+    : Surface(SDL_CreateRGBSurfaceFrom(pixels, width, height, depth, pitch, r_mask, g_mask, b_mask,
+                                       a_mask)) {}
 
 Surface::Surface(void* pixels, int width, int height, int depth, int pitch, uint32_t format)
     : Surface(SDL_CreateRGBSurfaceWithFormatFrom(pixels, width, height, depth, pitch, format)) {}

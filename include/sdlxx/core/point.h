@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -27,7 +28,7 @@
 #ifndef SDLXX_CORE_POINT_H
 #define SDLXX_CORE_POINT_H
 
-namespace sdlxx::core {
+namespace sdlxx {
 
 /**
  * \brief A structure that represents a 2D point.
@@ -35,13 +36,13 @@ namespace sdlxx::core {
  * \upstream SDL_Point
  */
 struct Point {
-  int x;  ///< X coordinate value
-  int y;  ///< Y coordinate value
+  int x = 0;  ///< X coordinate value
+  int y = 0;  ///< Y coordinate value
 
   /**
    * \brief Construct a new point at (0, 0).
    */
-  constexpr Point() : x(0), y(0) {}
+  constexpr Point() = default;
 
   /**
    * \brief Construct a new point with given coordinates.
@@ -51,6 +52,6 @@ struct Point {
   constexpr Point(int x, int y) : x(x), y(y) {}
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx
 
 #endif  // SDLXX_CORE_POINT_H

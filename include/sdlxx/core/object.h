@@ -22,46 +22,30 @@
 
 /**
  * \file
- * \brief Header for the Log class that represents the logger.
+ * \brief Header for the Object class that represents a basic object interface.
  */
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
+#ifndef SDLXX_CORE_OBJECT_H
+#define SDLXX_CORE_OBJECT_H
 
-#include <iostream>
-#include <string>
+#include <cstdint>
+
+#include "sdlxx/core/events.h"
+#include "sdlxx/core/renderable.h"
+#include "sdlxx/core/time.h"
 
 namespace sdlxx {
 
 /**
- * \brief A class that represents the logger.
+ * \brief A class that represents a basic object interface.
  */
-class Log {
+class Object : public Renderable {
 public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
+  virtual bool HandleEvent(const Event& e) = 0;
 
-  static void Trace(const std::string& message);
-
-  static void Debug(const std::string& message);
-
-  static void Info(const std::string& message);
-
-  static void Warning(const std::string& message);
-
-  static void Error(const std::string& message);
-
-  static void Fatal(const std::string& message);
-
-  static void SetVerbosity(Verbosity new_verbosity);
-
-private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
+  virtual void Update(Time dt) = 0;
 };
 
 }  // namespace sdlxx
 
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_CORE_OBJECT_H

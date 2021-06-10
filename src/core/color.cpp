@@ -1,6 +1,6 @@
 #include "sdlxx/core/color.h"
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 const Color Color::BLACK = 0x000000;
 const Color Color::RED = 0xFF0000;

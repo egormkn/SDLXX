@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -29,7 +30,7 @@
 
 #include <cstdint>
 
-namespace sdlxx::core {
+namespace sdlxx {
 
 /**
  * \brief A structure that represents a color.
@@ -51,9 +52,10 @@ struct Color {
    *   Color(0xC0FFEE) I don't know what it is but it has a nice name
    *
    * \param rgb Hexadecimal RGB value of a color.
+   * \param alpha Alpha component value of a color.
    */
-  constexpr Color(uint32_t rgb = 0x000000)  // NOLINT
-      : r((rgb >> 16U) & 0xFFU), g((rgb >> 8U) & 0xFFU), b(rgb & 0xFFU), a(0xFFU) {}
+  constexpr Color(uint32_t rgb = 0x000000, uint8_t alpha = 255) noexcept  // NOLINT
+      : r((rgb >> 16U) & 0xFFU), g((rgb >> 8U) & 0xFFU), b(rgb & 0xFFU), a(alpha) {}
 
   /**
    * \brief Construct a color from its RGBA values.
@@ -63,7 +65,8 @@ struct Color {
    * \param b Blue component (0 is none, 255 is full).
    * \param a Alpha component (0 is transparent, 255 is opaque).
    */
-  constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) : r(r), g(g), b(b), a(a) {}
+  constexpr Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) noexcept
+      : r(r), g(g), b(b), a(a) {}
 
   // Predefined colors
   static const Color BLACK;        ///< Black color
@@ -77,6 +80,6 @@ struct Color {
   static const Color TRANSPARENT;  ///< Transparent color
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx
 
 #endif  // SDLXX_CORE_COLOR_H

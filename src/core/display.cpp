@@ -1,8 +1,10 @@
 #include "sdlxx/core/display.h"
 
+#include <SDL_rect.h>
+#include <SDL_stdinc.h>
 #include <SDL_video.h>
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 #define ASSERT_DISPLAYEVENTID(x) \
   static_assert(static_cast<SDL_DisplayEventID>(Display::EventID::x) == SDL_DISPLAYEVENT_##x);

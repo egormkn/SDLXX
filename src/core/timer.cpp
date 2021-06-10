@@ -3,7 +3,7 @@
 #include <SDL_timer.h>
 
 using namespace std::literals::string_literals;
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 uint32_t Timer::GetTicks() { return SDL_GetTicks(); }
 

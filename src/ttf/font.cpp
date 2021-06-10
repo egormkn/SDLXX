@@ -1,9 +1,12 @@
 #include "sdlxx/ttf/font.h"
 
+#include <SDL_stdinc.h>
+#include <SDL_surface.h>
 #include <SDL_ttf.h>
 
-using namespace sdlxx::core;
-using namespace sdlxx::ttf;
+#include "sdlxx/core/color.h"
+
+using namespace sdlxx;
 
 Font::Font(TTF_Font* ptr) : font_ptr(ptr) {
   if (!font_ptr) {
@@ -18,9 +21,7 @@ BitMask<Font::Style> Font::GetStyle() const {
   return BitMask<Font::Style>{TTF_GetFontStyle(font_ptr.get())};
 }
 
-void Font::SetStyle(sdlxx::core::BitMask<Style> style) {
-  TTF_SetFontStyle(font_ptr.get(), style.value);
-}
+void Font::SetStyle(BitMask<Style> style) { TTF_SetFontStyle(font_ptr.get(), style.value); }
 
 int Font::GetOutline() const { return TTF_GetFontOutline(font_ptr.get()); }
 

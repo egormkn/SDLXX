@@ -1,5 +1,3 @@
-SDLXX - Modern C++ interface for Simple DirectMedia Layer
-
 Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
 This software is provided 'as-is', without any express or implied

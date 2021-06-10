@@ -2,13 +2,22 @@
 
 [![Build](https://github.com/egormkn/SDLXX/actions/workflows/build.yml/badge.svg)](https://github.com/egormkn/SDLXX/actions/workflows/build.yml)
 
-SDLXX is a library that implements a modern C++17 interface to the widely used [SDL](https://www.libsdl.org/) library and its addons: [SDL_image](https://www.libsdl.org/projects/SDL_image/), [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/), [SDL_net](https://www.libsdl.org/projects/SDL_net/), [SDL_ttf](https://www.libsdl.org/projects/SDL_ttf/).
-It is designed to provide a safe access to audio, keyboard, mouse, joystick, network and graphics hardware.
+## Description
+
+SDLXX is a library that implements a modern C++ interface 
+to the widely used [SDL](https://www.libsdl.org/) library 
+and its extensions: 
+[SDL_image](https://www.libsdl.org/projects/SDL_image/), 
+[SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/), 
+[SDL_net](https://www.libsdl.org/projects/SDL_net/), 
+[SDL_ttf](https://www.libsdl.org/projects/SDL_ttf/).
+
+It is designed to provide safe access to audio, keyboard, mouse, joystick, network and graphics hardware.
 
 ## Features
 
 - Provides type-safe bindings to SDL2 and its extension libraries
-- Uses [RAII idiom](https://en.cppreference.com/w/cpp/language/raii) for safe management of SDL resources
+- Uses [RAII idiom](https://en.cppreference.com/w/cpp/language/raii) and C++ smart pointers for safe management of SDL resources
 - Supports [vcpkg manifest mode](https://github.com/microsoft/vcpkg/blob/master/docs/users/manifests.md)
 
 ## Examples
@@ -42,6 +51,4 @@ cmake --build build
 
 ## License
 
-Copyright (C) 2019-2021 Egor Makarenko
-
-This software is provided 'as-is', without any express or implied warranty. See our [LICENSE](LICENSE) file for more information.
+This library is distributed under the terms of the [ZLib License](LICENSE.md).

@@ -22,46 +22,31 @@
 
 /**
  * \file
- * \brief Header for the Log class that represents the logger.
+ * \brief Header that includes all other headers from sdlxx/core.
  */
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
+#ifndef SDLXX_CORE_H
+#define SDLXX_CORE_H
 
-#include <iostream>
-#include <string>
+#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/core/blendmode.h"
+#include "sdlxx/core/color.h"
+#include "sdlxx/core/core_api.h"
+#include "sdlxx/core/dimensions.h"
+#include "sdlxx/core/display.h"
+#include "sdlxx/core/events.h"
+#include "sdlxx/core/exception.h"
+#include "sdlxx/core/gl.h"
+#include "sdlxx/core/keyboard.h"
+#include "sdlxx/core/log.h"
+#include "sdlxx/core/point.h"
+#include "sdlxx/core/rectangle.h"
+#include "sdlxx/core/renderable.h"
+#include "sdlxx/core/renderer.h"
+#include "sdlxx/core/surface.h"
+#include "sdlxx/core/texture.h"
+#include "sdlxx/core/timer.h"
+#include "sdlxx/core/version.h"
+#include "sdlxx/core/window.h"
 
-namespace sdlxx {
-
-/**
- * \brief A class that represents the logger.
- */
-class Log {
-public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
-
-  static void Trace(const std::string& message);
-
-  static void Debug(const std::string& message);
-
-  static void Info(const std::string& message);
-
-  static void Warning(const std::string& message);
-
-  static void Error(const std::string& message);
-
-  static void Fatal(const std::string& message);
-
-  static void SetVerbosity(Verbosity new_verbosity);
-
-private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
-};
-
-}  // namespace sdlxx
-
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_CORE_H

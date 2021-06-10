@@ -20,48 +20,23 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/**
- * \file
- * \brief Header for the Log class that represents the logger.
- */
+#ifndef SDLXX_GUI_TEXTURE_MANAGER_H
+#define SDLXX_GUI_TEXTURE_MANAGER_H
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
-
-#include <iostream>
-#include <string>
+#include <unordered_map>
 
 namespace sdlxx {
 
-/**
- * \brief A class that represents the logger.
- */
-class Log {
+class TextureManager {
 public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
+  Texture& GetTexture(const std::string& path);
 
-  static void Trace(const std::string& message);
-
-  static void Debug(const std::string& message);
-
-  static void Info(const std::string& message);
-
-  static void Warning(const std::string& message);
-
-  static void Error(const std::string& message);
-
-  static void Fatal(const std::string& message);
-
-  static void SetVerbosity(Verbosity new_verbosity);
+  void FreeTexture(const std::string& path);
 
 private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
+  std::unordered_map<std::string, sdlxx::Texture> textures;
 };
 
 }  // namespace sdlxx
 
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_GUI_TEXTURE_MANAGER_H

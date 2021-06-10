@@ -20,48 +20,50 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/**
- * \file
- * \brief Header for the Log class that represents the logger.
- */
+#ifndef SDLXX_GUI_STYLE_H
+#define SDLXX_GUI_STYLE_H
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
-
-#include <iostream>
+#include <optional>
 #include <string>
+
+#include <sdlxx/core/dimensions.h>
+
+#include "sdlxx/core/color.h"
 
 namespace sdlxx {
 
-/**
- * \brief A class that represents the logger.
- */
-class Log {
-public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
+struct Style {
+  enum class Visibility { VISIBLE, HIDDEN };
 
-  static void Trace(const std::string& message);
+  enum class FontStyle { NORMAL, ITALIC };
 
-  static void Debug(const std::string& message);
+  enum class FontWeight { NORMAL, BOLD };
 
-  static void Info(const std::string& message);
+  enum class Align { START, CENTER, END };
 
-  static void Warning(const std::string& message);
+  std::optional<Dimensions> min_size;
+  std::optional<Dimensions> max_size;
+  std::optional<Dimensions> pref_size;
+  std::optional<Visibility> visibility;
+  std::optional<Color> text_color;
+  std::optional<Color> background_color;
+  std::optional<std::string> font_family;
+  std::optional<uint32_t> font_size;
+  std::optional<FontStyle> font_style;
+  std::optional<Align> horizontal_align;
+  std::optional<Align> vertical_align;
 
-  static void Error(const std::string& message);
+  void InheritFrom(const Style& other) {
 
-  static void Fatal(const std::string& message);
+  }
 
-  static void SetVerbosity(Verbosity new_verbosity);
-
-private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
+  void Set(Style&& other) {
+    if (other.min_size) {
+      std::swap(min_size, other.min_size);
+    }
+  }
 };
 
 }  // namespace sdlxx
 
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_GUI_STYLE_H

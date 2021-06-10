@@ -9,8 +9,11 @@ file(GLOB HEADERS_LIST CONFIGURE_DEPENDS
 set(SOURCES_LIST
     button.cpp
     layout.cpp
-        scene.cpp
-    scene_manager.cpp node.cpp parent_node.cpp)
+    node.cpp
+    parent_node.cpp
+    scene.cpp
+    scene_manager.cpp
+    style.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(sdlxx_gui ${HEADERS_LIST} ${SOURCES_LIST})

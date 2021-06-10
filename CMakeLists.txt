@@ -21,7 +21,7 @@ endif()
 # Project name and some basic information
 project(SDLXX
         VERSION 1.0.0
-        DESCRIPTION "Modern C++ interface for SDL2"
+        DESCRIPTION "Modern C++ wrapper for Simple DirectMedia Layer (SDL2)"
         HOMEPAGE_URL "https://github.com/egormkn/SDLXX"
         LANGUAGES CXX)
 
@@ -62,7 +62,7 @@ if(MAIN_PROJECT)
     set(ENABLE_CLANG_TIDY ON)
     set(ENABLE_CPPCHECK ON)
     set(ENABLE_CPPLINT ON)
-    set(ENABLE_IWYU ON)
+    # set(ENABLE_IWYU ON)
     set(ENABLE_LWYU ON)
     # set(ENABLE_STL_DEBUG_MODE ON)
     # set(ENABLE_ADDRESS_SANITIZER ON)

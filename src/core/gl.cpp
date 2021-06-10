@@ -1,10 +1,13 @@
 #include "sdlxx/core/gl.h"
 
+#include <cstddef>
+
+#include <SDL_stdinc.h>
 #include <SDL_video.h>
 
 #include "sdlxx/core/window.h"
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 void GL::LoadLibrary(const std::string& path) {
   int return_code = SDL_GL_LoadLibrary(path.c_str());
@@ -31,7 +34,7 @@ void GL::Context::SetAttribute(Attribute attr, int value) {
 }
 
 int GL::Context::GetAttribute(Attribute attr) {
-  int value;
+  int value = 0;
   int return_code = SDL_GL_GetAttribute(static_cast<SDL_GLattr>(attr), &value);
   if (return_code != 0) {
     throw GlException("Failed to get GL attribute");
@@ -39,18 +42,17 @@ int GL::Context::GetAttribute(Attribute attr) {
   return value;
 }
 
-GL::Context::Context(Window& window) {
-  context_ptr = SDL_GL_CreateContext(window.window_ptr.get());
-  if (context_ptr == NULL) {
+GL::Context::Context(Window& window) : context_ptr(SDL_GL_CreateContext(window.window_ptr.get())) {
+  if (context_ptr == nullptr) {
     throw GlException("Failed to create GL context");
   }
 }
 
 GL::Context::~Context() {
-  if (context_ptr) {
+  if (context_ptr != nullptr) {
     SDL_GL_DeleteContext(context_ptr);
+    context_ptr = nullptr;
   }
-  context_ptr = nullptr;
 }
 
 void GL::Context::MakeCurrent(Window& window) {

@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -27,23 +28,28 @@
 #ifndef SDLXX_CORE_RENDERER_H
 #define SDLXX_CORE_RENDERER_H
 
+#include <cstdint>
 #include <memory>
-#include <unordered_set>
+#include <string>
+#include <tuple>
 #include <vector>
 
 #include "sdlxx/core/color.h"
+#include "sdlxx/core/dimensions.h"
 #include "sdlxx/core/exception.h"
-#include "sdlxx/core/point.h"
 #include "sdlxx/core/rectangle.h"
 #include "sdlxx/core/utils/bitmask.h"
-#include "sdlxx/core/window.h"
 
 // Declaration of the underlying type
 struct SDL_Renderer;
 
-namespace sdlxx::core {
+namespace sdlxx {
 
 class Texture;
+class Renderable;
+class Surface;
+class Window;
+struct Point;
 
 /**
  * \brief A class for Renderer-related exceptions.
@@ -70,7 +76,7 @@ public:
   };
 
   /**
-   * \brief A class that holds an information on the capabilities of a Render driver or context.
+   * \brief A class that holds an information on the capabilities of a render driver or context.
    * \upstream SDL_RendererInfo
    */
   class Driver {
@@ -484,6 +490,15 @@ public:
   void DrawRectangles(const std::vector<Rectangle>& rectangles);
 
   /**
+   * \brief Fill entire rendering target with the drawing color.
+   *
+   * \throw RendererException on error.
+   *
+   * \upstream SDL_RenderFillRect
+   */
+  void Fill();
+
+  /**
    * \brief Fill a rectangle on the current rendering target with the drawing color.
    *
    * \param rectangle The rectangle to fill.
@@ -685,9 +700,11 @@ public:
    *
    * \upstream SDL_RenderPresent
    */
-  void Render();
+  void RenderPresent();
 
   // TODO: SDL_RenderFlush, SDL_RenderGetMetalLayer, SDL_RenderGetMetalCommandEncoder
+
+  void Render(Renderable& renderable);
 
   /**
    * \brief Release the raw pointer to the underlying SDL_Renderer structure
@@ -700,7 +717,7 @@ public:
 
   friend class Texture;
 
-protected:
+private:
   struct Deleter {
     void operator()(SDL_Renderer* ptr) const;
   };
@@ -708,8 +725,8 @@ protected:
   std::unique_ptr<SDL_Renderer, Deleter> renderer_ptr;
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx
 
-ENABLE_BITMASK_OPERATORS(sdlxx::core::Renderer::Flag);
+ENABLE_BITMASK_OPERATORS(sdlxx::Renderer::Flag);
 
 #endif  // SDLXX_CORE_RENDERER_H

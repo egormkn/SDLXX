@@ -2,7 +2,7 @@
 
 #include <SDL_error.h>
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 Exception::Exception(const std::string& message) : message(message + ": " + SDL_GetError()) {}
 

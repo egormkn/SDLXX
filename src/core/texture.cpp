@@ -2,7 +2,9 @@
 
 #include <SDL_render.h>
 
-using namespace sdlxx::core;
+#include "sdlxx/core/surface.h"
+
+using namespace sdlxx;
 
 using Format = Texture::Format;
 using Access = Texture::Access;
@@ -57,7 +59,7 @@ void Texture::SetAlphaModulation(uint8_t alpha) {
 }
 
 uint8_t Texture::GetAlphaModulation() const {
-  uint8_t alpha;
+  uint8_t alpha = 0;
   int return_code = SDL_GetTextureAlphaMod(texture_ptr.get(), &alpha);
   if (return_code != 0) {
     throw TextureException("Failed to get alpha modulation for the texture");
@@ -102,7 +104,7 @@ Texture::ScaleMode Texture::GetScaleMode() const {
 SDL_Texture* Texture::Release() { return texture_ptr.release(); }
 
 void Texture::Deleter::operator()(SDL_Texture* ptr) const {
-  if (ptr) {
+  if (ptr != nullptr) {
     SDL_DestroyTexture(ptr);
   }
 }

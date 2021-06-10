@@ -2,6 +2,6 @@
 
 #include <SDL_image.h>
 
-using namespace sdlxx::image;
+using namespace sdlxx;
 
 ImageSurface::ImageSurface(const std::string& path) : Surface(IMG_Load(path.c_str())) {}

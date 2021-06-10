@@ -20,48 +20,23 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/**
- * \file
- * \brief Header for the Log class that represents the logger.
- */
-
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
-
-#include <iostream>
-#include <string>
+#ifndef SDLXX_CORE_RENDERABLE_H
+#define SDLXX_CORE_RENDERABLE_H
 
 namespace sdlxx {
 
-/**
- * \brief A class that represents the logger.
- */
-class Log {
+class Renderer;
+
+class Renderable {
 public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
+  virtual ~Renderable() = default;
 
-  static void Trace(const std::string& message);
+protected:
+  friend class Renderer;
 
-  static void Debug(const std::string& message);
-
-  static void Info(const std::string& message);
-
-  static void Warning(const std::string& message);
-
-  static void Error(const std::string& message);
-
-  static void Fatal(const std::string& message);
-
-  static void SetVerbosity(Verbosity new_verbosity);
-
-private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
+  virtual void Render(Renderer& renderer) const = 0;
 };
 
 }  // namespace sdlxx
 
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_CORE_RENDERABLE_H

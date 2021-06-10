@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -32,9 +33,10 @@
 
 #include "sdlxx/core/exception.h"
 
+// Declaration of the underlying type
 union SDL_Event;
 
-namespace sdlxx::core {
+namespace sdlxx {
 
 /**
  * \brief Type alias for SDL_Event
@@ -366,6 +368,6 @@ public:
   // SDL_DelEventWatch, SDL_FilterEvents, SDL_EventState, SDL_GetEventState, SDL_RegisterEvents
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx
 
 #endif  // SDLXX_CORE_EVENTS_H

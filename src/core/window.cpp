@@ -1,11 +1,12 @@
 #include "sdlxx/core/window.h"
 
-#include <math.h>
+#include <cmath>
+
 #include <SDL_video.h>
 
 #include "sdlxx/core/surface.h"
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 using namespace std::literals::string_literals;
 
 #define ASSERT_FLAGS(x) \
@@ -37,19 +38,24 @@ ASSERT_FLAGS(METAL);
 static_assert(Window::WINDOW_POS_UNDEFINED == SDL_WINDOWPOS_UNDEFINED);
 static_assert(Window::WINDOW_POS_CENTERED == SDL_WINDOWPOS_CENTERED);
 
+std::unordered_map<SDL_Window*, Window&> Window::windows = {};
+
 Window::Window(const std::string& title, int width, int height, BitMask<Flag> flags, int position_x,
                int position_y)
-    : window_ptr(SDL_CreateWindow(title.c_str(), position_x, position_y, width, height,
-                                  static_cast<Uint32>(flags.value))) {
-  if (window_ptr == NULL) {
-    throw WindowException("Failed to create a window");
-  }
-}
+    : Window(SDL_CreateWindow(title.c_str(), position_x, position_y, width, height,
+                              static_cast<Uint32>(flags.value))) {}
 
-Window::Window(const void* data) : window_ptr(SDL_CreateWindowFrom(data)) {
-  if (window_ptr == NULL) {
+Window::Window(const std::string& title, Dimensions size, BitMask<Flag> flags, int position_x,
+               int position_y)
+    : Window(title, size.width, size.height, flags, position_x, position_y) {}
+
+Window::Window(const void* data) : Window(SDL_CreateWindowFrom(data)) {}
+
+Window::Window(SDL_Window* ptr) : window_ptr(ptr) {
+  if (!window_ptr) {
     throw WindowException("Failed to create a window");
   }
+  windows.emplace(ptr, *this);
 }
 
 Window::Window(Window::Id id) {

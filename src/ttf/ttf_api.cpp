@@ -1,9 +1,9 @@
 #include "sdlxx/ttf/ttf_api.h"
 
 #include <SDL_ttf.h>
+#include <SDL_version.h>
 
-using namespace sdlxx::core;
-using namespace sdlxx::ttf;
+using namespace sdlxx;
 
 Version TtfApi::GetCompiledSdlTtfVersion() {
   SDL_version compiled;

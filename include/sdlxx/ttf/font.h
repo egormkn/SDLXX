@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -27,11 +28,10 @@
 #ifndef SDLXX_TTF_FONT_H
 #define SDLXX_TTF_FONT_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
-#include "sdlxx/core/color.h"
-#include "sdlxx/core/dimensions.h"
 #include "sdlxx/core/exception.h"
 #include "sdlxx/core/surface.h"
 #include "sdlxx/core/utils/bitmask.h"
@@ -39,15 +39,14 @@
 // Declaration of the underlying type
 using TTF_Font = struct _TTF_Font;  // NOLINT
 
-namespace sdlxx::ttf {
+namespace sdlxx {
 
-using Color = sdlxx::core::Color;
-using Surface = sdlxx::core::Surface;
+struct Color;
 
 /**
  * \brief A class for Surface-related exceptions.
  */
-class FontException : public sdlxx::core::Exception {
+class FontException : public Exception {
   using Exception::Exception;
 };
 
@@ -127,7 +126,7 @@ public:
    *
    * \upstream TTF_GetFontStyle
    */
-  sdlxx::core::BitMask<Style> GetStyle() const;
+  BitMask<Style> GetStyle() const;
 
   /**
    * \brief Set the rendering style of the font as a bitmask of Font::Style values.
@@ -136,7 +135,7 @@ public:
    *
    * \upstream TTF_SetFontStyle
    */
-  void SetStyle(sdlxx::core::BitMask<Style> style);
+  void SetStyle(BitMask<Style> style);
 
   /**
    * \brief Get the outline size of the font.
@@ -302,8 +301,8 @@ private:
   std::unique_ptr<TTF_Font, Deleter> font_ptr;
 };
 
-}  // namespace sdlxx::ttf
+}  // namespace sdlxx
 
-ENABLE_BITMASK_OPERATORS(sdlxx::ttf::Font::Style);
+ENABLE_BITMASK_OPERATORS(sdlxx::Font::Style);
 
 #endif  // SDLXX_TTF_FONT_H

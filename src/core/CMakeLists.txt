@@ -7,6 +7,7 @@ file(GLOB HEADERS_LIST CONFIGURE_DEPENDS
 
 # Add source files
 set(SOURCES_LIST
+    blendmode.cpp
     color.cpp
     core_api.cpp
     dimensions.cpp
@@ -20,10 +21,10 @@ set(SOURCES_LIST
     renderer.cpp
     surface.cpp
     texture.cpp
+    time.cpp
     timer.cpp
     version.cpp
-    window.cpp
-    blendmode.cpp)
+    window.cpp)
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(sdlxx_core ${HEADERS_LIST} ${SOURCES_LIST})

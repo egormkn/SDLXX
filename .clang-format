@@ -28,4 +28,8 @@ SortIncludes: CaseSensitive
 TabWidth: 2
 UseTab: Never
 
+# Set indentation
+IndentWidth: 2
+
+# Set line length
 ColumnLimit: 100

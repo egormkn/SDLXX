@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -32,45 +33,51 @@
 #include <numeric>
 #include <type_traits>
 
-namespace sdlxx::core {
+namespace sdlxx {
 
 /**
- * A helper structure to enable overloaded operators
+ * \brief A helper structure to enable operator overloading for enumeration values.
  * See https://blog.bitwigglers.org/using-enum-classes-as-type-safe-bitmasks/
+ *
+ * \sa ENABLE_BITMASK_OPERATORS
  */
 template <typename E>
 struct BitMaskOperators : std::false_type {};
 
+/**
+ * \brief A structure that represents a bit mask of enumeration values.
+ * \tparam E An enumeration whose values are used as bit masks.
+ */
 template <typename E>
 struct BitMask {
-  using ValueType = std::underlying_type_t<E>;
+  using V = std::underlying_type_t<E>;
 
-  ValueType value{};
+  V value{};
 
   constexpr BitMask() = default;
 
-  constexpr BitMask(E enum_value) : value(static_cast<ValueType>(enum_value)) {}  // NOLINT
+  constexpr explicit BitMask(V value) : value(value) {}
 
-  constexpr explicit BitMask(ValueType new_value) : value(new_value) {}
+  constexpr BitMask(E enum_value) : value(static_cast<V>(enum_value)) {}  // NOLINT
 
-  constexpr BitMask(const std::initializer_list<E>& list) {
-    return std::accumulate(std::cbegin(list), std::cend(list), static_cast<E>(0), std::bit_or<>{});
-  }
+  constexpr BitMask(std::initializer_list<E> list)
+      : value(std::accumulate(std::cbegin(list), std::cend(list), static_cast<V>(0),
+                              [](V v, E e) { return v | static_cast<V>(e); })) {}
 
   constexpr BitMask<E> operator|(E enum_value) const {
-    return BitMask<E>{value | static_cast<ValueType>(enum_value)};
+    return BitMask<E>{value | static_cast<V>(enum_value)};
   }
 
   constexpr BitMask<E> operator&(E enum_value) const {
-    return BitMask<E>{value & static_cast<ValueType>(enum_value)};
+    return BitMask<E>{value & static_cast<V>(enum_value)};
   }
 
   constexpr BitMask<E> operator^(E enum_value) const {
-    return BitMask<E>{value ^ static_cast<ValueType>(enum_value)};
+    return BitMask<E>{value ^ static_cast<V>(enum_value)};
   }
 
-  constexpr bool IsSet(E enum_value) const {
-    return (value & static_cast<ValueType>(enum_value)) == static_cast<ValueType>(enum_value);
+  constexpr bool IsSet(BitMask<E> mask) const {
+    return (value & mask.value) == mask.value;
   }
 };
 
@@ -101,11 +108,10 @@ constexpr typename std::enable_if<BitMaskOperators<E>::value, BitMask<E>>::type 
   return BitMask<E>{~static_cast<ValueType>(lhs)};
 }
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx
 
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define ENABLE_BITMASK_OPERATORS(e) \
   template <>                       \
-  struct sdlxx::core::BitMaskOperators<e> : std::true_type {};
+  struct sdlxx::BitMaskOperators<e> : std::true_type {};
 
 #endif  // SDLXX_CORE_UTILS_BITMASK_H

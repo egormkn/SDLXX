@@ -1,9 +1,10 @@
 /*
-  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
   Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
 
   This software is provided 'as-is', without any express or implied
-  warranty. In no event will the authors be held liable for any damages
+  warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
 
   Permission is granted to anyone to use this software for any purpose,
@@ -12,7 +13,7 @@
 
   1. The origin of this software must not be misrepresented; you must not
      claim that you wrote the original software. If you use this software
-     in a product, an acknowledgement in the product documentation would be
+     in a product, an acknowledgment in the product documentation would be
      appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
@@ -31,8 +32,8 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <cstdint>
 
-#include "sdlxx/core/color.h"
 #include "sdlxx/core/dimensions.h"
 #include "sdlxx/core/exception.h"
 #include "sdlxx/core/rectangle.h"
@@ -43,7 +44,9 @@ struct SDL_Surface;
 // Declaration of used types
 struct SDL_PixelFormat;
 
-namespace sdlxx::core {
+namespace sdlxx {
+
+struct Color;
 
 /**
  * \brief A class for Surface-related exceptions.
@@ -80,8 +83,8 @@ public:
    *
    * \upstream SDL_CreateRGBSurface
    */
-  Surface(int width, int height, int depth, uint32_t Rmask, uint32_t Gmask, uint32_t Bmask,
-          uint32_t Amask);
+  Surface(int width, int height, int depth, uint32_t r_mask, uint32_t g_mask, uint32_t b_mask,
+          uint32_t a_mask);
 
   /**
    * \brief Allocate an RGB surface using pixel format.
@@ -110,8 +113,8 @@ public:
    *
    * \upstream SDL_CreateRGBSurfaceFrom
    */
-  Surface(void* pixels, int width, int height, int depth, int pitch, uint32_t Rmask, uint32_t Gmask,
-          uint32_t Bmask, uint32_t Amask);
+  Surface(void* pixels, int width, int height, int depth, int pitch, uint32_t r_mask,
+          uint32_t g_mask, uint32_t b_mask, uint32_t a_mask);
 
   /**
    * \brief Create a surface from raw pixel data using pixel format.
@@ -303,7 +306,7 @@ public:
    * \upstream SDL_ConvertSurface
    * \upstream SDL_ConvertSurfaceFormat
    */
-  std::optional<Surface> Convert(const SDL_PixelFormat* fmt, uint32_t flags);
+  std::optional<Surface> Convert(const SDL_PixelFormat* fmt, uint32_t flags = 0);
   std::optional<Surface> ConvertFormat(uint32_t pixel_format, uint32_t flags);
 
   /**
@@ -461,7 +464,7 @@ public:
   friend class Window;
   friend class Texture;
 
-protected:
+private:
   struct Deleter {
     void operator()(SDL_Surface* ptr) const;
   };
@@ -487,10 +490,16 @@ public:
   // Deleted copy assignment operator
   SurfaceLock& operator=(const SurfaceLock&) = delete;
 
+  // Deleted move constructor
+  SurfaceLock(SurfaceLock&&) = delete;
+
+  // Deleted move assignment operator
+  SurfaceLock& operator=(SurfaceLock&&) = delete;
+
 private:
   Surface& surface;
 };
 
-}  // namespace sdlxx::core
+}  // namespace sdlxx
 
 #endif  // SDLXX_CORE_SURFACE_H

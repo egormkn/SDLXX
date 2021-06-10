@@ -5,7 +5,7 @@
 
 #include <SDL_log.h>
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 using Verbosity = Log::Verbosity;
 

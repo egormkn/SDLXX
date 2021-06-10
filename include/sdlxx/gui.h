@@ -22,46 +22,23 @@
 
 /**
  * \file
- * \brief Header for the Log class that represents the logger.
+ * \brief Header that includes all other headers from sdlxx/gui.
  */
 
-#ifndef SDLXX_CORE_LOG_H
-#define SDLXX_CORE_LOG_H
+#ifndef SDLXX_GUI_H
+#define SDLXX_GUI_H
 
-#include <iostream>
-#include <string>
+#include "sdlxx/gui/button.h"
+#include "sdlxx/gui/layout.h"
+#include "sdlxx/gui/layouts/grid_layout.h"
+#include "sdlxx/gui/layouts/horizontal_layout.h"
+#include "sdlxx/gui/layouts/manual_layout.h"
+#include "sdlxx/gui/layouts/vertical_layout.h"
+#include "sdlxx/gui/node.h"
+#include "sdlxx/gui/parent_node.h"
+#include "sdlxx/gui/scene.h"
+#include "sdlxx/gui/scene_manager.h"
+#include "sdlxx/gui/style.h"
+#include "sdlxx/gui/texture_manager.h"
 
-namespace sdlxx {
-
-/**
- * \brief A class that represents the logger.
- */
-class Log {
-public:
-  enum class Verbosity { TRACE, DEBUG, INFO, WARNING, ERROR, FATAL };
-
-  static void Trace(const std::string& message);
-
-  static void Debug(const std::string& message);
-
-  static void Info(const std::string& message);
-
-  static void Warning(const std::string& message);
-
-  static void Error(const std::string& message);
-
-  static void Fatal(const std::string& message);
-
-  static void SetVerbosity(Verbosity new_verbosity);
-
-private:
-  static Verbosity verbosity;
-  static bool have_escape_codes;
-
-  static void Print(Verbosity verbosity, const std::string& message,
-                    std::ostream& stream = std::cout);
-};
-
-}  // namespace sdlxx
-
-#endif  // SDLXX_CORE_LOG_H
+#endif  // SDLXX_GUI_H

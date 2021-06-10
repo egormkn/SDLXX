@@ -1,13 +1,20 @@
 #include "sdlxx/core/renderer.h"
 
-#include <SDL_render.h>
-#include <math.h>
+#include <cmath>
+#include <cstddef>
 
+#include <SDL_rect.h>
+#include <SDL_render.h>
+#include <SDL_stdinc.h>
+
+#include "sdlxx/core/point.h"
 #include "sdlxx/core/rectangle.h"
+#include "sdlxx/core/renderable.h"
 #include "sdlxx/core/surface.h"
 #include "sdlxx/core/texture.h"
+#include "sdlxx/core/window.h"
 
-using namespace sdlxx::core;
+using namespace sdlxx;
 
 Renderer::Driver::Driver(int index) : index(index) {}
 
@@ -72,14 +79,14 @@ Renderer::Renderer(Window& window, BitMask<Flag> flags)
 Renderer::Renderer(Window& window, Renderer::Driver driver, BitMask<Flag> flags)
     : renderer_ptr(SDL_CreateRenderer(window.window_ptr.get(), driver.GetIndex(),
                                       static_cast<Uint32>(flags.value))) {
-  if (renderer_ptr == NULL) {
+  if (renderer_ptr == nullptr) {
     throw RendererException("Failed to create a 2D rendering context for a window");
   }
 }
 
 Renderer::Renderer(Surface& surface)
     : renderer_ptr(SDL_CreateSoftwareRenderer(surface.surface_ptr.get())) {
-  if (renderer_ptr == NULL) {
+  if (renderer_ptr == nullptr) {
     throw RendererException("Failed to create a 2D rendering context for a surface");
   }
 }
@@ -106,7 +113,7 @@ void Renderer::SetRenderTarget(Texture& texture) {
 }
 
 void Renderer::SetRenderTargetDefault() {
-  int return_code = SDL_SetRenderTarget(renderer_ptr.get(), NULL);
+  int return_code = SDL_SetRenderTarget(renderer_ptr.get(), nullptr);
   if (return_code != 0) {
     throw RendererException("Failed to set render target for the renderer");
   }
@@ -147,7 +154,7 @@ void Renderer::SetViewport(const Rectangle& rectangle) {
 }
 
 void Renderer::ResetViewport() {
-  int return_code = SDL_RenderSetViewport(renderer_ptr.get(), NULL);
+  int return_code = SDL_RenderSetViewport(renderer_ptr.get(), nullptr);
   if (return_code != 0) {
     throw RendererException("Failed to set the viewport for the renderer");
   }
@@ -168,7 +175,7 @@ void Renderer::SetClipRectangle(const Rectangle& rectangle) {
 }
 
 void Renderer::ResetClipRectangle() {
-  int return_code = SDL_RenderSetClipRect(renderer_ptr.get(), NULL);
+  int return_code = SDL_RenderSetClipRect(renderer_ptr.get(), nullptr);
   if (return_code != 0) {
     throw RendererException("Failed to set the clip rectangle for the renderer");
   }
@@ -280,6 +287,13 @@ void Renderer::DrawRectangles(const std::vector<Rectangle>& rectangles) {
   }
 }
 
+void Renderer::Fill() {
+  int return_code = SDL_RenderFillRect(renderer_ptr.get(), NULL);
+  if (return_code != 0) {
+    throw RendererException("Failed to fill the rectangle");
+  }
+}
+
 void Renderer::FillRectangle(const Rectangle& rectangle) {
   SDL_Rect rect{rectangle.x, rectangle.y, rectangle.width, rectangle.height};
   int return_code = SDL_RenderFillRect(renderer_ptr.get(), &rect);
@@ -301,7 +315,7 @@ void Renderer::FillRectangles(const std::vector<Rectangle>& rectangles) {
 }
 
 void Renderer::Copy(const Texture& texture) {
-  int return_code = SDL_RenderCopy(renderer_ptr.get(), texture.texture_ptr.get(), NULL, NULL);
+  int return_code = SDL_RenderCopy(renderer_ptr.get(), texture.texture_ptr.get(), nullptr, nullptr);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }
@@ -309,7 +323,8 @@ void Renderer::Copy(const Texture& texture) {
 
 void Renderer::Copy(const Texture& texture, const Rectangle& dest) {
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
-  int return_code = SDL_RenderCopy(renderer_ptr.get(), texture.texture_ptr.get(), NULL, &dstrect);
+  int return_code =
+      SDL_RenderCopy(renderer_ptr.get(), texture.texture_ptr.get(), nullptr, &dstrect);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }
@@ -327,8 +342,8 @@ void Renderer::Copy(const Texture& texture, const Rectangle& source, const Recta
 
 void Renderer::Copy(const Texture& texture, double angle, Renderer::Flip flip) {
   SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
-  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), NULL, NULL,
-                                     angle, NULL, flip_value);
+  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
+                                     nullptr, angle, nullptr, flip_value);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }
@@ -337,8 +352,8 @@ void Renderer::Copy(const Texture& texture, double angle, Renderer::Flip flip) {
 void Renderer::Copy(const Texture& texture, double angle, Point center, Renderer::Flip flip) {
   SDL_Point center_value{center.x, center.y};
   SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
-  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), NULL, NULL,
-                                     angle, &center_value, flip_value);
+  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
+                                     nullptr, angle, &center_value, flip_value);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }
@@ -348,8 +363,8 @@ void Renderer::Copy(const Texture& texture, const Rectangle& dest, double angle,
                     Renderer::Flip flip) {
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
   SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
-  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), NULL, &dstrect,
-                                     angle, NULL, flip_value);
+  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
+                                     &dstrect, angle, nullptr, flip_value);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }
@@ -361,7 +376,7 @@ void Renderer::Copy(const Texture& texture, const Rectangle& source, const Recta
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
   SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
   int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), &srcrect,
-                                     &dstrect, angle, NULL, flip_value);
+                                     &dstrect, angle, nullptr, flip_value);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }
@@ -372,8 +387,8 @@ void Renderer::Copy(const Texture& texture, const Rectangle& dest, double angle,
   SDL_Rect dstrect{dest.x, dest.y, dest.width, dest.height};
   SDL_Point center_value{center.x, center.y};
   SDL_RendererFlip flip_value = static_cast<SDL_RendererFlip>(flip);
-  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), NULL, &dstrect,
-                                     angle, &center_value, flip_value);
+  int return_code = SDL_RenderCopyEx(renderer_ptr.get(), texture.texture_ptr.get(), nullptr,
+                                     &dstrect, angle, &center_value, flip_value);
   if (return_code != 0) {
     throw RendererException("Failed to copy the texture to the current rendering target");
   }
@@ -394,7 +409,7 @@ void Renderer::Copy(const Texture& texture, const Rectangle& source, const Recta
 
 void Renderer::ReadPixels(uint32_t format, void* pixels, int pitch) {
   int return_code =
-      SDL_RenderReadPixels(renderer_ptr.get(), NULL, static_cast<Uint32>(format), pixels, pitch);
+      SDL_RenderReadPixels(renderer_ptr.get(), nullptr, static_cast<Uint32>(format), pixels, pitch);
   if (return_code != 0) {
     throw RendererException("Failed to read pixels from the current rendering target");
   }
@@ -409,7 +424,9 @@ void Renderer::ReadPixels(const Rectangle& rectangle, uint32_t format, void* pix
   }
 }
 
-void Renderer::Render() { SDL_RenderPresent(renderer_ptr.get()); }
+void Renderer::RenderPresent() { SDL_RenderPresent(renderer_ptr.get()); }
+
+void Renderer::Render(Renderable& renderable) { renderable.Render(*this); }
 
 SDL_Renderer* Renderer::Release() { return renderer_ptr.release(); }
 
