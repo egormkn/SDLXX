@@ -1,3 +1,5 @@
+#include <array>
+
 #include <SDL_events.h>
 #include <sdlxx/core.h>
 #include <sdlxx/image.h>
@@ -50,14 +52,14 @@ int main(int argc, char* args[]) {
       renderer.SetDrawColor(Color::WHITE);
       renderer.Clear();
 
-      Rectangle& src = clips[frame / 4];
+      Rectangle& src = clips.at(frame / 4);
       Rectangle dst = {(window_size.width - src.width) / 2, (window_size.height - src.height) / 2,
                        stickman_size.width / 4, stickman_size.height};
       renderer.Copy(stickman, src, dst);
 
       renderer.RenderPresent();
 
-      frame = (frame + 1) % (clips.size() * 4);
+      frame = (frame + 1) % static_cast<int>(clips.size() * 4);
     }
   } catch (std::exception& e) {
     Log::Error(e.what());

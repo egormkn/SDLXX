@@ -1,3 +1,5 @@
+#include <array>
+
 #include <SDL_events.h>
 #include <sdlxx/core.h>
 #include <sdlxx/image.h>
