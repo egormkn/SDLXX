@@ -30,7 +30,7 @@
 
 #include <memory>
 #include <string>
-#include <unordered_set>
+#include <unordered_map>
 
 #include "sdlxx/core/dimensions.h"
 #include "sdlxx/core/display.h"
