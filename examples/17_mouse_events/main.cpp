@@ -26,26 +26,30 @@ int main(int argc, char* args[]) {
     Renderer renderer(window, Renderer::Flag::ACCELERATED | Renderer::Flag::PRESENTVSYNC);
     renderer.SetDrawColor(Color::WHITE);
 
-    const int BUTTON_WIDTH = 300;
-    const int BUTTON_HEIGHT = 200;
-    const int TOTAL_BUTTONS = 4;
+    const Dimensions button_size = {window_size.width / 2, window_size.height / 2};
 
     std::array<Rectangle, Button::Sprite::TOTAL> clips;
-    Texture texture = ImageTexture(renderer, "assets/button.png");
-    std::array<Button, TOTAL_BUTTONS> buttons;
-
     for (int i = 0; i < clips.size(); ++i) {
-      clips[i].x = 0;
-      clips[i].y = i * 200;
-      clips[i].width = BUTTON_WIDTH;
-      clips[i].height = BUTTON_HEIGHT;
+      clips.at(i).x = 0;
+      clips.at(i).y = i * 200;
+      clips.at(i).width = 300;
+      clips.at(i).height = 200;
+    }
+
+    Button::SetTexture(ImageTexture(renderer, "assets/button.png"), clips);
+
+    std::array<Button, 4> buttons;
+
+    for (Button& button : buttons) {
+      button.SetSize({window_size.width / 2, window_size.height / 2});
     }
 
     // Set buttons in corners
     buttons[0].SetPosition(0, 0);
-    buttons[1].SetPosition(window_size.width - BUTTON_WIDTH, 0);
-    buttons[2].SetPosition(0, window_size.height - BUTTON_HEIGHT);
-    buttons[3].SetPosition(window_size.width - BUTTON_WIDTH, window_size.height - BUTTON_HEIGHT);
+    buttons[1].SetPosition(window_size.width - button_size.width, 0);
+    buttons[2].SetPosition(0, window_size.height - button_size.height);
+    buttons[3].SetPosition(window_size.width - button_size.width,
+                           window_size.height - button_size.height);
 
     Event e;
     bool quit = false;
@@ -56,23 +60,23 @@ int main(int argc, char* args[]) {
           quit = true;
         }
 
-        for (int i = 0; i < TOTAL_BUTTONS; ++i) {
-          buttons.at(i).HandleEvent(e);
+        for (Button& button : buttons) {
+          button.HandleEvent(e);
         }
       }
 
       renderer.SetDrawColor(Color::WHITE);
       renderer.Clear();
 
-      for (int i = 0; i < TOTAL_BUTTONS; ++i) {
-        // buttons[i].Render();
-        Point position = buttons.at(i).GetPosition();
-        renderer.Copy(texture, clips.at(buttons.at(i).GetSprite()),
-                      {position.x, position.y, BUTTON_WIDTH, BUTTON_HEIGHT});
+      for (Button& button : buttons) {
+        renderer.Render(button);
       }
 
       renderer.RenderPresent();
     }
+
+    // Clear static texture, so it is destroyed properly before SDL shutdown
+    Button::SetTexture({}, {});
   } catch (std::exception& e) {
     Log::Error(e.what());
   }
