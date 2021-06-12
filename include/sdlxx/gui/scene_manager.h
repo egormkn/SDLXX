@@ -77,18 +77,14 @@ public:
    * \brief Run the event loop.
    */
   void Run() {
-    uint32_t t = 0, dt = 10, accumulator = 0;
-    uint32_t current_time = Timer::GetTicks();
+    time_accumulator = 0;
+    current_time = Timer::GetTicks();
 
     if (!scenes.empty()) {
       ActivateTop();
     }
 
     while (!scenes.empty()) {
-      uint32_t new_time = Timer::GetTicks();
-      uint32_t frame_time = std::min<uint32_t>(new_time - current_time, 250);
-      current_time = new_time;
-
       Scene& current_scene = *scenes.back();
 
       if (!current_scene.IsActive() || current_scene.HasIntent()) {
@@ -113,20 +109,6 @@ public:
         continue;
       }
 
-      accumulator += frame_time;
-
-      while (accumulator >= dt) {
-        // previous = current;
-        // integrate( current, t, dt );
-        if (current_scene.IsActive()) {
-          current_scene.Update(Time::Milliseconds(static_cast<int32_t>(dt)));
-        }
-        t += dt;
-        accumulator -= dt;
-        /*std::string str = "Game FPS: " + std::to_string((frameTime == 0 ? 0 :
-        (int) (1000.0 / frameTime))); window->SetTitle(str);*/
-      }
-
       Update(current_scene);
 
       Render(current_scene);
@@ -136,6 +118,9 @@ public:
 private:
   Node::Context context;
   std::vector<std::unique_ptr<Scene>> scenes;
+  uint32_t time_accumulator;
+  uint32_t current_time;
+  Event event;
 
   void ActivateTop() {
     Scene& scene = *scenes.back();
@@ -144,8 +129,6 @@ private:
   }
 
   void HandleEvents(Scene& current_scene) {
-    static Event event;
-
     while (Events::Poll(&event)) {
       if (event.type == SDL_QUIT) {
         bool handled = current_scene.HandleEvent(event);
@@ -162,7 +145,28 @@ private:
     }
   }
 
-  void Update(Scene& current_scene) {}
+  void Update(Scene& current_scene, uint32_t dt = 10) {
+    uint32_t new_time = Timer::GetTicks();
+    uint32_t frame_time = std::min<uint32_t>(new_time - current_time, 250);
+    current_time = new_time;
+
+    time_accumulator += frame_time;
+
+    while (time_accumulator >= dt) {
+      if (current_scene.IsActive()) {
+        current_scene.Update(Time::Milliseconds(static_cast<int32_t>(dt)));
+      }
+      time_accumulator -= dt;
+    }
+
+    static uint32_t last_title = 0;
+    if (current_time > last_title) {
+      context.window.SetTitle(
+          " [FPS: " + std::to_string(frame_time == 0 ? 0 : static_cast<int>(1000.0 / frame_time)) +
+          "]");
+      last_title = current_time + 1000;
+    }
+  }
 
   void Render(Scene& current_scene) {
     context.renderer.SetDrawColor(Color::WHITE);
