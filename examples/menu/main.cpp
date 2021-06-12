@@ -9,7 +9,7 @@ using namespace sdlxx;
 
 class Menu : public Scene {
 public:
-  explicit Menu(int index) : Scene("Menu" + to_string(index)), index(index) {
+  explicit Menu(int index) : Scene("Menu " + to_string(index)), index(index) {
     auto layout = std::make_unique<ManualLayout>();
     layout->AddChild(
         std::make_unique<Button>(
