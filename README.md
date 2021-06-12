@@ -4,8 +4,7 @@
 
 ## Description
 
-SDLXX is a library that implements a modern C++ interface 
-to the widely used [SDL](https://www.libsdl.org/) library 
+SDLXX is a modern C++ wrapper for the widely used [SDL](https://www.libsdl.org/) library 
 and its extensions: 
 [SDL_image](https://www.libsdl.org/projects/SDL_image/), 
 [SDL_mixer](https://www.libsdl.org/projects/SDL_mixer/), 
@@ -16,7 +15,7 @@ It is designed to provide safe access to audio, keyboard, mouse, joystick, netwo
 
 ## Features
 
-- Provides type-safe bindings to SDL2 and its extension libraries
+- Provides object-oriented bindings for SDL2 and its extension libraries
 - Uses [RAII idiom](https://en.cppreference.com/w/cpp/language/raii) and C++ smart pointers for safe management of SDL resources
 - Supports [vcpkg manifest mode](https://github.com/microsoft/vcpkg/blob/master/docs/users/manifests.md)
 
@@ -24,7 +23,7 @@ It is designed to provide safe access to audio, keyboard, mouse, joystick, netwo
 
 Here is an example of the [game](https://github.com/egormkn/SDLXX/releases) created using SDLXX:
 
-![Game screenshot](examples/game/data/game.png)
+![Game screenshot](examples/game/assets/game.png)
 
 ## Alternatives
 
@@ -45,7 +44,7 @@ git clone --recurse-submodules https://github.com/egormkn/SDLXX.git
 
 ```bash
 cd SDLXX
-cmake -S . -B build
+cmake -S . -B build -D BUILD_EXAMPLES=ON
 cmake --build build
 ```
 
