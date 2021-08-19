@@ -31,8 +31,8 @@
 #include <cstdint>
 
 #include "sdlxx/core/exception.h"
-#include "sdlxx/utils/bitmask.h"
 #include "sdlxx/core/version.h"
+#include "sdlxx/utils/bitmask.h"
 
 namespace sdlxx {
 

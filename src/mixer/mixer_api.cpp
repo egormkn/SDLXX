@@ -1,52 +1,43 @@
-#include <memory>
-#include <numeric>
-#include <system_error>
-#include <type_traits>
+#include "sdlxx/mixer/mixer_api.h"
+
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <SDL_mixer.h>
-#include <sdlxx/core/version.h>
-#include <sdlxx/mixer/mixer_api.h>
 
-using namespace sdlxx::core;
-using namespace sdlxx::mixer;
+using namespace std;
+using namespace sdlxx;
 
-// Convert options into bit mask
-template <typename Mask = uint32_t, typename Flag>
-Mask GetFlagsMask(const std::unordered_set<Flag>& flags) {
-  return std::accumulate(
-      flags.begin(), flags.end(), 0, [](Mask flags, const Flag& flag) {
-        return flags | static_cast<std::underlying_type_t<Flag>>(flag);
-      });
-}
-
-Version mixer_api::getCompiledSdlVersion() {
+Version MixerApi::GetCompiledSdlMixerVersion() {
   SDL_version compiled;
   SDL_MIXER_VERSION(&compiled);
   return {compiled.major, compiled.minor, compiled.patch};
 }
 
-Version mixer_api::getLinkedSdlVersion() {
-  std::unique_ptr<const SDL_version> linked(Mix_Linked_Version());
+Version MixerApi::GetLinkedSdlMixerVersion() {
+  const SDL_version* linked = Mix_Linked_Version();
   return {linked->major, linked->minor, linked->patch};
 }
 
-bool mixer_api::initialized = false;
-
-mixer_api::mixer_api(const std::unordered_set<Subsystem>& subsystems) {
-  if (initialized) {
-    throw std::runtime_error("SDLXX_mixer was already initialized");
+MixerApi::MixerApi(BitMask<Flag> flags) {
+  auto flags_mask = static_cast<int>(Mix_Init(static_cast<int>(flags.value)));
+  if ((~flags_mask & flags.value) != 0U) {
+    ostringstream message;
+    message << "Failed to initialize audio support for ";
+    for (const auto& [flag, name] : vector<pair<Flag, string>>{{Flag::FLAC, "FLAC"},
+                                                               {Flag::MOD, "MOD"},
+                                                               {Flag::MP3, "MP3"},
+                                                               {Flag::OGG, "OGG"},
+                                                               {Flag::MID, "MID"},
+                                                               {Flag::OPUS, "OPUS"}}) {
+      if ((~flags_mask & flags.value & static_cast<int>(flag)) != 0U) { message << name << ' '; }
+    }
+    throw MixerApiException(message.str());
   }
-  int flags = GetFlagsMask<int>(subsystems);
-  int return_code = Mix_Init(flags);
-  if (return_code != flags) {
-    throw std::system_error(
-        return_code, std::generic_category(),
-        "Unable to initialize SDL_mixer: " + std::string(Mix_GetError()));
-  }
-  initialized = true;
 }
 
-mixer_api::~mixer_api() {
+MixerApi::~MixerApi() {
   Mix_Quit();
-  initialized = false;
 }

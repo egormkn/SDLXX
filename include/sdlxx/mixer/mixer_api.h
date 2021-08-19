@@ -1,57 +1,56 @@
+/*
+  SDLXX - Modern C++ wrapper for Simple DirectMedia Layer (SDL2)
+
+  Copyright (C) 2019-2021 Egor Makarenko <egormkn@yandex.ru>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+*/
+
 /**
- * @file SDLXX_mixer.h
- * @author Egor Makarenko
- * @brief Class that represents SDLXX object that initializes the audio API
+ * \file
+ * \brief Header for the TtfApi class that initializes the audio API.
  */
 
-#pragma once
+#ifndef SDLXX_MIXER_MIXER_API_H
+#define SDLXX_MIXER_MIXER_API_H
 
-#ifndef SDLXX_MIXER_H
-#define SDLXX_MIXER_H
+#include "sdlxx/core/exception.h"
+#include "sdlxx/core/version.h"
+#include "sdlxx/utils/bitmask.h"
 
-#include <cstdint>
-#include <unordered_set>
-
-namespace sdlxx::core {
-
-// Forward declaration of Version class
-class Version;
-
-}  // namespace sdlxx::core
-
-namespace sdlxx::mixer {
+namespace sdlxx {
 
 /**
- * @brief Class that represents SDLXX object that initializes the audio API
+ * \brief A class for MixerApi-related exceptions.
  */
-class mixer_api {
+class MixerApiException : public Exception {
+  using Exception::Exception;
+};
+
+/**
+ * \brief A class that initializes the audio API.
+ */
+class MixerApi {
 public:
   /**
-   * @brief Get the SDL_mixer version the library was compiled against
-   *
-   * This is determined by what header the compiler used. Note that if you
-   * dynamically linked the library, you might have a slightly newer or older
-   * version at runtime. That version can be determined with
-   * SDLXX_mixer::getLinkedSdlVersion()
-   *
-   * @return Version Version of SDL_mixer the library was compiled against
+   * \brief An enumeration of library flags.
+   * \upstream MIX_InitFlags
    */
-  static sdlxx::core::Version getCompiledSdlVersion();
-
-  /**
-   * @brief Get the SDL_mixer version the library was linked against
-   *
-   * If you are linking to SDL_mixer dynamically, then it is possible that the
-   * current version will be different than the version you compiled against.
-   *
-   * @return Version Version of SDL_mixer the library was linked against
-   */
-  static sdlxx::core::Version getLinkedSdlVersion();
-
-  /**
-   * @brief An enumeration of library subsystems
-   */
-  enum class Subsystem : int32_t {
+  enum class Flag {
     FLAC = 0x00000001,
     MOD = 0x00000002,
     MP3 = 0x00000008,
@@ -61,40 +60,70 @@ public:
   };
 
   /**
-   * @brief Construct a new SDLXX_mixer object that initializes the specified
-   *        Subsystems of the library
+   * \brief Get the SDL_mixer version the library was compiled against.
    *
-   * @param subsystems Subsystems that should be initialized
+   * This is determined by what header the compiler used.
+   *
+   * \note If you dynamically linked the library, you might have a slightly newer or older version
+   * at runtime. That version can be determined with GetLinkedSdlMixerVersion()
+   *
+   * \return Version The version of SDL_mixer the library was compiled against.
+   *
+   * \upstream SDL_MIXER_VERSION
+   * \upstream SDL_MIXER_COMPILEDVERSION
+   * \upstream SDL_MIXER_MAJOR_VERSION
+   * \upstream SDL_MIXER_MINOR_VERSION
+   * \upstream SDL_MIXER_PATCHLEVEL
    */
-  explicit mixer_api(const std::unordered_set<Subsystem>& subsystems = {});
+  static Version GetCompiledSdlMixerVersion();
 
   /**
-   * @brief Destroy the SDLXX_mixer object cleaning up all initialized
-   * subsystems.
+   * \brief Get the SDL_mixer version the library was linked against.
    *
-   * @note You should call this function upon all exit conditions.
+   * If you are linking to SDL_mixer dynamically, then it is possible that the
+   * current version will be different than the version you compiled against.
+   *
+   * \return Version The version of SDL_mixer the library was linked against.
+   *
+   * \upstream Mix_Linked_Version
    */
-  ~mixer_api();
+  static Version GetLinkedSdlMixerVersion();
+
+  /**
+   * \brief Construct the MixerApi object that initializes the specified parts of the library.
+   *
+   * \param flags Parts of the library that should be initialized.
+   *
+   * \throw MixerApiException on failure.
+   *
+   * \upstream Mix_Init
+   */
+  explicit MixerApi(BitMask<Flag> flags);
+
+  /**
+   * \brief Destroy the MixerApi object cleaning up all initialized parts of the library.
+   *
+   * \upstream Mix_Quit
+   */
+  ~MixerApi();
 
   // TODO: initSubsystem/quitSubsystem/wasInit methods
 
-private:
-  // Initialization status
-  static bool initialized;
-
   // Deleted copy constructor
-  mixer_api(const mixer_api& other) = delete;
+  MixerApi(const MixerApi& other) = delete;
 
   // Deleted copy assignment operator
-  mixer_api& operator=(const mixer_api& other) = delete;
+  MixerApi& operator=(const MixerApi& other) = delete;
 
   // Deleted move constructor
-  mixer_api(mixer_api&& other) = delete;
+  MixerApi(MixerApi&& other) = delete;
 
   // Deleted move assignment operator
-  mixer_api& operator=(mixer_api&& other) = delete;
+  MixerApi& operator=(MixerApi&& other) = delete;
 };
 
-}  // namespace sdlxx::mixer
+}  // namespace sdlxx
 
-#endif  // SDLXX_MIXER_H
+ENABLE_BITMASK_OPERATORS(sdlxx::MixerApi::Flag);
+
+#endif  // SDLXX_MIXER_MIXER_API_H
