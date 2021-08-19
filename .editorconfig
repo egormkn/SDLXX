@@ -13,6 +13,9 @@ indent_style = space
 trim_trailing_whitespace = true
 charset = utf-8
 
+[*.py]
+indent_size = 4
+
 [*.md]
 trim_trailing_whitespace = false
 
@@ -28,6 +31,7 @@ ij_any_align_multiline_parameters_in_calls = true
 ij_continuation_indent_size = 4
 ij_cmake_align_multiline_parameters_in_calls = true
 ij_cmake_force_commands_case = 1
+ij_cmake_indent_size = 2
 ij_cmake_keep_blank_lines_in_code = 2
 ij_cmake_space_before_for_parentheses = false
 ij_cmake_space_before_if_parentheses = false

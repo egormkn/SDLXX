@@ -32,6 +32,7 @@
 
 #include <SDL_events.h>
 #include <sdlxx/ttf/font.h>
+#include <sdlxx/ttf/font_manager.h>
 
 #include "sdlxx/core/log.h"
 #include "sdlxx/core/texture.h"
@@ -47,12 +48,12 @@ class Button : public Node {
 public:
   enum class State { DEFAULT, HOVER, PRESSED, RELEASED };
 
-  explicit Button(std::string text, std::function<void()> handler)
-      : Node("button"), text(std::move(text)), handler(std::move(handler)) {}
+  explicit Button(std::string text, std::function<void()> handler,
+                  Font& font = FontManager::GetDefault())
+      : Node("button"), text(std::move(text)), handler(std::move(handler)), font(font) {}
 
   void OnActivate() override {
     Node::OnActivate();
-    Font font("assets/xkcd-script.ttf", 28);
     Surface text_surface = font.RenderBlended(text, Color::BLACK);
     text_texture = std::make_unique<Texture>(GetContext()->renderer, text_surface);
     text_size = text_surface.GetSize();
@@ -117,11 +118,11 @@ public:
     return false;
   }
 
-
 private:
   State state = State::DEFAULT;
   std::string text;
   std::function<void()> handler;
+  Font& font;
   std::unique_ptr<Texture> text_texture;
   Dimensions text_size;
 };

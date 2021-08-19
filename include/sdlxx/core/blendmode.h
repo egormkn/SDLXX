@@ -28,7 +28,7 @@
 #ifndef SDLXX_CORE_BLENDMODE_H
 #define SDLXX_CORE_BLENDMODE_H
 
-#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/utils/bitmask.h"
 
 namespace sdlxx {
 

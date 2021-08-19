@@ -1,12 +1,15 @@
 ---
 Checks: >
   *,
-  -altera-struct-pack-align,
+  -*-deprecated-headers,
+  -*-uppercase-literal-suffix,
+  -altera-*,
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-pro-type-reinterpret-cast,
   -fuchsia-*,
   -google-build-using-namespace,
+  -hicpp-special-member-functions,
   -llvmlibc-*,
   -misc-non-private-member-variables-in-classes,
   -misc-unused-parameters,
@@ -15,7 +18,6 @@ Checks: >
   -readability-convert-member-functions-to-static,
   -readability-isolate-declaration,
   -readability-magic-numbers,
-  -*-deprecated-headers,
 
 WarningsAsErrors: -*
 FormatStyle: file
@@ -35,5 +37,5 @@ CheckOptions:
   - { key: readability-identifier-naming.StructCase,            value: CamelCase  }
   - { key: readability-identifier-naming.TemplateParameterCase, value: CamelCase  }
   - { key: readability-identifier-naming.VariableCase,          value: lower_case }
-  - { key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor, value: true }
+  - { key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor, value: 1 }
 ...

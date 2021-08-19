@@ -1,1 +1,0 @@
-echo "Building for Windows"

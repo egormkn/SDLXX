@@ -38,7 +38,7 @@
 #include "sdlxx/core/dimensions.h"
 #include "sdlxx/core/exception.h"
 #include "sdlxx/core/rectangle.h"
-#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/utils/bitmask.h"
 
 // Declaration of the underlying type
 struct SDL_Renderer;

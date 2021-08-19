@@ -38,53 +38,40 @@ class ParentNode : public Node {
 public:
   bool HandleEvent(const Event& e) override {
     for (auto& child : children) {
-      if (child->HandleEvent(e)) {
-        return true;
-      }
+      if (child->HandleEvent(e)) { return true; }
     }
     return false;
   }
 
   void Update(Time dt) override {
-    for (auto& child : children) {
-      child->Update(dt);
-    }
+    for (auto& child : children) { child->Update(dt); }
   }
 
   void Render(Renderer& renderer) const override {
-    for (const auto& child : children) {
-      child->Render(renderer);
-    }
+    for (const auto& child : children) { child->Render(renderer); }
   }
 
   void OnActivate() override {
-    for (auto& child : children) {
-      child->OnActivate();
-    }
+    for (auto& child : children) { child->OnActivate(); }
   }
 
   void OnDeactivate() override {
-    for (auto& child : children) {
-      child->OnDeactivate();
-    }
+    for (auto& child : children) { child->OnDeactivate(); }
   }
 
   void SetSize(Dimensions new_size) override {
     Node::SetSize(new_size);
-    for (const auto& child : children) {
-      child->SetSize(new_size);
-    }
+    for (const auto& child : children) { child->SetSize(new_size); }
   }
 
-  void SetStyle(const Style& new_style) override {
-    throw std::runtime_error("Not implemented yet");
+  void SetStyle(Style new_style) override {
+    Node::SetStyle(new_style);
+    for (const auto& child : children) { child->SetStyle(new_style); }
   }
 
   void SetContext(Context* new_context) override {
     Node::SetContext(new_context);
-    for (const auto& child : children) {
-      child->SetContext(new_context);
-    }
+    for (const auto& child : children) { child->SetContext(new_context); }
   }
 
 protected:

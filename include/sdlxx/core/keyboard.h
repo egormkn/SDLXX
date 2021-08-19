@@ -21,3 +21,5 @@
 */
 
 // TODO: Keyboard class based on SDL_keyboard.h
+
+// const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );

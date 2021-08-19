@@ -34,7 +34,7 @@
 #include <string>
 
 #include "sdlxx/core/exception.h"
-#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/utils/bitmask.h"
 #include "sdlxx/core/version.h"
 
 namespace sdlxx {

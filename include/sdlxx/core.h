@@ -28,7 +28,7 @@
 #ifndef SDLXX_CORE_H
 #define SDLXX_CORE_H
 
-#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/utils/bitmask.h"
 #include "sdlxx/core/blendmode.h"
 #include "sdlxx/core/color.h"
 #include "sdlxx/core/core_api.h"

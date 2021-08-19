@@ -37,7 +37,7 @@
 #include "sdlxx/core/gl.h"
 #include "sdlxx/core/point.h"
 #include "sdlxx/core/surface.h"
-#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/utils/bitmask.h"
 
 // Declaration of the underlying type
 struct SDL_Window;

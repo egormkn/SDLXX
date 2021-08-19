@@ -39,6 +39,9 @@
 
 namespace sdlxx {
 
+class Window;
+class Renderer;
+
 class Node : public Object {
 public:
   struct Context {
@@ -46,10 +49,19 @@ public:
     Renderer& renderer;
   };
 
+  /**
+   * \copydoc Object::HandleEvent
+   */
   bool HandleEvent(const Event& e) override { return false; }
 
+  /**
+   * \copydoc Object::Update
+   */
   void Update(Time dt) override {}
 
+  /**
+   * \copydoc Renderable::Render
+   */
   void Render(Renderer& renderer) const override {}
 
   virtual void OnActivate() {}
@@ -58,13 +70,15 @@ public:
 
   virtual void SetSize(Dimensions new_size) { size = new_size; }
 
-  virtual void SetStyle(const Style& new_style) { throw std::runtime_error("Not implemented yet"); }
+  virtual void SetStyle(Style new_style) { style = std::move(new_style); }
 
   virtual void SetContext(Context* new_context) { context = new_context; }
 
   const std::string& GetTag() const { return tag; }
 
   Dimensions GetSize() const { return size; }
+
+  const Style& GetStyle() const { return style; }
 
   Style& GetStyle() { return style; }
 

@@ -9,7 +9,7 @@ DerivePointerAlignment: false
 AccessModifierOffset: -2
 
 # Don't add indentation level for namespaces
-NamespaceIndentation: None
+NamespaceIndentation: Inner
 
 # Sort includes by category and in alphabetical order inside category
 IncludeBlocks: Regroup
@@ -33,3 +33,15 @@ IndentWidth: 2
 
 # Set line length
 ColumnLimit: 100
+
+# Imported from other projects
+AlwaysBreakTemplateDeclarations: Yes
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+Cpp11BracedListStyle: true
+AlignConsecutiveAssignments: None
+AlignTrailingComments: true
+SpaceAfterCStyleCast: true

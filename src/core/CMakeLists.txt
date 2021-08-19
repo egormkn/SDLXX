@@ -3,7 +3,7 @@
 
 # Add header files
 file(GLOB HEADERS_LIST CONFIGURE_DEPENDS
-     "${PROJECT_SOURCE_DIR}/include/sdlxx/core/*.h")
+     "${PROJECT_SOURCE_DIR}/include/sdlxx/core/**/*.h")
 
 # Add source files
 set(SOURCES_LIST
@@ -37,8 +37,8 @@ target_include_directories(sdlxx_core PUBLIC "${PROJECT_SOURCE_DIR}/include")
 # Add dependencies
 find_package(SDL2 CONFIG REQUIRED)
 target_link_libraries(sdlxx_core PUBLIC
-                      SDL2::SDL2main
-                      SDL2::SDL2)
+                      SDL2::SDL2
+                      SDL2::SDL2main)
 
 # Set C++ standard to C++17
 target_compile_features(sdlxx_core PRIVATE cxx_std_17)

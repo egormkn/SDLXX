@@ -6,10 +6,6 @@
   "dependencies": [
     "sdl2"
   ],
-  "default-features": [
-    "image",
-    "ttf"
-  ],
   "features": {
     "gfx": {
       "description": "Graphics primitives for sdlxx",
@@ -18,7 +14,17 @@
       ]
     },
     "gui": {
-      "description": "User interface for sdlxx"
+      "description": "User interface for sdlxx",
+      "dependencies": [
+        {
+          "name": "sdlxx",
+          "default-features": false,
+          "features": [
+            "image",
+            "ttf"
+          ]
+        }
+      ]
     },
     "image": {
       "description": "Image support for sdlxx",
@@ -38,11 +44,50 @@
         "sdl2-net"
       ]
     },
+    "physics": {
+      "description": "Physics support for sdlxx",
+      "dependencies": [
+        "box2d"
+      ]
+    },
     "ttf": {
       "description": "Fonts support for sdlxx",
       "dependencies": [
-        "sdl2-ttf"
+        "sdl2-ttf",
+        {
+          "name": "sdlxx",
+          "default-features": false,
+          "features": [
+            "image"
+          ]
+        }
+      ]
+    },
+    "examples": {
+      "description": "Examples for sdlxx",
+      "dependencies": [
+        {
+          "name": "sdlxx",
+          "default-features": false,
+          "features": [
+            "gfx",
+            "gui",
+            "image",
+            "physics",
+            "ttf"
+          ]
+        },
+        "tinyxml2"
       ]
     }
-  }
+  },
+  "default-features": [
+    "gfx",
+    "gui",
+    "image",
+    "mixer",
+    "net",
+    "ttf",
+    "examples"
+  ]
 }

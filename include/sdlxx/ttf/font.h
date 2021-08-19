@@ -34,7 +34,7 @@
 
 #include "sdlxx/core/exception.h"
 #include "sdlxx/core/surface.h"
-#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/utils/bitmask.h"
 
 // Declaration of the underlying type
 using TTF_Font = struct _TTF_Font;  // NOLINT

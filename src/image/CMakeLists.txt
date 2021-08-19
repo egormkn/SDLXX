@@ -3,7 +3,7 @@
 
 # Add header files
 file(GLOB HEADERS_LIST CONFIGURE_DEPENDS
-     "${PROJECT_SOURCE_DIR}/include/sdlxx/image/*.h")
+     "${PROJECT_SOURCE_DIR}/include/sdlxx/image/**/*.h")
 
 # Add source files
 set(SOURCES_LIST

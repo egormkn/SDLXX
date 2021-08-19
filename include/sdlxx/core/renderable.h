@@ -20,6 +20,11 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+/**
+ * \file
+ * \brief Header for the Renderable class that represents an interface for renderable objects.
+ */
+
 #ifndef SDLXX_CORE_RENDERABLE_H
 #define SDLXX_CORE_RENDERABLE_H
 
@@ -34,6 +39,10 @@ public:
 protected:
   friend class Renderer;
 
+  /**
+   * Draw the object using specified renderer
+   * @param renderer Renderer to use
+   */
   virtual void Render(Renderer& renderer) const = 0;
 };
 

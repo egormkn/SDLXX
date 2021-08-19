@@ -28,8 +28,6 @@
 #ifndef SDLXX_CORE_OBJECT_H
 #define SDLXX_CORE_OBJECT_H
 
-#include <cstdint>
-
 #include "sdlxx/core/events.h"
 #include "sdlxx/core/renderable.h"
 #include "sdlxx/core/time.h"
@@ -41,8 +39,17 @@ namespace sdlxx {
  */
 class Object : public Renderable {
 public:
+  /**
+   * Handle event
+   * @param e Event to process
+   * @return true if event was handled by this object, false otherwise
+   */
   virtual bool HandleEvent(const Event& e) = 0;
 
+  /**
+   * Update object state
+   * @param dt time delta
+   */
   virtual void Update(Time dt) = 0;
 };
 

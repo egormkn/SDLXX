@@ -33,7 +33,7 @@
 namespace sdlxx {
 
 /**
- * \brief A structure that represents a color.
+ * \brief A structure that represents a color with the values in range [0-255].
  *
  * \upstream SDL_Color
  */

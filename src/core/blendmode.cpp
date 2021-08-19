@@ -2,7 +2,7 @@
 
 #include <SDL_blendmode.h>
 
-#include "sdlxx/core/utils/bitmask.h"
+#include "sdlxx/utils/bitmask.h"
 
 using namespace sdlxx;
 

@@ -35,6 +35,7 @@ protected:
     text = std::make_unique<Texture>(GetContext()->renderer, text_surface);
     background = std::make_unique<ImageTexture>(GetContext()->renderer, "assets/menu.png");
   }
+
   void OnDeactivate() override {
     background = nullptr;
     text = nullptr;
