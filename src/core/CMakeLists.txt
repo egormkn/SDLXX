@@ -38,7 +38,7 @@ target_include_directories(sdlxx_core PUBLIC "${PROJECT_SOURCE_DIR}/include")
 find_package(SDL2 CONFIG REQUIRED)
 target_link_libraries(sdlxx_core PUBLIC
                       SDL2::SDL2main
-                      SDL2::SDL2-static)
+                      SDL2::SDL2)
 
 # Set C++ standard to C++17
 target_compile_features(sdlxx_core PRIVATE cxx_std_17)
